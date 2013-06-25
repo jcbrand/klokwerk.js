@@ -1,0 +1,308 @@
+html, body {
+    height: 100%;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+#wrap {
+    min-height: 100%;
+}
+
+#main, #tracker {
+    overflow:auto;
+    padding-bottom: 40px; /* this needs to be bigger than footer height*/
+}
+
+#header, #footer {
+  width: 100%;
+  color: #fff;
+  height: 40px;
+  position: absolute;
+  text-align: center;
+  line-height: 40px;
+  overflow: hidden;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+#footer {
+  bottom: 0;
+  background: #000 url(footerbg.png) repeat-x 0 top;
+  position: relative;
+  margin-top: -40px;
+  clear: both;
+}
+
+input:focus:invalid:focus,
+textarea:focus:invalid:focus,
+select:focus:invalid:focus {
+  border-color: rgba(82, 168, 236, 0.8);
+  -webkit-box-shadow: inset 0 0 1px rgba(82,168,236,.6);
+  -moz-box-shadow: inset 0 0 1px rgba(82,168,236,.6);
+  box-shadow: inset 0 0 1px rgba(82,168,236,.6);
+}
+input:-moz-placeholder,
+textarea:-moz-placeholder,
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder,
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder,
+.navbar-inverse .navbar-search .search-query:-moz-placeholder,
+.navbar-inverse .navbar-search .search-query:-ms-input-placeholder,
+.navbar-inverse .navbar-search .search-query::-webkit-input-placeholder {
+    color: #A0A0A0;
+}
+
+.apply-dates {
+    margin-left: 0.5em;
+    clear: left;
+}
+
+.datepicker {
+    float: left;
+}
+
+.datepicker th.prev,
+.datepicker th.next,
+.datepicker th.dow,
+.datepicker td.day {
+    width: 20px;
+    height: 20px;
+}
+
+.datepicker th, 
+.datepicker td {
+    text-align: center;
+    display: inline-block;
+    height: 100%;
+    width: 220px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    border: none;
+}
+
+strong.task-desc {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+#current-task-section {
+    display: None;
+}
+
+.input-append .popover-content {
+    font-size: 12px;
+    line-height: normal;
+}
+
+.barchart {
+    height: 90px;
+    text-align: justify;
+    -ms-text-justify: distribute-all-lines;
+    text-justify: distribute-all-lines;
+    width: 100%;
+    margin-bottom: 3em;
+}
+
+.daybar, .hourbar, .monthbar {
+    height: 100%;
+    vertical-align: top;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    text-align: center;
+}
+
+.daybar {
+    width: 10%;
+}
+
+.hourbar {
+    width: 3%;
+}
+
+.monthbar {
+    width: 7%;
+}
+
+.stretch {
+    width: 100%;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0
+}
+
+.progress-vertical {
+    height: 100%;
+    width: 90%;
+    position: relative;
+    margin-right: 10px;
+    text-align: left;
+}
+.progress-vertical .bar {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+}
+
+#current-task-section p span.label,
+.tasklist li {
+    margin-left: 0.5em;
+}
+
+span.category {
+    color: grey;
+    white-space: nowrap;
+}
+.category::before {
+    content: "@ ";
+}
+
+.hero-unit .input-large {
+  width: 200px;
+}
+
+.hero-unit input#organisation,
+.hero-unit input#task_name {
+  width: -webkit-calc(100% - 35px);
+  width: -moz-calc(100% - 35px);
+  width: -o-calc(100% - 35px);
+  width: calc(100% - 35px);
+}
+
+.form-search .input-append .btn {
+    vertical-align: middle;
+}
+
+.input-append button.add-on {
+    height: inherit;
+}
+
+time {
+    display: inline-block;
+}
+
+time.spent {
+    margin-left: 1em; 
+    margin-right: 1em; 
+    color: grey;
+}
+
+.day_heading .spent {
+    color: #565656;
+    font-weight: bold;
+}
+
+.current_task .spent {
+    font-weight: bold;
+}
+
+.day_heading {
+    margin-top: 1.5em;
+}
+
+.hours::after {
+    content: "h ";
+}
+.hours {
+    white-space: nowrap; 
+}
+.minutes::after {
+    content: "m";
+}
+.minutes {
+    white-space: nowrap; 
+}
+
+.current_task .hours, .current_task .minutes {
+    color: #565656;
+}
+
+.seconds {
+    color: #BBB;
+    white-space: nowrap; 
+}
+.seconds::before {
+    content: " ";
+}
+.seconds::after {
+    content: "s";
+}
+
+.current_task {
+    margin-top: 1em;
+    margin-bottom: 2em;
+    font-size: 18px;
+}
+
+.lightblue {
+    color: #6699BB;
+}
+
+.grey{
+    color: grey;
+}
+
+.hero-unit {
+  padding: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.hero-unit h1 {
+    margin-bottom: 30px;
+}
+
+legend {
+  border-bottom: 1px solid #ff8e31;
+}
+
+.tasks_body {
+  padding: 15px;
+}
+
+#labels {
+    width: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+.input-append #s2id_labels {
+    font-size: 14px;
+}
+
+ul.select2-choices {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.select2-search-field {
+    height: 28px;
+}
+
+i.icon-pencil {
+    margin-left: 1em;
+}
+i.icon-remove {
+    margin-left: 0.3em;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.login {
+    float:right; 
+    color: white;
+    font-weight: bold;
+}
+
+.inherit-color {
+    color: inherit;
+}
