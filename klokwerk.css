@@ -198,8 +198,13 @@ time.spent {
     font-weight: bold;
 }
 
-.current_task .spent {
+.current-task .spent {
     font-weight: bold;
+}
+
+ul.tasklist li .span8,
+.current-task .span8 {
+    margin-left: 0;
 }
 
 .day_heading {
@@ -219,7 +224,7 @@ time.spent {
     white-space: nowrap; 
 }
 
-.current_task .hours, .current_task .minutes {
+.current-task .hours, .current-task .minutes {
     color: #565656;
 }
 
@@ -234,7 +239,7 @@ time.spent {
     content: "s";
 }
 
-.current_task {
+.current-task {
     margin-top: 1em;
     margin-bottom: 2em;
     font-size: 18px;
@@ -306,3 +311,4 @@ i.icon-remove {
 .inherit-color {
     color: inherit;
 }
+
