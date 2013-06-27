@@ -94,7 +94,7 @@
 
         addTask: function () {
             var $form = this.$el.find('form'),
-                $taskname = $form.find('#task_name'),
+                $taskname = $form.find('#task-name'),
                 arr = $taskname.attr('value').split('@'),
                 desc = arr[0],
                 cat = arr[1] || 'uncategorized',
@@ -123,7 +123,7 @@
             } else {
                 $form.validate({
                     highlight: function () {
-                        $form.find('#task_name').addClass('error').wrap('<span class="control-group error"/>');
+                        $form.find('#task-name').addClass('error').wrap('<span class="control-group error"/>');
                     },
                     submitHandler: $.proxy(function () {
                         this.addTask();

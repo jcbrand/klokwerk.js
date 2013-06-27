@@ -20,7 +20,7 @@
                 <h1>Kl⚙kwerk &nbsp;<small>Track your time</small></h1>
                 <form class="row-fluid form-inline tracker-form">
                     <span class="span4 input-append">
-                        <input type="text" name="task_name" id="task_name" required="required" autofocus="autofocus" placeholder="What are you doing right now?" tabindex="1"/>
+                        <input type="text" name="task-name" id="task-name" required="required" autofocus="autofocus" placeholder="What are you doing right now?" tabindex="1"/>
                         <a href="#" class="btn help_button" data-toggle="popover" data-placement="bottom" tabindex="-1"
                             data-content="This could be any activity for which you would like to track the time spent. For example designing a flyer, writing an article or fixing a software bug."
                             title="" data-original-title="Name your current activity"><i class="icon-question-sign"></i></a>
@@ -152,45 +152,47 @@
                     <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
                 </p>
                 <ul class="unstyled tasklist">
-                    <li class="finished-task row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8"><strong class="task_name">
-                            Gardening
-                            </strong><span class="category">housework</span>
+                    <li class="finished-task clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Really long tasks that is so long it overflows the space
+                            available for its title. Still not long enough, so lets add more text. Ok, lets make this thing
+                            ridiculously long.</strong>
+                            <span class="category">housework</span>
                             <span class="clickable label label-info">outside</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
-                            <time class="spent pull-right"><span class="minutes">35</span></time>
-                        </span>
+                        </div>
+                        <div class="task-spent">
+                            <time class="spent"><span class="minutes">35</span></time>
+                        </div>
                     </li>
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name">Bits and bobs</strong>
+                    <li class="finished-task clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Bits and Bobs</strong>
                             <span class="category">uncategorized</span>
                             <span class="clickable label label-info">house</span>
                             <span class="clickable label label-info">driveway</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
-                            <time class="spent pull-right"><span class="hours">1</span><span class="minutes">1</span></time>
-                        </span>
+                        </div>
+                        <div class="task-spent">
+                            <time class="spent"><span class="minutes">35</span></time>
+                        </div>
                     </li>
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name">Washing dishes</strong>
+                    <li class="finished-task clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Washing dishes</strong>
                             <span class="category">houework</span>
                             <span class="clickable label label-info">kitchen</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
+                        </div>
+                        <div class="task-spent">
                             <time class="spent pull-right"><span class="hours">2</span><span class="minutes">4</span></time>
-                        </span>
+                        </div>
                     </li>
                 </ul>
                 <p class="row-fluid day_heading">
@@ -198,44 +200,44 @@
                     <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
                 </p>
                 <ul class="unstyled tasklist">
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name">Debug new website for IE 8</strong>
+                    <li class="finished-task clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Debug new website for IE 8</strong>
                             <span class="category">webdesign</span>
                             <span class="clickable label label-info">clientX</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
+                        </div>
+                        <div class="task-spent">
                             <time class="spent pull-right"><span class="minutes">23</span></time>
-                        </span>
+                        </div>
                     </li>
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name">Design banner</strong>
+                    <li class="finished-task row-fluid clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Design banner</strong>
                             <span class="category">webdesign</span>
                             <span class="clickable label label-info">clientX</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
+                        </div>
+                        <div class="task-spent">
                             <time class="spent pull-right"><span class="minutes">49</span></time>
-                        </span>
+                        </div>
                     </li>
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name">Debug form validation</strong>
+                    <li class="finished-task row-fluid clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Debug form validation</strong>
                             <span class="category">javascript</span>
                             <span class="clickable label label-info">clientX</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
-                            <time class="spent pull-right"><span class="minutes">41</span></time>
-                        </span>
+                        </div>
+                        <div class="task-spent">
+                            <time class="spent pull-right"><span class="minutes">49</span></time>
+                        </div>
                     </li>
                 </ul>
                 <p class="row-fluid day_heading">
@@ -243,30 +245,30 @@
                     <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
                 </p>
                 <ul class="unstyled tasklist">
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name">Washing dishes</strong>
+                    <li class="finished-task row-fluid clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Washing dishes</strong>
                             <span class="category">uncategorized</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
-                            <time class="spent pull-right"><span class="hours">5</span><span class="minutes">4</span></time>
-                        </span>
+                        </div>
+                        <div class="task-spent">
+                            <time class="spent pull-right"><span class="hours">2</span><span class="minutes">4</span></time>
+                        </div>
                     </li>
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name">Email time estimate to client</strong>
+                    <li class="finished-task row-fluid clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Email time estimate to client</strong>
                             <span class="category">estimates</span>
                             <span class="clickable label label-info">emails</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
+                        </div>
+                        <div class="task-spent">
                             <time class="spent pull-right"><span class="hours">2</span><span class="minutes">34</span></time>
-                        </span>
+                        </div>
                     </li>
                 </ul>
                 <p class="row-fluid day_heading">
@@ -274,22 +276,22 @@
                     <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
                 </p>
                 <ul class="unstyled tasklist">
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name">Clean out the garage</strong>
+                    <li class="finished-task row-fluid clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Clean out the garage</strong>
                             <span class="category">houseworkwithsomestuffadded</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
+                        </div>
+                        <div class="task-spent">
                             <time class="spent pull-right"><span class="hours">2</span><span class="minutes">34</span></time>
-                        </span>
+                        </div>
                     </li>
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name" >Really long tasks that is so long it overflows the space
+                    <li class="finished-task row-fluid clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name" >Really long tasks that is so long it overflows the space
                             available for its title. Still not long enough, so lets add more text. Ok, lets make this thing
                             ridiculously long.</strong>
                             <span class="category">houseworkxxxxxxxxxxxxxx</span>
@@ -298,23 +300,23 @@
                             <span class="clickable label label-info">label3</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
-                            <time class="spent pull-right"><span class="minutes">23</span></time>
-                        </span>
+                        </div>
+                        <div class="task-spent">
+                            <time class="spent pull-right"><span class="hours">12</span><span class="minutes">34</span></time>
+                        </div>
                     </li>
-                    <li class="row-fluid clearfix">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
-                            <strong class="task_name">Contact clientY and discuss the new project requirements</strong>
+                    <li class="finished-task row-fluid clearfix">
+                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                        <div class="task-details">
+                            <strong class="task-name">Contact clientY and discuss the new project requirements</strong>
                             <span class="category">uncategorized</span>
                             <span class="clickable label label-info">phonecalls</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
+                        </div>
+                        <div class="task-spent">
                             <time class="spent pull-right"><span class="minutes">41</span></time>
-                        </span>
+                        </div>
                     </li>
                 </ul>
             </div>

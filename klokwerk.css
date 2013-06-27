@@ -168,7 +168,7 @@ span.category {
 }
 
 .hero-unit input#organisation,
-.hero-unit input#task_name {
+.hero-unit input#task-name {
   width: -webkit-calc(100% - 35px);
   width: -moz-calc(100% - 35px);
   width: -o-calc(100% - 35px);
@@ -181,6 +181,25 @@ span.category {
 
 .input-append button.add-on {
     height: inherit;
+}
+
+div.task-times,
+div.task-details,
+div.task-spent {
+    display: table-cell;
+}
+
+div.task-spent,
+div.task-details {
+    padding-left: 1em;
+}
+
+div.task-details {
+    width: 100%;
+}
+
+div.task-times {
+    white-space: nowrap;
 }
 
 time {
