@@ -4,58 +4,47 @@
     <title>Kl⚙kwerk - Track your time</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/bootstrap.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/css/bootstrap-responsive.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/css/datepicker.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/css/lib/select2-3.3.1/select2.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/klokwerk.css" type="text/css" media="all">
-    <script data-main="/static/main" src="/lib/require-jquery.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="all">
+    <link rel="stylesheet" href="css/bootstrap-responsive.css" type="text/css" media="all">
+    <link rel="stylesheet" href="css/bootstrap-custom.css" type="text/css" media="all">
+    <link rel="stylesheet" href="css/datepicker.css" type="text/css" media="all">
+    <link rel="stylesheet" href="lib/select2-3.3.1/select2.css" type="text/css" media="all">
+    <link rel="stylesheet" href="klokwerk.css" type="text/css" media="all">
+    <script data-main="main" src="lib/require-jquery.js"></script>
 </head>
-<body>
-    <div id="wrap">
+<body class="container-fluid">
     <div class="row-fluid" id="tracker">
-        <span class="span2"></span>
-        <span class="span8">
+        <span class="span1"></span>
+        <span class="span10">
             <div class="hero-unit">
-                <tal:if condition="logged_in">
-                    <a class="login" href="${request.application_url}/logout">Sign out</a>
-               </tal:if>
-                <tal:if tal:condition="not:logged_in">
-                    <a class="login" href="${request.application_url}/login">Sign in</a>
-               </tal:if>
-                <h1>Kl⚙kwerk <small>Track your time</small></h1>
-                <form class="form-inline tracker-form">
-                    <span class="input-append">
-                        <input type="text" class="input-xxlarge" name="task_name" id="task_name" required="required" autofocus="autofocus" placeholder="New Task @ Category" tabindex="1"/>
-                        <a href="#" class="btn help_button" data-toggle="popover" data-placement="top" tabindex="-1"
-                           data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Creating a new task"><i class="icon-question-sign"></i></a>
+                <h1>Kl⚙kwerk &nbsp;<small>Track your time</small></h1>
+                <form class="row-fluid form-inline tracker-form">
+                    <span class="span4 input-append">
+                        <input type="text" name="task-name" id="task-name" required="required" autofocus="autofocus" placeholder="What are you doing right now?" tabindex="1"/>
+                        <a href="#" class="btn help_button" data-toggle="popover" data-placement="bottom" tabindex="-1"
+                            data-content="This could be any activity for which you would like to track the time spent. For example designing a flyer, writing an article or fixing a software bug."
+                            title="" data-original-title="Name your current activity"><i class="icon-question-sign"></i></a>
                     </span>
-                    <span class="input-append">
-                        <input type="text" class="input-large" name="task_name" id="labels" placeholder="Labels" tabindex="2"/>
-                        <a href="#" class="btn help_button" data-toggle="popover" data-placement="top" tabindex="-1"
-                           data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." title="" data-original-title="Adding labels to a task"><i class="icon-question-sign"></i></a>
+                    <span class="span4 input-append">
+                        <input type="text" name="organisation" id="organisation" placeholder="Who should know about this?" tabindex="2"/>
+                        <a href="#" class="btn help_button" data-toggle="popover" data-placement="bottom" tabindex="-1"
+                            data-content="Let your friends or colleagues know what you are doing right now." title="" data-original-title="Share"><i class="icon-question-sign"></i></a>
                     </span>
-                    <button class="btn btn-primary" id="start_task" type="submit" tabindex="3">Start</button> 
+                    <span class="span3 input-append" style="height: 20px;">
+                        <input type="text" name="labels" id="labels" placeholder="Labels" tabindex="3"/>
+                        <a href="#" class="btn help_button" data-toggle="popover" data-placement="bottom" tabindex="-1"
+                            data-content="You can add labels to your activity. For example, the name of the company you are doing this for, or the broader goal you are working towards."
+                            title="" data-original-title="Add some label"><i class="icon-question-sign"></i></a>
+                    </span>
+                    <span class="span1">
+                        <button class="btn btn-primary" id="start_task" type="submit" tabindex="4">Start</button> 
+                    </span>
                 </form>
             </div>
-            <div>
-                <metal:macro use-macro="macros.macros['flash-messages']"/>
-                <h2>Welcome</h2>
-                <p>
-                    <strong>Klokwerk</strong> is a social timetracker that lets you see what
-                    others are working on right now.
-                </p>
-                <p>
-                    If this is your first time here, you might want to 
-                    <strong><a href="tour">take the tour</a></strong>.
-                </p>
-                <p>
-                    Don't yet have an account? <strong><a href="/register">Click here to register</a></strong>.
-                </p>
-            </div>
             <div class="tasks_body">
-                <div id="current-task-section"></div>
-                <span id="finished-tasks-section" style="display: none">
+                <div id="current-task-section" style="display: block"></div>
+
+                <div id="finished-tasks-section" style="display: block">
                     <legend> Finished Tasks 
                         <form class="pull-right form-search">
                         <span class="btn-group">
@@ -72,15 +61,13 @@
                                 <li><a href="#"><strong>Day</strong>, 5 February</a></li>
                                 <li><a href="#"><strong>Week</strong>, 31 January to 5 February</a></li>
                                 <li><a href="#"><strong>Month</strong>, 1 January to 5 February</a><hr/></li>
-                                <li>
-                                    <strong class="apply-dates">Custom period</strong>
-                                </li>
+                                <li><strong class="apply-dates">Custom period</strong></li>
                                 <li>
                                     <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
                                     <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
                                 </li>
                                 <li class="clearfix">
-                                    <button class="btn apply-dates" type="submit">Apply</button>
+                                    <button class="btn apply-dates" left" type="submit">Apply</button>
                                 </li>
                             </ul>
                         </span>
@@ -88,29 +75,16 @@
                         </form>
                     </legend>
 
-                    <span id="day-sections">
-                        <!--
-                        <p class="day_heading"><strong>Today, Wednesday 08 Feb</strong>
-                            <time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time>
-                            <ul class="unstyled tasklist">
-                                <li class="clearfix">
-                                    <time>12:34</time> - <time>12:34</time> <strong class="task_name">Gardening</strong>
-                                    <span class="category">housework</span>
-                                    <span class="clickable label label-info">outside</span>
-                                    <i class="clickable icon-pencil"></i>
-                                    <i class="clickable icon-remove"></i>
-                                    <time class="spent pull-right"><span class="minutes">35</span></time>
-                                </li>
-                            </ul>
-                        </p>
-                        -->
-                    </span>
-                </span>
+                    <p class="row-fluid day_heading">
+                        <span class="span10"><strong>Today, Wednesday 08 Feb</strong></span>
+                        <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
+                    </p>
+                    <ul class="unstyled tasklist">
+                    </ul>
+                </div>
             </div>
         </span>
-        <span class="span2"></span>
+        <span class="span1"></span>
     </div>
-    </div>
-    <div id="footer"><div class="footer">&copy; Copyright 2013, <a href="http://opkode.com">Opkode</a></div></div>
 </body>
 </html>
