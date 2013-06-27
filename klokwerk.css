@@ -149,8 +149,7 @@ strong.task-desc {
     border-bottom-right-radius: inherit;
 }
 
-#current-task-section p span.label,
-.tasklist li {
+.label {
     margin-left: 0.5em;
 }
 
@@ -216,7 +215,7 @@ time.spent {
     font-weight: bold;
 }
 
-.current-task .spent {
+.current-task .task-spent {
     font-weight: bold;
 }
 

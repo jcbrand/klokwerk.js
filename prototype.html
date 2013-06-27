@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="css/datepicker.css" type="text/css" media="all">
     <link rel="stylesheet" href="lib/select2-3.3.1/select2.css" type="text/css" media="all">
     <link rel="stylesheet" href="klokwerk.css" type="text/css" media="all">
+    <!--
     <script data-main="main" src="lib/require-jquery.js"></script>
+    -->
 </head>
 <body class="container-fluid">
     <div class="row-fluid" id="tracker">
@@ -44,281 +46,283 @@
             <div class="tasks_body">
                 <div id="current-task-section" style="display: block">
                     <legend>Current Task
-                        <form class="pull-right form-search">
-                        <button class="btn" id="stop_task" type="submit">Stop Task</button>
-                        </form>
+                        <form class="pull-right form-search"><button class="btn" id="stop_task" type="submit">Stop Task</button></form>
                     </legend>
-                    <p class="current-task row-fluid">
-                        <span class="span2"><time>12:34</time> - <time>12:34</time></span>
-                        <span class="span8">
+                    <div class="current-task">
+                        <div class="task-times"><time>12:34</time> - </div>
+                        <div class="task-details">
                             <strong class="task-desc">Washing dishes</strong>
                             <span class="category">housework</span>
-                            <span class="clickable label label-info">kitchen</span><span class="clickable label label-info">cleaning</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </span>
-                        <span class="span2">
-                            <time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span><span class="seconds">03</span></time>
-                        </span>
-                    </p>
-                </div>
-                <legend> Finished Tasks 
-                    <form class="pull-right form-search">
-                    <span class="btn-group">
-                        <button class="btn"><i class="icon-arrow-left"></i></button>
-                        <button class="btn"><i class="icon-home"></i></button>
-                        <button class="btn"><i class="icon-arrow-right"></i></button>
-                    </span>
-                    <span class="btn-group">
-                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                            <strong>5 - 8 February</strong>&nbsp;
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#"><strong>Day</strong>, 5 February</a></li>
-                            <li><a href="#"><strong>Week</strong>, 31 January to 5 February</a></li>
-                            <li><a href="#"><strong>Month</strong>, 1 January to 5 February</a><hr/></li>
-                            <li><strong class="apply-dates">Custom period</strong></li>
-                            <li>
-                                <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
-                                <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
-                            </li>
-                            <li class="clearfix">
-                                <button class="btn apply-dates" left" type="submit">Apply</button>
-                            </li>
-                        </ul>
-                    </span>
-                    <input type="search" placeholder="Filter Text" />
-                    </form>
-                </legend>
-
-                <div class="barchart">
-                    <div class="daybar">Sun<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
-                    <div class="daybar">Mon<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
-                    <div class="daybar">Tue<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
-                    <div class="daybar">Wed<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
-                    <div class="daybar">Thu<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
-                    <div class="daybar">Fri<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
-                    <div class="daybar">Sat<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
-                    <span class="stretch"></span>
-                </div>
-
-                <div class="barchart">
-                    <div class="hourbar">00<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
-                    <div class="hourbar">01<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
-                    <div class="hourbar">02<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
-                    <div class="hourbar">03<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
-                    <div class="hourbar">04<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
-                    <div class="hourbar">05<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
-                    <div class="hourbar">06<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
-                    <div class="hourbar">07<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
-                    <div class="hourbar">08<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
-                    <div class="hourbar">09<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
-                    <div class="hourbar">10<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
-                    <div class="hourbar">11<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
-                    <div class="hourbar">12<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
-                    <div class="hourbar">13<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
-                    <div class="hourbar">14<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
-                    <div class="hourbar">15<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
-                    <div class="hourbar">16<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
-                    <div class="hourbar">17<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
-                    <div class="hourbar">18<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
-                    <div class="hourbar">19<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
-                    <div class="hourbar">20<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
-                    <div class="hourbar">21<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
-                    <div class="hourbar">22<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
-                    <div class="hourbar">23<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
-                    <span class="stretch"></span>
-                </div>
-
-                <div class="barchart">
-                    <div class="monthbar">Jan<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
-                    <div class="monthbar">Feb<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
-                    <div class="monthbar">Mar<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
-                    <div class="monthbar">Apr<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
-                    <div class="monthbar">May<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
-                    <div class="monthbar">Jun<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
-                    <div class="monthbar">Jul<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
-                    <div class="monthbar">Aug<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
-                    <div class="monthbar">Sep<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
-                    <div class="monthbar">Oct<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
-                    <div class="monthbar">Nov<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
-                    <div class="monthbar">Dec<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
-                    <span class="stretch"></span>
-                </div>
-
-                <p class="row-fluid day_heading">
-                    <span class="span10"><strong>Today, Wednesday 08 Feb</strong></span>
-                    <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
-                </p>
-                <ul class="unstyled tasklist">
-                    <li class="finished-task clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Really long tasks that is so long it overflows the space
-                            available for its title. Still not long enough, so lets add more text. Ok, lets make this thing
-                            ridiculously long.</strong>
-                            <span class="category">housework</span>
-                            <span class="clickable label label-info">outside</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent"><span class="minutes">35</span></time>
-                        </div>
-                    </li>
-                    <li class="finished-task clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Bits and Bobs</strong>
-                            <span class="category">uncategorized</span>
-                            <span class="clickable label label-info">house</span>
-                            <span class="clickable label label-info">driveway</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent"><span class="minutes">35</span></time>
-                        </div>
-                    </li>
-                    <li class="finished-task clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Washing dishes</strong>
-                            <span class="category">houework</span>
                             <span class="clickable label label-info">kitchen</span>
+                            <span class="clickable label label-info">cleaning</span>
                             <i class="clickable icon-pencil"></i>
                             <i class="clickable icon-remove"></i>
                         </div>
                         <div class="task-spent">
-                            <time class="spent pull-right"><span class="hours">2</span><span class="minutes">4</span></time>
+                            <time class="spent"><span class="minutes">35</span></time>
                         </div>
-                    </li>
-                </ul>
-                <p class="row-fluid day_heading">
-                    <span class="span10"><strong>Yesterday, Tuesday 07 Feb</strong></span>
-                    <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
-                </p>
-                <ul class="unstyled tasklist">
-                    <li class="finished-task clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Debug new website for IE 8</strong>
-                            <span class="category">webdesign</span>
-                            <span class="clickable label label-info">clientX</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent pull-right"><span class="minutes">23</span></time>
-                        </div>
-                    </li>
-                    <li class="finished-task row-fluid clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Design banner</strong>
-                            <span class="category">webdesign</span>
-                            <span class="clickable label label-info">clientX</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent pull-right"><span class="minutes">49</span></time>
-                        </div>
-                    </li>
-                    <li class="finished-task row-fluid clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Debug form validation</strong>
-                            <span class="category">javascript</span>
-                            <span class="clickable label label-info">clientX</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent pull-right"><span class="minutes">49</span></time>
-                        </div>
-                    </li>
-                </ul>
-                <p class="row-fluid day_heading">
-                    <span class="span10"><strong>Monday 06 Feb</strong></span>
-                    <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
-                </p>
-                <ul class="unstyled tasklist">
-                    <li class="finished-task row-fluid clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Washing dishes</strong>
-                            <span class="category">uncategorized</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent pull-right"><span class="hours">2</span><span class="minutes">4</span></time>
-                        </div>
-                    </li>
-                    <li class="finished-task row-fluid clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Email time estimate to client</strong>
-                            <span class="category">estimates</span>
-                            <span class="clickable label label-info">emails</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent pull-right"><span class="hours">2</span><span class="minutes">34</span></time>
-                        </div>
-                    </li>
-                </ul>
-                <p class="row-fluid day_heading">
-                    <span class="span10"><strong>Sunday 05 Feb</strong></span>
-                    <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
-                </p>
-                <ul class="unstyled tasklist">
-                    <li class="finished-task row-fluid clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Clean out the garage</strong>
-                            <span class="category">houseworkwithsomestuffadded</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent pull-right"><span class="hours">2</span><span class="minutes">34</span></time>
-                        </div>
-                    </li>
-                    <li class="finished-task row-fluid clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name" >Really long tasks that is so long it overflows the space
-                            available for its title. Still not long enough, so lets add more text. Ok, lets make this thing
-                            ridiculously long.</strong>
-                            <span class="category">houseworkxxxxxxxxxxxxxx</span>
-                            <span class="clickable label label-info">label1</span>
-                            <span class="clickable label label-info">label2</span>
-                            <span class="clickable label label-info">label3</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent pull-right"><span class="hours">12</span><span class="minutes">34</span></time>
-                        </div>
-                    </li>
-                    <li class="finished-task row-fluid clearfix">
-                        <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
-                        <div class="task-details">
-                            <strong class="task-name">Contact clientY and discuss the new project requirements</strong>
-                            <span class="category">uncategorized</span>
-                            <span class="clickable label label-info">phonecalls</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent pull-right"><span class="minutes">41</span></time>
-                        </div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
+
+                <div id="finished-tasks-section" style="display: block">
+                    <legend> Finished Tasks 
+                        <form class="pull-right form-search">
+                        <span class="btn-group">
+                            <button class="btn"><i class="icon-arrow-left"></i></button>
+                            <button class="btn"><i class="icon-home"></i></button>
+                            <button class="btn"><i class="icon-arrow-right"></i></button>
+                        </span>
+                        <span class="btn-group">
+                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                <strong>5 - 8 February</strong>&nbsp;
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#"><strong>Day</strong>, 5 February</a></li>
+                                <li><a href="#"><strong>Week</strong>, 31 January to 5 February</a></li>
+                                <li><a href="#"><strong>Month</strong>, 1 January to 5 February</a><hr/></li>
+                                <li><strong class="apply-dates">Custom period</strong></li>
+                                <li>
+                                    <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
+                                    <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
+                                </li>
+                                <li class="clearfix">
+                                    <button class="btn apply-dates" left" type="submit">Apply</button>
+                                </li>
+                            </ul>
+                        </span>
+                        <input type="search" placeholder="Filter Text" />
+                        </form>
+                    </legend>
+
+                    <div class="barchart">
+                        <div class="daybar">Sun<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
+                        <div class="daybar">Mon<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
+                        <div class="daybar">Tue<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
+                        <div class="daybar">Wed<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
+                        <div class="daybar">Thu<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
+                        <div class="daybar">Fri<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
+                        <div class="daybar">Sat<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
+                        <span class="stretch"></span>
+                    </div>
+
+                    <div class="barchart">
+                        <div class="hourbar">00<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
+                        <div class="hourbar">01<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
+                        <div class="hourbar">02<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
+                        <div class="hourbar">03<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
+                        <div class="hourbar">04<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
+                        <div class="hourbar">05<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
+                        <div class="hourbar">06<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
+                        <div class="hourbar">07<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
+                        <div class="hourbar">08<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
+                        <div class="hourbar">09<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
+                        <div class="hourbar">10<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
+                        <div class="hourbar">11<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
+                        <div class="hourbar">12<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
+                        <div class="hourbar">13<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
+                        <div class="hourbar">14<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
+                        <div class="hourbar">15<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
+                        <div class="hourbar">16<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
+                        <div class="hourbar">17<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
+                        <div class="hourbar">18<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
+                        <div class="hourbar">19<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
+                        <div class="hourbar">20<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
+                        <div class="hourbar">21<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
+                        <div class="hourbar">22<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
+                        <div class="hourbar">23<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
+                        <span class="stretch"></span>
+                    </div>
+
+                    <div class="barchart">
+                        <div class="monthbar">Jan<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
+                        <div class="monthbar">Feb<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
+                        <div class="monthbar">Mar<div class="progress progress-vertical active"><span class="bar" style="height: 50%;"></span></div></div>
+                        <div class="monthbar">Apr<div class="progress progress-vertical active"><span class="bar" style="height: 90%;"></span></div></div>
+                        <div class="monthbar">May<div class="progress progress-vertical active"><span class="bar" style="height: 100%;"></span></div></div>
+                        <div class="monthbar">Jun<div class="progress progress-vertical active"><span class="bar" style="height: 80%;"></span></div></div>
+                        <div class="monthbar">Jul<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
+                        <div class="monthbar">Aug<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
+                        <div class="monthbar">Sep<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
+                        <div class="monthbar">Oct<div class="progress progress-vertical active"><span class="bar" style="height: 40%;"></span></div></div>
+                        <div class="monthbar">Nov<div class="progress progress-vertical active"><span class="bar" style="height: 70%;"></span></div></div>
+                        <div class="monthbar">Dec<div class="progress progress-vertical active"><span class="bar" style="height: 30%;"></span></div></div>
+                        <span class="stretch"></span>
+                    </div>
+
+                    <p class="row-fluid day_heading">
+                        <span class="span10"><strong>Today, Wednesday 08 Feb</strong></span>
+                        <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
+                    </p>
+                    <ul class="unstyled tasklist">
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Really long tasks that is so long it overflows the space
+                                available for its title. Still not long enough, so lets add more text. Ok, lets make this thing
+                                ridiculously long.</strong>
+                                <span class="category">housework</span>
+                                <span class="clickable label label-info">outside</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent"><span class="minutes">35</span></time>
+                            </div>
+                        </li>
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Bits and Bobs</strong>
+                                <span class="category">uncategorized</span>
+                                <span class="clickable label label-info">house</span>
+                                <span class="clickable label label-info">driveway</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent"><span class="minutes">35</span></time>
+                            </div>
+                        </li>
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Washing dishes</strong>
+                                <span class="category">houework</span>
+                                <span class="clickable label label-info">kitchen</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="hours">2</span><span class="minutes">4</span></time>
+                            </div>
+                        </li>
+                    </ul>
+                    <p class="row-fluid day_heading">
+                        <span class="span10"><strong>Yesterday, Tuesday 07 Feb</strong></span>
+                        <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
+                    </p>
+                    <ul class="unstyled tasklist">
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Debug new website for IE 8</strong>
+                                <span class="category">webdesign</span>
+                                <span class="clickable label label-info">clientX</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="minutes">23</span></time>
+                            </div>
+                        </li>
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Design banner</strong>
+                                <span class="category">webdesign</span>
+                                <span class="clickable label label-info">clientX</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="minutes">49</span></time>
+                            </div>
+                        </li>
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Debug form validation</strong>
+                                <span class="category">javascript</span>
+                                <span class="clickable label label-info">clientX</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="minutes">49</span></time>
+                            </div>
+                        </li>
+                    </ul>
+                    <p class="row-fluid day_heading">
+                        <span class="span10"><strong>Monday 06 Feb</strong></span>
+                        <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
+                    </p>
+                    <ul class="unstyled tasklist">
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Washing dishes</strong>
+                                <span class="category">uncategorized</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="hours">2</span><span class="minutes">4</span></time>
+                            </div>
+                        </li>
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Email time estimate to client</strong>
+                                <span class="category">estimates</span>
+                                <span class="clickable label label-info">emails</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="hours">2</span><span class="minutes">34</span></time>
+                            </div>
+                        </li>
+                    </ul>
+                    <p class="row-fluid day_heading">
+                        <span class="span10"><strong>Sunday 05 Feb</strong></span>
+                        <span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>
+                    </p>
+                    <ul class="unstyled tasklist">
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Clean out the garage</strong>
+                                <span class="category">houseworkwithsomestuffadded</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="hours">2</span><span class="minutes">34</span></time>
+                            </div>
+                        </li>
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name" >Really long tasks that is so long it overflows the space
+                                available for its title. Still not long enough, so lets add more text. Ok, lets make this thing
+                                ridiculously long.</strong>
+                                <span class="category">houseworkxxxxxxxxxxxxxx</span>
+                                <span class="clickable label label-info">label1</span>
+                                <span class="clickable label label-info">label2</span>
+                                <span class="clickable label label-info">label3</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="hours">12</span><span class="minutes">34</span></time>
+                            </div>
+                        </li>
+                        <li class="finished-task clearfix">
+                            <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
+                            <div class="task-details">
+                                <strong class="task-name">Contact clientY and discuss the new project requirements</strong>
+                                <span class="category">uncategorized</span>
+                                <span class="clickable label label-info">phonecalls</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="minutes">41</span></time>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </span>
         <span class="span1"></span>
