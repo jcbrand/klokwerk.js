@@ -113,7 +113,6 @@ strong.task-desc {
     display: inline-block;
     *display: inline;
     zoom: 1;
-    text-align: center;
 }
 
 .daybar {
@@ -163,16 +162,16 @@ span.category {
     content: "@ ";
 }
 
-.hero-unit .input-large {
-  width: 200px;
+.hero-unit [class*="span"] {
+    display: inline-block;
 }
 
 .hero-unit input#organisation,
 .hero-unit input#task-name {
-  width: -webkit-calc(100% - 35px);
-  width: -moz-calc(100% - 35px);
-  width: -o-calc(100% - 35px);
-  width: calc(100% - 35px);
+    width: -webkit-calc(100% - 3em);
+    width: -moz-calc(100% - 35px);
+    width: -o-calc(100% - 35px);
+    width: calc(100% - 35px);
 }
 
 .form-search .input-append .btn {
