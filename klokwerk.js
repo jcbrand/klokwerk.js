@@ -1,5 +1,5 @@
 /*!
- * Klokwork.js 
+ * klokwerk.js 
  * http://opkode.com
  *
  * Copyright (c) Jan-Carel Brand (jc@opkode.com)
@@ -14,26 +14,30 @@
     if (typeof define === 'function' && define.amd) { 
 
         require.config({
-            // paths: {
-            //     "patterns": "lib/Patterns"
-            // },
+            paths: {
+                "underscore": "lib/underscore",
+                "backbone": "lib/backbone",
+                "localstorage": "lib/backbone.localStorage"
+            },
             // define module dependencies for modules not using define
             shim: {
-                'lib/backbone': {
+                'backbone': {
                     //These script dependencies should be loaded before loading
                     //backbone.js
                     deps: [
-                        'lib/underscore', 
-                        'jquery'],
+                        'underscore', 
+                        'jquery'
+                        ],
                     //Once loaded, use the global 'Backbone' as the
                     //module value.
                     exports: 'Backbone'
-                }
+                },
+                'underscore':   { exports: '_' }
             }
         });
 
-        define([
-            "lib/backbone"
+        define('klokwerk', [
+            "localstorage"
             ], function () {
                 // Use Mustache style syntax for variable interpolation
                 _.templateSettings = {
@@ -56,12 +60,13 @@
         if (console===undefined || console.log===undefined) {
             console = { log: function () {}, error: function () {} };
         }
-        root.klokwork = factory(jQuery, _, console || {log: function(){}});
+        root.klokwerk = factory(jQuery, _, console || {log: function(){}});
     }
 }(this, function ($, _, console) {
-    klokwork = {};
+    var klokwerk = {};
 
-    klokwork.toISOString = function (date) {
+    klokwerk.toISOString = function (date) {
+        var pad;
         if (typeof date.toISOString !== 'undefined') {
             return date.toISOString();
         } else {
@@ -69,16 +74,39 @@
             pad = function (num) {
                 return (num < 10) ? '0' + num : '' + num;
             };
-            return date.getUTCFullYear() + '-' + 
-                pad(date.getUTCMonth() + 1) + '-' + 
-                pad(date.getUTCDate()) + 'T' + 
-                pad(date.getUTCHours()) + ':' + 
-                pad(date.getUTCMinutes()) + ':' + 
-                pad(date.getUTCSeconds()) + '.000Z'; 
+            return date.getUTCFullYear() + '-' +
+                pad(date.getUTCMonth() + 1) + '-' +
+                pad(date.getUTCDate()) + 'T' +
+                pad(date.getUTCHours()) + ':' +
+                pad(date.getUTCMinutes()) + ':' +
+                pad(date.getUTCSeconds()) + '.000Z';
         }
     };
+    klokwerk.parseISO8601 = function (datestr) {
+        /* Parses string formatted as 2013-02-14T11:27:08.268Z to a Date obj.
+        */
+        var numericKeys = [1, 4, 5, 6, 7, 10, 11],
+            struct = /^\s*(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}\.?\d*)Z\s*$/.exec(datestr),
+            minutesOffset = 0,
+            i, k;
 
-    klokwork.Tracker = Backbone.Model.extend({
+        for (i = 0; (k = numericKeys[i]); ++i) {
+            struct[k] = +struct[k] || 0;
+        }
+        // allow undefined days and months
+        struct[2] = (+struct[2] || 1) - 1;
+        struct[3] = +struct[3] || 1;
+        if (struct[8] !== 'Z' && struct[9] !== undefined) {
+            minutesOffset = struct[10] * 60 + struct[11];
+
+            if (struct[9] === '+') {
+                minutesOffset = 0 - minutesOffset;
+            }
+        }
+        return new Date(Date.UTC(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]));
+    };
+
+    klokwerk.Tracker = Backbone.Model.extend({
         initialize: function (desc) {
             this.set({
                 'description' : desc
@@ -86,32 +114,34 @@
         }
     });
 
-    klokwork.TrackerView = Backbone.View.extend({
+    klokwerk.TrackerView = Backbone.View.extend({
         el: "div#tracker",
         events: {
             "submit form.tracker-form": "startTask"
         },
 
         addTask: function () {
-            var $form = this.$el.find('form'),
+            var $form = this.$el.find('form.tracker-form'),
                 $taskname = $form.find('#task-name'),
+                $labels = $form.find('#labels'),
                 arr = $taskname.attr('value').split('@'),
                 desc = arr[0],
-                cat = arr[1] || 'uncategorized',
-                now = new Date();
-            this.model.tasks.add([{
+                cat = arr[1] || 'uncategorized';
+
+            this.model.tasks.create({
                 'description': desc,
-                'start': now,
+                'start': klokwerk.toISOString(new Date()),
                 'end': undefined,
-                'category': cat 
-                }]);
+                'category': cat,
+                'labels': ($labels.val() || '').split(',')
+                });
             $taskname.attr('value', '');
         },
 
         stopCurrentTask: function () {
-            var task = this.model.tasks.pop();
-            if (task !== undefined) {
-                task.stop();
+            var i, tasks = this.model.tasks.where({end: undefined});
+            for (i=0; i<tasks.length; i++) {
+                tasks[i].stop();
             }
         },
 
@@ -133,8 +163,10 @@
         },
 
         initialize: function () {
-            this.model.tasks = new klokwork.TrackerTasks();
-            this.tasksview = new klokwork.TrackerTasksView({'model': this.model.tasks});
+            this.model.tasks = new klokwerk.TrackerTasks();
+            this.model.tasks.localStorage = new Backbone.LocalStorage('klokwerk'); // FIXME: proper id
+            this.tasksview = new klokwerk.TrackerTasksView({'model': this.model.tasks});
+            this.model.tasks.fetch({add:true});
 
             this.model.on('change', function (item, changed) {
                 alert('Tracker has changed');
@@ -142,70 +174,101 @@
         }
     });
 
-    klokwork.Task = Backbone.Model.extend({
+    klokwerk.Task = Backbone.Model.extend({
         stop: function () {
-            this.set({ 'end': new Date() });
+            this.save({'end': klokwerk.toISOString(new Date())});
         }
     });
 
-    klokwork.TaskView = Backbone.View.extend({
+    klokwerk.TaskView = Backbone.View.extend({
         tagName: 'li',
+        className: 'finished-task clearfix',
 
-        completed_template: _.template('<time datetime="{{start_iso}}">{{start_time}}</time>-<time datetime="{{end_iso}}">{{end}}</time> '+
-                             '{{description}}<span class="help-inline">@{{category}}</span>'),
+        completed_template: _.template(
+            '<div class="task-times">'+
+                '<time datetime="{{start_iso}}">{{start_time}}</time> - <time datetime="{{end_iso}}">{{end_time}}</time> '+
+            '</div>'+
+            '<div class="task-details">'+
+                '<strong class="task-name">{{description}}</strong>'+
+                '<span class="category">{{category}}</span>'+
+                '<i class="clickable icon-pencil"></i>'+
+                '<i class="clickable icon-remove"></i>'+
+            '</div>'+
+            '<div class="task-spent">'+
+            '</div>'
+        ),
 
-        current_template: _.template(''+
-                            '<legend>Current Task'+
-                                '<form class="pull-right form-search">'+
-                                '<button class="btn" id="stop_task" type="submit">Stop Task</button>'+
-                                '</form>'+
-                            '</legend>'+
-                            '<p class="current_task">'+
-                                '<time>{{start_time}}</time> <strong class="task-desc">{{description}}</strong>'+
-                                '<span class="category">{{category}}</span>'+
-                                '<span class="label label-info">kitchen</span>'+
-                                '<span class="label label-info">cleaning</span>'+
-                                '<time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span><span class="seconds">03</span></time>'+
-                            '</p>'),
+        current_template: _.template(
+            '<legend>Current Task'+
+                '<form class="pull-right form-search">'+
+                '<button class="btn" id="stop_task" type="submit">Stop Task</button>'+
+                '</form>'+
+            '</legend>'+
+            '<div class="current-task">'+
+                '<div class="task-times"><time>{{start_time}}</time> - </div>'+
+                '<div class="task-details">'+
+                    '<strong class="task-desc">{{description}}</strong>'+
+                    '<span class="category">{{category}}</span>'+
+                    '<i class="clickable icon-pencil"></i>'+
+                    '<i class="clickable icon-remove"></i>'+
+                '</div>'+
+                '<div class="task-spent">'+
+                    '<time class="spent pull-right">'+
+                        '<span class="hours">12</span><span class="minutes">35</span><span class="seconds">03</span>'+
+                    '</time>'+
+                '</div>'+
+            '</div>'),
+
+        label_template: _.template('<span class="clickable label label-info">{{label}}</span>'),
         
         initialize: function () {
             this.model.on('change', function (item, changed) {
-                alert('hello');
+                this.render(); 
             }, this);
         },
 
         render: function () {
-            var $section;
+            var $section, i, $task_html;
             var d = this.model.toJSON(),
-                start = this.model.get('start'),
+                start = klokwerk.parseISO8601(this.model.get('start')),
                 end = this.model.get('end');
             d.start_time = start.getHours()+':'+start.getMinutes();
-            d.start_iso = start.toISOString();
+            d.start_iso = klokwerk.toISOString(start);
 
             if (end !== undefined) {
+                end = klokwerk.parseISO8601(end);
                 d.end_time = end.getHours()+':'+end.getMinutes();
-                d.end_iso = end.toISOString();
-                this.$el.html(this.completed_template(d));
+                d.end_iso = klokwerk.toISOString(end);
+                $task_html = $(this.$el.html(this.completed_template(d)));
+                $section = $('#finished-tasks-section ul.tasklist:first');
             } else {
-                $section = $('#current-task-section').html(this.current_template(d));
-                if (!$section.is(':visible')) {
-                    $section.slideDown();
-                }
+                $task_html = $(this.current_template(d));
+                $section = $('#current-task-section').empty();
+            }
+
+            for (i=0; i<d.labels.length; i++) {
+                $task_html.find('span.category').after(this.label_template({label: d.labels[i]}));
+            }
+            $section.append($task_html);
+            if (!$section.is(':visible')) {
+                $section.slideDown();
             }
             return this;
         }
     });
 
-    klokwork.TrackerTasks = Backbone.Collection.extend({});
+    klokwerk.TrackerTasks = Backbone.Collection.extend({
+        model: klokwerk.Task
+    });
 
-    klokwork.TrackerTasksView = Backbone.View.extend({
+    klokwerk.TrackerTasksView = Backbone.View.extend({
         el: 'ol#tracker_tasks',
 
         initialize: function () {
             this.taskviews = [];
             var $el = this.$el;
             this.model.on('add', $.proxy(function (item) {
-                view = new klokwork.TaskView({'model': item});
+                var view = new klokwerk.TaskView({'model': item});
                 this.taskviews.push(view);
                 view.render();
             }, this));
@@ -223,8 +286,8 @@
         });
         this.tracker = new this.Tracker('Default Tracker');
         this.trackerview = new this.TrackerView({'model': this.tracker});
-    }, klokwork));
+    }, klokwerk));
 
-    return klokwork;
+    return klokwerk;
 }));
 
