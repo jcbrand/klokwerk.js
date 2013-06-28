@@ -6,6 +6,45 @@ a:hover {
     text-decoration: none;
 }
 
+.hero-unit h1 span.gear {
+    margin: 0;
+    padding: 4px 4px 0 0; /* Works in webkit but not aligned in FF */
+    font-size: 90%;
+    display: inline-block;
+    -webkit-animation-duration: 4s;
+       -moz-animation-duration: 4s;
+            animation-duration: 4s;
+    -webkit-animation-name: rotate;
+       -moz-animation-name: rotate;
+            animation-name: rotate;
+}
+
+@-webkit-keyframes rotate {
+    10% { -webkit-transform: rotate(36deg); }
+    20% { -webkit-transform: rotate(72deg); }
+    30% { -webkit-transform: rotate(108deg); }
+    40% { -webkit-transform: rotate(144deg); }
+    50% { -webkit-transform: rotate(180deg); }
+    60% { -webkit-transform: rotate(216deg); }
+    70% { -webkit-transform: rotate(252deg); }
+    80% { -webkit-transform: rotate(288deg); }
+    90% { -webkit-transform: rotate(324deg); }
+    to  { -webkit-transform: rotate(360deg); }
+}
+
+@-moz-keyframes rotate {
+    10% { -moz-transform: rotate(36deg); }
+    20% { -moz-transform: rotate(72deg); }
+    30% { -moz-transform: rotate(108deg); }
+    40% { -moz-transform: rotate(144deg); }
+    50% { -moz-transform: rotate(180deg); }
+    60% { -moz-transform: rotate(216deg); }
+    70% { -moz-transform: rotate(252deg); }
+    80% { -moz-transform: rotate(288deg); }
+    90% { -moz-transform: rotate(324deg); }
+    to  { -moz-transform: rotate(360deg); }
+}
+
 #wrap {
     min-height: 100%;
 }
