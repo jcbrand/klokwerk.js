@@ -226,6 +226,10 @@ div.task-spent {
     display: table-cell;
 }
 
+.task-name {
+    font-weight: bold;
+}
+
 div.task-spent,
 div.task-details {
     padding-left: 1em;

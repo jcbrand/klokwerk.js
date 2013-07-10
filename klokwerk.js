@@ -127,7 +127,7 @@
                 $labels = $form.find('#labels'),
                 arr = $taskname.attr('value').split('@'),
                 desc = arr[0],
-                cat = arr[1] || 'uncategorized';
+                cat = arr[1] || '';
 
             this.model.tasks.create({
                 'description': desc,
@@ -195,8 +195,15 @@
                 '<time datetime="{{start_iso}}">{{start_time}}</time> - '+
             '</div>'+
             '<div class="task-details">'+
-                '<strong class="task-name">{{description}}</strong>'+
-                '<span class="category">{{category}}</span>'+
+                '{[ if (end) { ]}' +
+                    '<a class="task-name">{{description}}</a>'+
+                '{[ } ]}'+
+                '{[ if (!end) { ]}' +
+                    '<strong class="task-name">{{description}}</strong>'+
+                '{[ } ]}'+
+                '{[ if (category) { ]}' +
+                    '<span class="category">{{category}}</span>'+
+                '{[ } ]}'+
                 '<i class="clickable icon-pencil"></i>'+
                 '<i class="clickable icon-remove"></i>'+
             '</div>'+
@@ -212,13 +219,15 @@
         },
 
         render: function () {
-            var $section, $task_html, $tasklist, end_iso, end_time, i, prefix,
+            var $section, $tasklist, end_iso, end_time, i, prefix,
                 d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
                 end = this.model.get('end');
             d.start_time = start.getHours()+':'+start.getMinutes();
             d.start_iso = klokwerk.toISOString(start);
-            $task_html = $(this.$el.html(this.task_template(d)));
+            d.end = end;
+
+            var $task_html = $(this.$el.html(this.task_template(d)));
 
             if (end !== undefined) {
                 end = klokwerk.parseISO8601(end);
