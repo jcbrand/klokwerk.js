@@ -117,7 +117,8 @@
     klokwerk.TrackerView = Backbone.View.extend({
         el: "div#tracker",
         events: {
-            "submit form.tracker-form": "startTask"
+            "submit form.tracker-form": "startTask",
+            "submit form.current-task-form": "stopTask"
         },
 
         addTask: function () {
@@ -147,7 +148,7 @@
 
         startTask: function (ev) {
             ev.preventDefault();
-            if (Modernizr.input.required) {
+            if (Modernizr.input.required) { // already validated via HTML5
                 this.stopCurrentTask();
                 this.addTask();
             } else {
@@ -160,6 +161,11 @@
                     }, this)
                 }); 
             }
+        },
+
+        stopTask: function (ev) {
+            ev.preventDefault();
+            this.stopCurrentTask();
         },
 
         initialize: function () {
@@ -218,16 +224,16 @@
                 end = klokwerk.parseISO8601(end);
                 end_time = end.getHours()+':'+end.getMinutes();
                 end_iso = klokwerk.toISOString(end);
-                //<time datetime="{{end_iso}}">{{end_time}}</time> 
                 $task_html.find('.task-times').append('<time>').attr('datetime',  end_iso).append(end_time);
+                $task_html.removeClass('current-task');
                 prefix = 'finished';
             } else {
                 // XXX: We'll probably later still introduce the concept of
                 // sticky tasks
                 prefix = 'current';
             }
-            $section = $('#'+prefix+'-tasks-section');
             $task_html.addClass(prefix+'-task');
+            $section = $('#'+prefix+'-tasks-section');
             $tasklist = $section.find('ul.tasklist:first');
             if (prefix == 'current') {
                 $tasklist.empty();
