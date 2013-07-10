@@ -42,9 +42,16 @@
                 </form>
             </div>
             <div class="tasks_body">
-                <div id="current-task-section" style="display: block"></div>
+                <div id="current-tasks-section">
+                    <legend>Current Task
+                        <form class="pull-right form-search">
+                            <button class="btn" id="stop_task" type="submit">Stop Task</button>
+                        </form>
+                    </legend>
+                    <ul class="current-task unstyled tasklist"></ul>
+                </div>
 
-                <div id="finished-tasks-section" style="display: block">
+                <div id="finished-tasks-section" style="display: none">
                     <legend> Finished Tasks 
                         <form class="pull-right form-search">
                         <span class="btn-group">

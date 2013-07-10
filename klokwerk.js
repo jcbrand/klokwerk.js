@@ -182,11 +182,11 @@
 
     klokwerk.TaskView = Backbone.View.extend({
         tagName: 'li',
-        className: 'finished-task clearfix',
+        className: 'clearfix',
 
-        completed_template: _.template(
+        task_template: _.template(
             '<div class="task-times">'+
-                '<time datetime="{{start_iso}}">{{start_time}}</time> - <time datetime="{{end_iso}}">{{end_time}}</time> '+
+                '<time datetime="{{start_iso}}">{{start_time}}</time> - '+
             '</div>'+
             '<div class="task-details">'+
                 '<strong class="task-name">{{description}}</strong>'+
@@ -197,28 +197,6 @@
             '<div class="task-spent">'+
             '</div>'
         ),
-
-        current_template: _.template(
-            '<legend>Current Task'+
-                '<form class="pull-right form-search">'+
-                '<button class="btn" id="stop_task" type="submit">Stop Task</button>'+
-                '</form>'+
-            '</legend>'+
-            '<div class="current-task">'+
-                '<div class="task-times"><time>{{start_time}}</time> - </div>'+
-                '<div class="task-details">'+
-                    '<strong class="task-desc">{{description}}</strong>'+
-                    '<span class="category">{{category}}</span>'+
-                    '<i class="clickable icon-pencil"></i>'+
-                    '<i class="clickable icon-remove"></i>'+
-                '</div>'+
-                '<div class="task-spent">'+
-                    '<time class="spent pull-right">'+
-                        '<span class="hours">12</span><span class="minutes">35</span><span class="seconds">03</span>'+
-                    '</time>'+
-                '</div>'+
-            '</div>'),
-
         label_template: _.template('<span class="clickable label label-info">{{label}}</span>'),
         
         initialize: function () {
@@ -228,28 +206,36 @@
         },
 
         render: function () {
-            var $section, i, $task_html;
-            var d = this.model.toJSON(),
+            var $section, $task_html, $tasklist, end_iso, end_time, i, prefix,
+                d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
                 end = this.model.get('end');
             d.start_time = start.getHours()+':'+start.getMinutes();
             d.start_iso = klokwerk.toISOString(start);
+            $task_html = $(this.$el.html(this.task_template(d)));
 
             if (end !== undefined) {
                 end = klokwerk.parseISO8601(end);
-                d.end_time = end.getHours()+':'+end.getMinutes();
-                d.end_iso = klokwerk.toISOString(end);
-                $task_html = $(this.$el.html(this.completed_template(d)));
-                $section = $('#finished-tasks-section ul.tasklist:first');
+                end_time = end.getHours()+':'+end.getMinutes();
+                end_iso = klokwerk.toISOString(end);
+                //<time datetime="{{end_iso}}">{{end_time}}</time> 
+                $task_html.find('.task-times').append('<time>').attr('datetime',  end_iso).append(end_time);
+                prefix = 'finished';
             } else {
-                $task_html = $(this.current_template(d));
-                $section = $('#current-task-section').empty();
+                // XXX: We'll probably later still introduce the concept of
+                // sticky tasks
+                prefix = 'current';
             }
-
+            $section = $('#'+prefix+'-tasks-section');
+            $task_html.addClass(prefix+'-task');
+            $tasklist = $section.find('ul.tasklist:first');
+            if (prefix == 'current') {
+                $tasklist.empty();
+            }
             for (i=0; i<d.labels.length; i++) {
                 $task_html.find('span.category').after(this.label_template({label: d.labels[i]}));
             }
-            $section.append($task_html);
+            $tasklist.append($task_html);
             if (!$section.is(':visible')) {
                 $section.slideDown();
             }
