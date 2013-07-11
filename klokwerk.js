@@ -117,8 +117,11 @@
     klokwerk.TrackerView = Backbone.View.extend({
         el: "div#tracker",
         events: {
-            "submit form.tracker-form": "startTask",
-            "submit form.current-task-form": "stopTask"
+            "submit form.tracker-form": "startTaskFromForm",
+            "submit form.current-task-form": "stopTask",
+            "click a.task-name": "startTaskFromLink",
+            "click a.edit-task": "editTask",
+            "click a.remove-task": "removeTask"
         },
 
         addTask: function () {
@@ -146,7 +149,7 @@
             }
         },
 
-        startTask: function (ev) {
+        startTaskFromForm: function (ev) {
             ev.preventDefault();
             if (Modernizr.input.required) { // already validated via HTML5
                 this.stopCurrentTask();
@@ -163,9 +166,38 @@
             }
         },
 
+        startTaskFromLink: function (ev) {
+            ev.preventDefault();
+            this.stopCurrentTask();
+
+            var $link = $(ev.target),
+                $parent = $link.parent(),
+                desc = $link.text(),
+                cat = $link.parent().find('.category').text(),
+                labels = $parent.find('.label');
+
+            this.model.tasks.create({
+                'description': desc,
+                'start': klokwerk.toISOString(new Date()),
+                'end': undefined,
+                'category': cat,
+                'labels': ''.split(',')
+                });
+        },
+
         stopTask: function (ev) {
             ev.preventDefault();
             this.stopCurrentTask();
+        },
+
+        editTask: function (ev) {
+            ev.preventDefault();
+            alert('editTask');
+        },
+
+        removeTask: function (ev) {
+            ev.preventDefault();
+            alert('removeTask');
         },
 
         initialize: function () {
@@ -196,7 +228,7 @@
             '</div>'+
             '<div class="task-details">'+
                 '{[ if (end) { ]}' +
-                    '<a class="task-name">{{description}}</a>'+
+                    '<a class="task-name" href="#">{{description}}</a>'+
                 '{[ } ]}'+
                 '{[ if (!end) { ]}' +
                     '<strong class="task-name">{{description}}</strong>'+
@@ -204,8 +236,8 @@
                 '{[ if (category) { ]}' +
                     '<span class="category">{{category}}</span>'+
                 '{[ } ]}'+
-                '<i class="clickable icon-pencil"></i>'+
-                '<i class="clickable icon-remove"></i>'+
+                '<a href="#" class="edit-task"><i class="icon-pencil"></i></a>'+
+                '<a href="#" class="remove-task"><i class="icon-remove"></i></a>'+
             '</div>'+
             '<div class="task-spent">'+
             '</div>'
