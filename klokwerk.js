@@ -120,8 +120,7 @@
             "submit form.tracker-form": "startTaskFromForm",
             "submit form.current-task-form": "stopTask",
             "click a.task-name": "startTaskFromLink",
-            "click a.edit-task": "editTask",
-            "click a.remove-task": "removeTask"
+            "click a.edit-task": "editTask"
         },
 
         addTask: function () {
@@ -198,11 +197,6 @@
             alert('editTask');
         },
 
-        removeTask: function (ev) {
-            ev.preventDefault();
-            alert('removeTask');
-        },
-
         initialize: function () {
             this.model.tasks = new klokwerk.TrackerTasks();
             this.model.tasks.localStorage = new Backbone.LocalStorage('klokwerk'); // FIXME: proper id
@@ -224,6 +218,9 @@
     klokwerk.TaskView = Backbone.View.extend({
         tagName: 'li',
         className: 'clearfix',
+        events: {
+            "click a.remove-task": "removeTask"
+        },
 
         task_template: _.template(
             '<div class="task-times">'+
@@ -251,6 +248,15 @@
             this.model.on('change', function (item, changed) {
                 this.render(); 
             }, this);
+        },
+
+        removeTask: function (ev) {
+            ev.preventDefault();
+            var that = this;
+            $(ev.target).closest('li').hide(function () {
+                that.model.destroy();
+                this.remove();
+            });
         },
 
         render: function () {
