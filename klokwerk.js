@@ -169,19 +169,22 @@
         startTaskFromLink: function (ev) {
             ev.preventDefault();
             this.stopCurrentTask();
-
-            var $link = $(ev.target),
+            var i,
+                labels = [],
+                $link = $(ev.target),
                 $parent = $link.parent(),
-                desc = $link.text(),
+                $labels = $parent.find('.label'),
                 cat = $link.parent().find('.category').text(),
-                labels = $parent.find('.label');
-
+                desc = $link.text();
+            for (i=0; i < $labels.length; i++) {
+                labels.push($labels[i].innerText);
+            }
             this.model.tasks.create({
                 'description': desc,
                 'start': klokwerk.toISOString(new Date()),
                 'end': undefined,
                 'category': cat,
-                'labels': ''.split(',')
+                'labels': labels
                 });
         },
 
@@ -280,7 +283,7 @@
                 $tasklist.empty();
             }
             for (i=0; i<d.labels.length; i++) {
-                $task_html.find('span.category').after(this.label_template({label: d.labels[i]}));
+                $task_html.find('a.edit-task').before(this.label_template({label: d.labels[i]}));
             }
             $tasklist.append($task_html);
             if (!$section.is(':visible')) {
