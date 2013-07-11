@@ -236,8 +236,8 @@
                 '{[ if (category) { ]}' +
                     '<span class="category">{{category}}</span>'+
                 '{[ } ]}'+
-                '<a href="#" class="edit-task"><i class="icon-pencil"></i></a>'+
-                '<a href="#" class="remove-task"><i class="icon-remove"></i></a>'+
+                '<a href="#" class="edit-task icon-pencil"></a>'+
+                '<a href="#" class="remove-task icon-remove"></a>'+
             '</div>'+
             '<div class="task-spent">'+
             '</div>'
