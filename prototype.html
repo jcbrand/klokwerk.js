@@ -44,24 +44,25 @@
                 </form>
             </div>
             <div class="tasks_body">
-                <div id="current-task-section" style="display: block">
+                <div id="current-tasks-section" style="display: block">
                     <legend>Current Task
-                        <form class="pull-right form-search"><button class="btn" id="stop_task" type="submit">Stop Task</button></form>
+                        <form class="pull-right"><button class="btn" id="stop_task" type="submit">Stop Task</button></form>
                     </legend>
-                    <div class="current-task">
-                        <div class="task-times"><time>12:34</time> - </div>
-                        <div class="task-details">
-                            <strong class="task-desc">Washing dishes</strong>
-                            <span class="category">housework</span>
-                            <span class="clickable label label-info">kitchen</span>
-                            <span class="clickable label label-info">cleaning</span>
-                            <i class="clickable icon-pencil"></i>
-                            <i class="clickable icon-remove"></i>
-                        </div>
-                        <div class="task-spent">
-                            <time class="spent"><span class="minutes">35</span></time>
-                        </div>
-                    </div>
+                    <ul class="unstyled tasklist">
+                        <li class="current-task clearfix">
+                            <div class="task-times"><time>12:34</time> - </div>
+                            <div class="task-details">
+                                <strong class="task-name">Washing dishes</strong>
+                                <span class="category">housework</span>
+                                <span class="clickable label label-info">kitchen</span>
+                                <i class="clickable icon-pencil"></i>
+                                <i class="clickable icon-remove"></i>
+                            </div>
+                            <div class="task-spent">
+                                <time class="spent pull-right"><span class="hours">2</span><span class="minutes">34</span></time>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
 
                 <div id="finished-tasks-section" style="display: block">
@@ -314,8 +315,8 @@
                                 <strong class="task-name">Contact clientY and discuss the new project requirements</strong>
                                 <span class="category">uncategorized</span>
                                 <span class="clickable label label-info">phonecalls</span>
-                                <i class="clickable icon-pencil"></i>
-                                <i class="clickable icon-remove"></i>
+                                <a class="edit-task icon-pencil"></a>
+                                <a class="remove-task icon-remove"></a>
                             </div>
                             <div class="task-spent">
                                 <time class="spent pull-right"><span class="minutes">41</span></time>

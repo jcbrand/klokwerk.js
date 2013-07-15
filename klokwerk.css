@@ -123,7 +123,7 @@ strong.task-desc {
     margin-right: 0.5em;
 }
 
-#current-task-section {
+#current-tasks-section {
     display: None;
 }
 
@@ -221,6 +221,10 @@ div.task-spent {
     display: table-cell;
 }
 
+.task-name {
+    font-weight: bold;
+}
+
 div.task-spent,
 div.task-details {
     padding-left: 1em;
@@ -253,8 +257,7 @@ time.spent {
     font-weight: bold;
 }
 
-ul.tasklist li .span8,
-.current-task .span8 {
+ul.tasklist li .span8 {
     margin-left: 0;
 }
 
