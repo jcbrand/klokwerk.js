@@ -225,6 +225,7 @@
         task_template: _.template(
             '<div class="task-times">'+
                 '<time datetime="{{start_iso}}">{{start_time}}</time> - '+
+                '{[ if (end) { ]} <time datetime="{{end_iso}}">{{end_time}}</time> {[ } ]}'+
             '</div>'+
             '<div class="task-details">'+
                 '{[ if (end) { ]}' +
@@ -239,8 +240,16 @@
                 '<a href="#" class="edit-task icon-pencil"></a>'+
                 '<a href="#" class="remove-task icon-remove"></a>'+
             '</div>'+
-            '<div class="task-spent">'+
-            '</div>'
+            '{[ if (end) { ]}' +
+                '<div class="task-spent">'+
+                    '<time class="spent pull-right">'+
+                        '{[ if (hours) { ]}'+
+                            '<span class="hours">{{hours}}</span>'+
+                        '{[ } ]}'+
+                        '<span class="minutes">{{minutes}}</span>'+
+                    '</time>'+
+                '</div>' +
+            '{[ } ]}'
         ),
         label_template: _.template('<span class="clickable label label-info">{{label}}</span>'),
         
@@ -260,7 +269,8 @@
         },
 
         render: function () {
-            var $section, $tasklist, end_iso, end_time, i, prefix,
+            var $section, $tasklist, $task_html, end_iso, end_time, i, prefix,
+                minutes, hours, days,
                 d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
                 end = this.model.get('end');
@@ -268,19 +278,27 @@
             d.start_iso = klokwerk.toISOString(start);
             d.end = end;
 
-            var $task_html = $(this.$el.html(this.task_template(d)));
-
             if (end !== undefined) {
                 end = klokwerk.parseISO8601(end);
-                end_time = end.getHours()+':'+end.getMinutes();
-                end_iso = klokwerk.toISOString(end);
-                $task_html.find('.task-times').append('<time>').attr('datetime',  end_iso).append(end_time);
-                $task_html.removeClass('current-task');
                 prefix = 'finished';
             } else {
                 // XXX: We'll probably later still introduce the concept of
                 // sticky tasks
+                end = new Date();
                 prefix = 'current';
+            }
+            d.end_time = end.getHours()+':'+end.getMinutes();
+            d.end_iso = klokwerk.toISOString(end);
+
+            minutes = Math.round((end-start)/(1000*60));
+            hours = Math.floor(minutes/60);
+            days = Math.floor(hours/24);
+            d.hours = hours-(days*24);
+            d.minutes = minutes-(days*24*60)-(hours*60);
+            $task_html = $(this.$el.html(this.task_template(d)));
+
+            if (prefix == 'finished') {
+                $task_html.removeClass('current-task');
             }
             $task_html.addClass(prefix+'-task');
             $section = $('#'+prefix+'-tasks-section');

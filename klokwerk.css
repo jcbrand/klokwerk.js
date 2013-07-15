@@ -345,10 +345,10 @@ ul.select2-choices {
     height: 28px;
 }
 
-i.icon-pencil {
+a.icon-pencil {
     margin-left: 1em;
 }
-i.icon-remove {
+a.icon-remove {
     margin-left: 0.3em;
 }
 
