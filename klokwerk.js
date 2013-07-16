@@ -317,6 +317,7 @@
             if (!$section.is(':visible')) {
                 $section.slideDown();
             }
+            this.delegateEvents();
             return this;
         }
     });
