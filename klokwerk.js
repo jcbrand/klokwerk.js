@@ -106,6 +106,14 @@
         return new Date(Date.UTC(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]));
     };
 
+    klokwerk.roundDate = function () {
+        /* Return the current date rounded to the nearest minute. */
+        var date = new Date(),
+            coeff = 1000*60,
+            millis = Math.round(date.getTime()/(coeff))*coeff;
+        return new Date(millis);
+    };
+
     klokwerk.Tracker = Backbone.Model.extend({
         initialize: function (desc) {
             this.set({
@@ -133,7 +141,7 @@
 
             this.model.tasks.create({
                 'description': desc,
-                'start': klokwerk.toISOString(new Date()),
+                'start': klokwerk.toISOString(klokwerk.roundDate()),
                 'end': undefined,
                 'category': cat,
                 'labels': ($labels.val() || '').split(',')
@@ -180,7 +188,7 @@
             }
             this.model.tasks.create({
                 'description': desc,
-                'start': klokwerk.toISOString(new Date()),
+                'start': klokwerk.toISOString(klokwerk.roundDate()),
                 'end': undefined,
                 'category': cat,
                 'labels': labels
@@ -211,7 +219,7 @@
 
     klokwerk.Task = Backbone.Model.extend({
         stop: function () {
-            this.save({'end': klokwerk.toISOString(new Date())});
+            this.save({'end': klokwerk.toISOString(klokwerk.roundDate())});
         }
     });
 
@@ -270,7 +278,6 @@
 
         render: function () {
             var $section, $tasklist, $task_html, end_iso, end_time, i, prefix,
-                minutes, hours, days,
                 d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
                 end = this.model.get('end');
@@ -284,17 +291,14 @@
             } else {
                 // XXX: We'll probably later still introduce the concept of
                 // sticky tasks
-                end = new Date();
+                end = klokwerk.roundDate();
                 prefix = 'current';
             }
             d.end_time = end.getHours()+':'+end.getMinutes();
             d.end_iso = klokwerk.toISOString(end);
-
-            minutes = Math.round((end-start)/(1000*60));
-            hours = Math.floor(minutes/60);
-            days = Math.floor(hours/24);
-            d.hours = hours-(days*24);
-            d.minutes = minutes-(days*24*60)-(hours*60);
+            d.minutes = (end-start)/(1000*60);
+            d.hours = Math.floor(d.minutes/60);
+            d.minutes = d.minutes-(d.hours*60);
             $task_html = $(this.$el.html(this.task_template(d)));
 
             if (prefix == 'finished') {
