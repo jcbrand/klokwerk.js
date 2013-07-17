@@ -137,11 +137,15 @@
                 $labels = $form.find('#labels'),
                 arr = $taskname.attr('value').split('@'),
                 desc = arr[0],
-                cat = arr[1] || '';
+                cat = arr[1] || '',
+                start_date = klokwerk.roundDate(),
+                start_iso = klokwerk.toISOString(start_date);
 
             this.model.tasks.create({
                 'description': desc,
-                'start': klokwerk.toISOString(klokwerk.roundDate()),
+                'start': start_iso,
+                'start_day': start_iso.split('T')[0]+'T00:00:00Z',
+                'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
                 'end': undefined,
                 'category': cat,
                 'labels': ($labels.val() || '').split(',')
@@ -189,6 +193,8 @@
             this.model.tasks.create({
                 'description': desc,
                 'start': klokwerk.toISOString(klokwerk.roundDate()),
+                'start_day': start_iso.split('T')[0]+'T00:00:00Z',
+                'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
                 'end': undefined,
                 'category': cat,
                 'labels': labels
@@ -219,7 +225,13 @@
 
     klokwerk.Task = Backbone.Model.extend({
         stop: function () {
-            this.save({'end': klokwerk.toISOString(klokwerk.roundDate())});
+            var end_date = klokwerk.roundDate();
+            var end_iso = klokwerk.toISOString(end_date);
+            this.save({
+                'end': end_iso,
+                'end_day': end_iso.split('T')[0]+'T00:00:00Z',
+                'end_month': end_date.getUTCFullYear()+"-"+end_date.getUTCMonth()+"-1"+'T00:00:00Z'
+            });
         }
     });
 
@@ -288,16 +300,16 @@
         },
 
         render: function () {
-            var $section, $day_section, $tasklist, $task_html, end_iso, end_time, i, prefix,
+            var $section, $day_section, $tasklist, $task_html, day_iso, end_iso, end_time, i, prefix,
                 d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
-                end = this.model.get('end'),
-                day_iso = end.split('T')[0] + 'T00:00:00Z';
+                end = this.model.get('end');
             d.start_time = start.getHours()+':'+start.getMinutes();
             d.start_iso = klokwerk.toISOString(start);
             d.end = end;
 
             if (end !== undefined) {
+                day_iso = end.split('T')[0] + 'T00:00:00Z';
                 end = klokwerk.parseISO8601(end);
                 prefix = 'finished';
                 $section = $('#finished-tasks-section');
