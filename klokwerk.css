@@ -242,6 +242,10 @@ time {
     display: inline-block;
 }
 
+time.day-heading {
+    font-weight: bold;
+}
+
 time.spent {
     margin-left: 1em; 
     margin-right: 1em; 

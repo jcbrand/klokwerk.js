@@ -259,7 +259,18 @@
                 '</div>' +
             '{[ } ]}'
         ),
+
         label_template: _.template('<span class="clickable label label-info">{{label}}</span>'),
+
+        day_template: _.template(
+            '<span data-day="{{day_iso}}">'+
+                '<p class="row-fluid day_heading">'+
+                    '<span class="span10"><time class="day-heading" datetime="{{day_iso}}">{{day_human}}</time></span>'+
+                    '<span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>'+
+                '</p>'+
+                '<ul class="unstyled tasklist"></ul>'+
+            '</span>'
+        ),
         
         initialize: function () {
             this.model.on('change', function (item, changed) {
@@ -277,10 +288,11 @@
         },
 
         render: function () {
-            var $section, $tasklist, $task_html, end_iso, end_time, i, prefix,
+            var $section, $day_section, $tasklist, $task_html, end_iso, end_time, i, prefix,
                 d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
-                end = this.model.get('end');
+                end = this.model.get('end'),
+                day_iso = end.split('T')[0] + 'T00:00:00Z';
             d.start_time = start.getHours()+':'+start.getMinutes();
             d.start_iso = klokwerk.toISOString(start);
             d.end = end;
@@ -288,30 +300,38 @@
             if (end !== undefined) {
                 end = klokwerk.parseISO8601(end);
                 prefix = 'finished';
+                $section = $('#finished-tasks-section');
+                $day_section = $('span[data-day="'+day_iso+'"]');
+                if (!$day_section.length) {
+                    $day_section = $(this.day_template({
+                        'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
+                        'day_iso': day_iso
+                    })).appendTo($section);
+                }
+                $tasklist = $day_section.find('ul.tasklist:first');
             } else {
                 // XXX: We'll probably later still introduce the concept of
                 // sticky tasks
                 end = klokwerk.roundDate();
                 prefix = 'current';
+                $section = $('#'+prefix+'-tasks-section');
+                $tasklist = $section.find('ul.tasklist:first');
             }
             d.end_time = end.getHours()+':'+end.getMinutes();
             d.end_iso = klokwerk.toISOString(end);
             d.minutes = (end-start)/(1000*60);
             d.hours = Math.floor(d.minutes/60);
-            d.minutes = d.minutes-(d.hours*60);
+            d.minutes = Math.round(d.minutes-(d.hours*60));
             $task_html = $(this.$el.html(this.task_template(d)));
-
             if (prefix == 'finished') {
                 $task_html.removeClass('current-task');
             }
             $task_html.addClass(prefix+'-task');
-            $section = $('#'+prefix+'-tasks-section');
-            $tasklist = $section.find('ul.tasklist:first');
-            if (prefix == 'current') {
-                $tasklist.empty();
-            }
             for (i=0; i<d.labels.length; i++) {
                 $task_html.find('a.edit-task').before(this.label_template({label: d.labels[i]}));
+            }
+            if (prefix == 'current') {
+                $tasklist.empty();
             }
             $tasklist.append($task_html);
             if (!$section.is(':visible')) {
