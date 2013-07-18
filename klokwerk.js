@@ -303,8 +303,10 @@
             var $section, $day_section, $tasklist, $task_html, day_iso, end_iso, end_time, i, prefix,
                 d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
-                end = this.model.get('end');
-            d.start_time = start.getHours()+':'+start.getMinutes();
+                end = this.model.get('end'),
+                minutes = start.getMinutes().toString();
+
+            d.start_time = start.getHours()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
             d.start_iso = klokwerk.toISOString(start);
             d.end = end;
 
@@ -329,7 +331,8 @@
                 $section = $('#'+prefix+'-tasks-section');
                 $tasklist = $section.find('ul.tasklist:first');
             }
-            d.end_time = end.getHours()+':'+end.getMinutes();
+            minutes = end.getMinutes().toString();
+            d.end_time = end.getHours()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
             d.end_iso = klokwerk.toISOString(end);
             d.minutes = (end-start)/(1000*60);
             d.hours = Math.floor(d.minutes/60);
