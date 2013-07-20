@@ -114,115 +114,6 @@
         return new Date(millis);
     };
 
-    klokwerk.Tracker = Backbone.Model.extend({
-        initialize: function (desc) {
-            this.set({
-                'description' : desc
-            });
-        }
-    });
-
-    klokwerk.TrackerView = Backbone.View.extend({
-        el: "div#tracker",
-        events: {
-            "submit form.tracker-form": "startTaskFromForm",
-            "submit form.current-task-form": "stopTask",
-            "click a.task-name": "startTaskFromLink",
-            "click a.edit-task": "editTask"
-        },
-
-        addTask: function () {
-            var $form = this.$el.find('form.tracker-form'),
-                $taskname = $form.find('#task-name'),
-                $labels = $form.find('#labels'),
-                arr = $taskname.attr('value').split('@'),
-                desc = arr[0],
-                cat = arr[1] || '',
-                start_date = klokwerk.roundDate(),
-                start_iso = klokwerk.toISOString(start_date);
-
-            this.model.tasks.create({
-                'description': desc,
-                'start': start_iso,
-                'start_day': start_iso.split('T')[0]+'T00:00:00Z',
-                'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
-                'end': undefined,
-                'category': cat,
-                'labels': ($labels.val() || '').split(',')
-                });
-            $taskname.attr('value', '');
-        },
-
-        stopCurrentTask: function () {
-            var i, tasks = this.model.tasks.where({end: undefined});
-            for (i=0; i<tasks.length; i++) {
-                tasks[i].stop();
-            }
-        },
-
-        startTaskFromForm: function (ev) {
-            ev.preventDefault();
-            if (Modernizr.input.required) { // already validated via HTML5
-                this.stopCurrentTask();
-                this.addTask();
-            } else {
-                $form.validate({
-                    highlight: function () {
-                        $form.find('#task-name').addClass('error').wrap('<span class="control-group error"/>');
-                    },
-                    submitHandler: $.proxy(function () {
-                        this.addTask();
-                    }, this)
-                }); 
-            }
-        },
-
-        startTaskFromLink: function (ev) {
-            ev.preventDefault();
-            this.stopCurrentTask();
-            var i,
-                labels = [],
-                $link = $(ev.target),
-                $parent = $link.parent(),
-                $labels = $parent.find('.label'),
-                cat = $link.parent().find('.category').text(),
-                desc = $link.text();
-            for (i=0; i < $labels.length; i++) {
-                labels.push($labels[i].innerText);
-            }
-            this.model.tasks.create({
-                'description': desc,
-                'start': klokwerk.toISOString(klokwerk.roundDate()),
-                'start_day': start_iso.split('T')[0]+'T00:00:00Z',
-                'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
-                'end': undefined,
-                'category': cat,
-                'labels': labels
-                });
-        },
-
-        stopTask: function (ev) {
-            ev.preventDefault();
-            this.stopCurrentTask();
-        },
-
-        editTask: function (ev) {
-            ev.preventDefault();
-            alert('editTask');
-        },
-
-        initialize: function () {
-            this.model.tasks = new klokwerk.TrackerTasks();
-            this.model.tasks.localStorage = new Backbone.LocalStorage('klokwerk'); // FIXME: proper id
-            this.tasksview = new klokwerk.TrackerTasksView({'model': this.model.tasks});
-            this.model.tasks.fetch({add:true});
-
-            this.model.on('change', function (item, changed) {
-                alert('Tracker has changed');
-            });
-        }
-    });
-
     klokwerk.Task = Backbone.Model.extend({
         stop: function () {
             var end_date = klokwerk.roundDate();
@@ -357,21 +248,108 @@
         }
     });
 
-    klokwerk.TrackerTasks = Backbone.Collection.extend({
+
+    klokwerk.Tracker = Backbone.Collection.extend({
         model: klokwerk.Task
     });
 
-    klokwerk.TrackerTasksView = Backbone.View.extend({
-        el: 'ol#tracker_tasks',
+    klokwerk.TrackerView = Backbone.View.extend({
+        el: "div#tracker",
+        events: {
+            "submit form.tracker-form": "startTaskFromForm",
+            "submit form.current-task-form": "stopTask",
+            "click a.task-name": "startTaskFromLink",
+            "click a.edit-task": "editTask"
+        },
+
+        addTask: function () {
+            var $form = this.$el.find('form.tracker-form'),
+                $taskname = $form.find('#task-name'),
+                $labels = $form.find('#labels'),
+                arr = $taskname.attr('value').split('@'),
+                desc = arr[0],
+                cat = arr[1] || '',
+                start_date = klokwerk.roundDate(),
+                start_iso = klokwerk.toISOString(start_date);
+
+            this.model.create({
+                'description': desc,
+                'start': start_iso,
+                'start_day': start_iso.split('T')[0]+'T00:00:00Z',
+                'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
+                'end': undefined,
+                'category': cat,
+                'labels': ($labels.val() || '').split(',')
+                });
+            $taskname.attr('value', '');
+        },
+
+        stopCurrentTask: function () {
+            var i, tasks = this.model.where({end: undefined});
+            for (i=0; i<tasks.length; i++) {
+                tasks[i].stop();
+            }
+        },
+
+        startTaskFromForm: function (ev) {
+            ev.preventDefault();
+            if (Modernizr.input.required) { // already validated via HTML5
+                this.stopCurrentTask();
+                this.addTask();
+            } else {
+                $form.validate({
+                    highlight: function () {
+                        $form.find('#task-name').addClass('error').wrap('<span class="control-group error"/>');
+                    },
+                    submitHandler: $.proxy(function () {
+                        this.addTask();
+                    }, this)
+                }); 
+            }
+        },
+
+        startTaskFromLink: function (ev) {
+            ev.preventDefault();
+            this.stopCurrentTask();
+            var i,
+                labels = [],
+                $link = $(ev.target),
+                $parent = $link.parent(),
+                $labels = $parent.find('.label'),
+                cat = $link.parent().find('.category').text(),
+                desc = $link.text();
+            for (i=0; i < $labels.length; i++) {
+                labels.push($labels[i].innerText);
+            }
+            this.model.create({
+                'description': desc,
+                'start': klokwerk.toISOString(klokwerk.roundDate()),
+                'start_day': start_iso.split('T')[0]+'T00:00:00Z',
+                'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
+                'end': undefined,
+                'category': cat,
+                'labels': labels
+                });
+        },
+
+        stopTask: function (ev) {
+            ev.preventDefault();
+            this.stopCurrentTask();
+        },
+
+        editTask: function (ev) {
+            ev.preventDefault();
+            alert('editTask');
+        },
 
         initialize: function () {
             this.taskviews = [];
-            var $el = this.$el;
             this.model.on('add', $.proxy(function (item) {
                 var view = new klokwerk.TaskView({'model': item});
                 this.taskviews.push(view);
                 view.render();
             }, this));
+            this.model.fetch({add:true});
         }
     });
 
@@ -384,7 +362,8 @@
             tags:["red", "green", "blue"],
             tokenSeparators: [";"]
         });
-        this.tracker = new this.Tracker('Default Tracker');
+        this.tracker = new this.Tracker();
+        this.tracker.localStorage = new Backbone.LocalStorage('klokwerk'); // FIXME: proper id
         this.trackerview = new this.TrackerView({'model': this.tracker});
     }, klokwerk));
 
