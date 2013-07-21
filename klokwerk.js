@@ -227,7 +227,7 @@
 
         day_template: _.template(
             '<span class="day-section" data-day="{{day_iso}}">'+
-                '<p class="row-fluid day_heading">'+
+                '<p class="row-fluid day-heading">'+
                     '<span class="span10"><time class="day-heading" datetime="{{day_iso}}">{{day_human}}</time></span>'+
                     '<span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>'+
                 '</p>'+

@@ -252,7 +252,7 @@ time.spent {
     color: grey;
 }
 
-.day_heading .spent {
+p.day-heading .spent {
     color: #565656;
     font-weight: bold;
 }
@@ -265,7 +265,7 @@ ul.tasklist li .span8 {
     margin-left: 0;
 }
 
-.day_heading {
+p.day-heading {
     margin-top: 1.5em;
 }
 
