@@ -151,16 +151,14 @@
                 '<a href="#" class="edit-task icon-pencil"></a>'+
                 '<a href="#" class="remove-task icon-remove"></a>'+
             '</div>'+
-            '{[ if (end) { ]}' +
-                '<div class="task-spent">'+
-                    '<time class="spent pull-right">'+
-                        '{[ if (hours) { ]}'+
-                            '<span class="hours">{{hours}}</span>'+
-                        '{[ } ]}'+
-                        '<span class="minutes">{{minutes}}</span>'+
-                    '</time>'+
-                '</div>' +
-            '{[ } ]}'
+            '<div class="task-spent">'+
+                '<time class="spent pull-right">'+
+                    '{[ if (hours) { ]}'+
+                        '<span class="hours">{{hours}}</span>'+
+                    '{[ } ]}'+
+                    '<span class="minutes">{{minutes}}</span>'+
+                '</time>'+
+            '</div>'
         ),
 
         label_template: _.template('<span class="clickable label label-info">{{label}}</span>'),
