@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kl⚙kwerk - Tests</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Jasmine Stuff-->
+    <link rel="shortcut icon" type="image/png" href="lib/jasmine-1.3.1/jasmine_favicon.png">
+    <link rel="stylesheet" type="text/css" href="lib/jasmine-1.3.1/jasmine.css">
+    <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine.js"></script>
+    <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine-html.js"></script>
+    <!-- Klokwerk -->
+    <link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="all">
+    <link rel="stylesheet" href="css/bootstrap-responsive.css" type="text/css" media="all">
+    <link rel="stylesheet" href="css/bootstrap-custom.css" type="text/css" media="all">
+    <link rel="stylesheet" href="css/datepicker.css" type="text/css" media="all">
+    <link rel="stylesheet" href="lib/select2-3.3.1/select2.css" type="text/css" media="all">
+    <link rel="stylesheet" href="klokwerk.css" type="text/css" media="all">
+    <script data-main="tests_main" src="lib/require-jquery.js"></script>
+</head>
+<body class="container-fluid">
+    <div class="row-fluid" id="tracker">
+        <span class="span1"></span>
+        <span class="span10">
+            <div class="hero-unit">
+                <h1>Toetswerk</h1>
+                <form class="row-fluid form-inline tracker-form">
+                    <span class="span4 input-append">
+                        <input type="text" name="task-name" id="task-name" required="required" autofocus="autofocus" placeholder="What are you doing right now?" tabindex="1"/>
+                        <a href="#" class="btn help_button" data-toggle="popover" data-placement="bottom" tabindex="-1"
+                            data-content="This could be any activity for which you would like to track the time spent. For example designing a flyer, writing an article or fixing a software bug."
+                            title="" data-original-title="Name your current activity"><i class="icon-question-sign"></i></a>
+                    </span>
+                    <span class="span4 input-append">
+                        <input type="text" name="organisation" id="organisation" placeholder="Who should know about this?" tabindex="2"/>
+                        <a href="#" class="btn help_button" data-toggle="popover" data-placement="bottom" tabindex="-1"
+                            data-content="Let your friends or colleagues know what you are doing right now." title="" data-original-title="Share"><i class="icon-question-sign"></i></a>
+                    </span>
+                    <span class="span3 input-append" style="height: 20px;">
+                        <input type="text" name="labels" id="labels" placeholder="Labels" tabindex="3"/>
+                        <a href="#" class="btn help_button" data-toggle="popover" data-placement="bottom" tabindex="-1"
+                            data-content="You can add labels to your activity. For example, the name of the company you are doing this for, or the broader goal you are working towards."
+                            title="" data-original-title="Add labels"><i class="icon-question-sign"></i></a>
+                    </span>
+                    <span class="span1">
+                        <button class="btn btn-primary" id="start_task" type="submit" tabindex="4">Start</button> 
+                    </span>
+                </form>
+            </div>
+            <div class="tasks_body">
+                <div id="current-tasks-section">
+                    <legend>Current Task
+                        <form class="current-task-form pull-right"><button class="btn" id="stop_task" type="submit">Stop Task</button></form>
+                    </legend>
+                    <ul class="current-task unstyled tasklist"></ul>
+                </div>
+
+                <div id="finished-tasks-section" style="display: none">
+                    <legend> Finished Tasks 
+                        <form class="pull-right form-search">
+                            <span class="btn-group">
+                                <button class="btn"><i class="icon-arrow-left"></i></button>
+                                <button class="btn"><i class="icon-home"></i></button>
+                                <button class="btn"><i class="icon-arrow-right"></i></button>
+                            </span>
+                            <span class="btn-group">
+                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <strong>5 - 8 February</strong>&nbsp;
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#"><strong>Day</strong>, 5 February</a></li>
+                                    <li><a href="#"><strong>Week</strong>, 31 January to 5 February</a></li>
+                                    <li><a href="#"><strong>Month</strong>, 1 January to 5 February</a><hr/></li>
+                                    <li><strong class="apply-dates">Custom period</strong></li>
+                                    <li>
+                                        <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
+                                        <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
+                                    </li>
+                                    <li class="clearfix">
+                                        <button class="btn apply-dates" type="submit">Apply</button>
+                                    </li>
+                                </ul>
+                            </span>
+                            <input type="search" placeholder="Filter Text" />
+                        </form>
+                    </legend>
+                </div>
+            </div>
+        </span>
+        <span class="span1"></span>
+    </div>
+</body>
+</html>
