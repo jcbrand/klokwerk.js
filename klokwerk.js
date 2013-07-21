@@ -165,16 +165,6 @@
 
         label_template: _.template('<span class="clickable label label-info">{{label}}</span>'),
 
-        day_template: _.template(
-            '<span data-day="{{day_iso}}">'+
-                '<p class="row-fluid day_heading">'+
-                    '<span class="span10"><time class="day-heading" datetime="{{day_iso}}">{{day_human}}</time></span>'+
-                    '<span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>'+
-                '</p>'+
-                '<ul class="unstyled tasklist"></ul>'+
-            '</span>'
-        ),
-        
         initialize: function () {
             this.model.on('change', function (item, changed) {
                 this.render(); 
@@ -191,36 +181,20 @@
         },
 
         render: function () {
-            var $section, $day_section, $tasklist, $task_html, day_iso, end_iso, end_time, i, prefix,
+            var $task_html, end_iso, end_time, i, prefix,
                 d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
                 end = this.model.get('end'),
                 minutes = start.getMinutes().toString();
-
             d.start_time = start.getHours()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
             d.start_iso = klokwerk.toISOString(start);
             d.end = end;
-
             if (end !== undefined) {
-                day_iso = end.split('T')[0] + 'T00:00:00Z';
                 end = klokwerk.parseISO8601(end);
                 prefix = 'finished';
-                $section = $('#finished-tasks-section');
-                $day_section = $('span[data-day="'+day_iso+'"]');
-                if (!$day_section.length) {
-                    $day_section = $(this.day_template({
-                        'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
-                        'day_iso': day_iso
-                    })).appendTo($section);
-                }
-                $tasklist = $day_section.find('ul.tasklist:first');
             } else {
-                // XXX: We'll probably later still introduce the concept of
-                // sticky tasks
                 end = klokwerk.roundDate();
                 prefix = 'current';
-                $section = $('#'+prefix+'-tasks-section');
-                $tasklist = $section.find('ul.tasklist:first');
             }
             minutes = end.getMinutes().toString();
             d.end_time = end.getHours()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
@@ -236,18 +210,9 @@
             for (i=0; i<d.labels.length; i++) {
                 $task_html.find('a.edit-task').before(this.label_template({label: d.labels[i]}));
             }
-            if (prefix == 'current') {
-                $tasklist.empty();
-            }
-            $tasklist.append($task_html);
-            if (!$section.is(':visible')) {
-                $section.slideDown();
-            }
-            this.delegateEvents();
-            return this;
+            return $task_html;
         }
     });
-
 
     klokwerk.Tracker = Backbone.Collection.extend({
         model: klokwerk.Task
@@ -260,6 +225,58 @@
             "submit form.current-task-form": "stopTask",
             "click a.task-name": "startTaskFromLink",
             "click a.edit-task": "editTask"
+        },
+
+        day_template: _.template(
+            '<span data-day="{{day_iso}}">'+
+                '<p class="row-fluid day_heading">'+
+                    '<span class="span10"><time class="day-heading" datetime="{{day_iso}}">{{day_human}}</time></span>'+
+                    '<span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>'+
+                '</p>'+
+                '<ul class="unstyled tasklist"></ul>'+
+            '</span>'
+        ),
+        
+        initialize: function () {
+            this.taskviews = {};
+            this.model.on('add', $.proxy(function (item) {
+                var view = new klokwerk.TaskView({'model': item});
+                this.taskviews[item.cid] = view;
+                this.render(item);
+            }, this));
+            this.model.fetch({add:true});
+            this.model.on('change', this.render, this);
+        },
+
+        render: function (item) {
+            var taskview = this.taskviews[item.cid];
+            var end = item.get('end');
+            var day_iso, end_iso, $tasklist, $section, $day_section;
+            if (end !== undefined) {
+                day_iso = end.split('T')[0] + 'T00:00:00Z';
+                prefix = 'finished';
+                $section = $('#finished-tasks-section');
+                $day_section = $('span[data-day="'+day_iso+'"]');
+                if (!$day_section.length) {
+                    $day_section = $(this.day_template({
+                        'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
+                        'day_iso': day_iso
+                    })).appendTo($section);
+                }
+                $tasklist = $day_section.find('ul.tasklist:first');
+            } else {
+                // XXX: We'll probably later still introduce the concept of
+                // sticky tasks
+                prefix = 'current';
+                $section = $('#'+prefix+'-tasks-section');
+                $tasklist = $section.find('ul.tasklist:first').empty();
+            }
+            $tasklist.append(taskview.render());
+            if (!$section.is(':visible')) {
+                $section.slideDown();
+            }
+            taskview.delegateEvents();
+            return this;
         },
 
         addTask: function () {
@@ -340,16 +357,6 @@
         editTask: function (ev) {
             ev.preventDefault();
             alert('editTask');
-        },
-
-        initialize: function () {
-            this.taskviews = [];
-            this.model.on('add', $.proxy(function (item) {
-                var view = new klokwerk.TaskView({'model': item});
-                this.taskviews.push(view);
-                view.render();
-            }, this));
-            this.model.fetch({add:true});
         }
     });
 
