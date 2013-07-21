@@ -226,7 +226,7 @@
         },
 
         day_template: _.template(
-            '<span data-day="{{day_iso}}">'+
+            '<span class="day-section" data-day="{{day_iso}}">'+
                 '<p class="row-fluid day_heading">'+
                     '<span class="span10"><time class="day-heading" datetime="{{day_iso}}">{{day_human}}</time></span>'+
                     '<span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>'+
@@ -253,12 +253,21 @@
             if (item.get('end') !== undefined) {
                 var $finished_section = $('#finished-tasks-section');
                 var day_iso = item.get('end').split('T')[0] + 'T00:00:00Z';
-                var $day_section = $('span[data-day="'+day_iso+'"]');
+                var $day_section = $('span.day-section[data-day="'+day_iso+'"]');
+                var all_isos, index;
                 if (!$day_section.length) {
                     $day_section = $(this.day_template({
                         'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
                         'day_iso': day_iso
-                    })).appendTo($finished_section);
+                    }));
+                    all_isos = $('span.day-section').map(function() {return $(this).attr('data-day');}).get();
+                    all_isos.push(day_iso);
+                    index = all_isos.sort().reverse().indexOf(day_iso);
+                    if (index === 0) {
+                        $finished_section.find('legend').after($day_section);
+                    } else {
+                        $('span.day-section[data-day="'+all_isos[index-1]+'"]').after($day_section);
+                    }
                 }
                 $day_section.find('ul.tasklist:first').append(taskview.render());
                 // Hide the current tasks section if there aren't any tasks there
