@@ -248,30 +248,34 @@
 
         render: function (item) {
             var taskview = this.taskviews[item.cid];
-            var end = item.get('end');
-            var day_iso, end_iso, $tasklist, $section, $day_section;
-            if (end !== undefined) {
-                day_iso = end.split('T')[0] + 'T00:00:00Z';
-                prefix = 'finished';
-                $section = $('#finished-tasks-section');
-                $day_section = $('span[data-day="'+day_iso+'"]');
+            var $current_section = $('#current-tasks-section');
+            var $current_tasklist = $current_section.find('ul.tasklist:first').empty();
+            if (item.get('end') !== undefined) {
+                var $finished_section = $('#finished-tasks-section');
+                var day_iso = item.get('end').split('T')[0] + 'T00:00:00Z';
+                var $day_section = $('span[data-day="'+day_iso+'"]');
                 if (!$day_section.length) {
                     $day_section = $(this.day_template({
                         'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
                         'day_iso': day_iso
-                    })).appendTo($section);
+                    })).appendTo($finished_section);
                 }
-                $tasklist = $day_section.find('ul.tasklist:first');
+                $day_section.find('ul.tasklist:first').append(taskview.render());
+                // Hide the current tasks section if there aren't any tasks there
+                // anymore.
+                if ($current_tasklist.children().length === 0) {
+                    $current_section.hide();
+                }
+                // Show the finished tasks section if it's hidden.
+                if (!$finished_section.is(':visible')) {
+                    $finished_section.slideDown();
+                }
             } else {
-                // XXX: We'll probably later still introduce the concept of
-                // sticky tasks
-                prefix = 'current';
-                $section = $('#'+prefix+'-tasks-section');
-                $tasklist = $section.find('ul.tasklist:first').empty();
-            }
-            $tasklist.append(taskview.render());
-            if (!$section.is(':visible')) {
-                $section.slideDown();
+                $current_tasklist.empty().append(taskview.render());
+                // Show the current tasks section if it's hidden.
+                if (!$current_section.is(':visible')) {
+                    $current_section.slideDown();
+                }
             }
             taskview.delegateEvents();
             return this;
