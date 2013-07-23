@@ -106,11 +106,10 @@
         return new Date(Date.UTC(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]));
     };
 
-    klokwerk.roundDate = function () {
-        /* Return the current date rounded to the nearest minute. */
-        var date = new Date(),
-            coeff = 1000*60,
-            millis = Math.round(date.getTime()/(coeff))*coeff;
+    klokwerk.roundDate = function (date) {
+        /* Return date rounded to the nearest minute. */
+        var coeff = 1000*60;
+        var millis = Math.round((date || new Date()).getTime()/(coeff))*coeff;
         return new Date(millis);
     };
 
