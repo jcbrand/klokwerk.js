@@ -16,14 +16,18 @@
     return describe("The Tracker", $.proxy(function () {
         beforeEach(function () {
             window.localStorage.clear();
+            if (klokwerk.trackerview) {
+                var i, view; 
+                var keys = _.keys(klokwerk.trackerview.taskviews);
+                for (i=0; i<keys.length; i++) {
+                    klokwerk.trackerview.taskviews[keys[i]].remove();
+                    delete klokwerk.trackerview.taskviews[keys[i]];
+                }
+                klokwerk.trackerview.undelegateEvents();
+            }
             $('#current-tasks-section').hide().find('ul.tasklist').empty();
-            $('#finished-tasks-section').hide().find('ul.tasklist').empty();
-        });
-
-        afterEach(function () {
-            window.localStorage.clear();
-            $('#current-tasks-section').hide().find('ul.tasklist').empty();
-            $('#finished-tasks-section').hide().find('ul.tasklist').empty();
+            $('#finished-tasks-section').hide().find('span.day-section').empty();
+            klokwerk.initialize();
         });
 
         describe('The task form', $.proxy(function () {
@@ -45,17 +49,19 @@
                 var $section = $('#current-tasks-section');
                 expect($section.is(':visible')).toEqual(false);
                 runs(function () {
-                    createTaskFromForm('Writing a book', ['writing', 'book']);
+                    createTaskFromForm('Proofreading my  book', ['book']);
                 });
                 waits(500);
                 runs(function () {
                     expect($section.is(':visible')).toEqual(true);
+                    expect($section.find('ul.tasklist').children('li').length).toEqual(1);
                     createTaskFromForm('Editing a play', ['editing', 'play']);
                 });
                 waits(500);
                 runs(function () {
-                    expect($section.is(':visible')).toEqual(true);
-                    var $day_section = $section.find('span.day-section');
+                    var $finished_section = $('#finished-tasks-section');
+                    expect($finished_section.is(':visible')).toEqual(true);
+                    var $day_section = $finished_section.find('span.day-section');
                     expect($day_section.length).toEqual(1);
                     expect($day_section.find('ul.tasklist').children('li').length).toEqual(1);
                 });
@@ -90,7 +96,7 @@
                 });
                 waits(500);
                 runs(function () {
-                    alert('hello');
+                    
                 });
             }, klokwerk));
         }));

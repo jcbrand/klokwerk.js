@@ -11,11 +11,6 @@ require(["jquery",
         "klokwerk",
         "spec/MainSpec"
     ], function() {
-        var klokwerk = arguments[10];
-        window.localStorage.clear();
-        $(document).ready(function () {
-            klokwerk.initialize();
-        });
         // Jasmine stuff
         var jasmineEnv = jasmine.getEnv();
         jasmineEnv.updateInterval = 250;
