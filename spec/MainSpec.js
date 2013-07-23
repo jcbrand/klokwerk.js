@@ -26,7 +26,7 @@
                 klokwerk.trackerview.undelegateEvents();
             }
             $('#current-tasks-section').hide().find('ul.tasklist').empty();
-            $('#finished-tasks-section').hide().find('span.day-section').empty();
+            $('#finished-tasks-section').hide().find('span.day-section').remove();
             klokwerk.initialize();
         });
 
@@ -75,9 +75,9 @@
         
             it('shows finished tasks if there are any', $.proxy(function () {
                 runs(function () {
-                    var d = new Date(), 
-                            end_date, end_iso, i, start_date, start_iso;
+                    var d, end_date, end_iso, i, start_date, start_iso;
                     for (i=1; i<5; i++) {
+                        d = new Date();
                         start_date = new Date(d.setDate(d.getDate()-i));
                         start_iso = klokwerk.toISOString(klokwerk.roundDate(start_date));
                         end_date = new Date(start_date.getTime() + 60*1000);
@@ -96,7 +96,23 @@
                 });
                 waits(500);
                 runs(function () {
-                    
+                    var i;
+                    var $finished_section = $('#finished-tasks-section');
+                    expect($finished_section.is(':visible')).toEqual(true);
+                    // Check that day sections are in reverse chronological
+                    // order
+                    var $day_section = $finished_section.find('span.day-section');
+                    var dates = [];
+                    for (i=0; i<$day_section.length; i++) {
+                        dates.push($($day_section[i]).data().day);
+                    }
+                    expect(dates).toEqual(dates.sort().reverse());
+                    // There must be one day section per task created (since
+                    // each is on a different day).
+                    expect($day_section.length).toEqual(4);
+                    $day_section.each(function (i, day_section) {
+                        expect($(day_section).find('ul.tasklist').children('li').length).toEqual(1);
+                    });
                 });
             }, klokwerk));
         }));
