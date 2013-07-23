@@ -14,6 +14,12 @@
         $form.submit();
     };
     return describe("The Tracker", $.proxy(function () {
+        beforeEach(function () {
+            window.localStorage.clear();
+            $('#current-tasks-section').hide().find('ul.tasklist').empty();
+            $('#finished-tasks-section').hide().find('ul.tasklist').empty();
+        });
+
         afterEach(function () {
             window.localStorage.clear();
             $('#current-tasks-section').hide().find('ul.tasklist').empty();
@@ -49,6 +55,9 @@
                 waits(500);
                 runs(function () {
                     expect($section.is(':visible')).toEqual(true);
+                    var $day_section = $section.find('span.day-section');
+                    expect($day_section.length).toEqual(1);
+                    expect($day_section.find('ul.tasklist').children('li').length).toEqual(1);
                 });
             }));
         }));
