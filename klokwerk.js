@@ -370,7 +370,7 @@
         }
     });
 
-    $(document).ready($.proxy(function () {
+    klokwerk.initialize = function () {
         $('.help_button').popover();
         $('.datepicker').datepicker('show');
         $("#labels").select2({
@@ -382,7 +382,7 @@
         this.tracker = new this.Tracker();
         this.tracker.localStorage = new Backbone.LocalStorage('klokwerk'); // FIXME: proper id
         this.trackerview = new this.TrackerView({'model': this.tracker});
-    }, klokwerk));
+    };
 
     return klokwerk;
 }));

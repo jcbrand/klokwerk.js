@@ -8,9 +8,14 @@ require(["jquery",
         "lib/bootstrap-datepicker",
         "lib/select2-3.3.1/select2",
         "lib/jquery-validation/jquery.validate",
+        "klokwerk",
         "spec/MainSpec"
     ], function() {
+        var klokwerk = arguments[10];
         window.localStorage.clear();
+        $(document).ready(function () {
+            klokwerk.initialize();
+        });
         // Jasmine stuff
         var jasmineEnv = jasmine.getEnv();
         jasmineEnv.updateInterval = 250;
@@ -20,4 +25,5 @@ require(["jquery",
             return htmlReporter.specFilter(spec);
         };
         jasmineEnv.execute();
-});
+    }
+);

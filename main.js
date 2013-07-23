@@ -8,4 +8,11 @@ require(["jquery",
         "lib/bootstrap-datepicker",
         "lib/select2-3.3.1/select2",
         "lib/jquery-validation/jquery.validate",
-        "klokwerk"], function($) {});
+        "klokwerk"
+    ], function($) {
+        var klokwerk = arguments[10];
+        $(document).ready(function () {
+            klokwerk.initialize();
+        });
+    }
+);
