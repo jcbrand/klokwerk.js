@@ -212,7 +212,11 @@
     });
 
     klokwerk.Tracker = Backbone.Collection.extend({
-        model: klokwerk.Task
+        model: klokwerk.Task,
+
+        current: function () {
+            return this.model.where({end: undefined});
+        }
     });
 
     klokwerk.TrackerView = Backbone.View.extend({
@@ -249,7 +253,13 @@
             var taskview = this.taskviews[item.cid];
             var $current_section = $('#current-tasks-section');
             var $current_tasklist = $current_section.find('ul.tasklist:first').empty();
-            if (item.get('end') !== undefined) {
+            if (item.get('end') === undefined) {
+                $current_tasklist.empty().append(taskview.render());
+                // Show the current tasks section if it's hidden.
+                if (!$current_section.is(':visible')) {
+                    $current_section.slideDown();
+                }
+            } else {
                 var $finished_section = $('#finished-tasks-section');
                 var day_iso = item.get('end').split('T')[0] + 'T00:00:00Z';
                 var $day_section = $('span.day-section[data-day="'+day_iso+'"]');
@@ -277,12 +287,6 @@
                 // Show the finished tasks section if it's hidden.
                 if (!$finished_section.is(':visible')) {
                     $finished_section.slideDown();
-                }
-            } else {
-                $current_tasklist.empty().append(taskview.render());
-                // Show the current tasks section if it's hidden.
-                if (!$current_section.is(':visible')) {
-                    $current_section.slideDown();
                 }
             }
             taskview.delegateEvents();
@@ -312,10 +316,7 @@
         },
 
         stopCurrentTask: function () {
-            var i, tasks = this.model.where({end: undefined});
-            for (i=0; i<tasks.length; i++) {
-                tasks[i].stop();
-            }
+            _.each(this.model.current(), function () { this.stop(); });
         },
 
         startTaskFromForm: function (ev) {
