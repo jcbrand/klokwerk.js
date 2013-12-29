@@ -316,7 +316,12 @@
         },
 
         stopCurrentTask: function () {
-            _.each(this.model.current(), function () { this.stop(); });
+            _.each(this.model.current(), 
+                function () {
+                    if (this) {
+                        this.stop();
+                    }
+                });
         },
 
         startTaskFromForm: function (ev) {
