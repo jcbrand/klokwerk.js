@@ -12,32 +12,8 @@
 // AMD/global registrations
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) { 
-
-        require.config({
-            paths: {
-                "underscore": "lib/underscore",
-                "backbone": "lib/backbone",
-                "localstorage": "lib/backbone.localStorage"
-            },
-            // define module dependencies for modules not using define
-            shim: {
-                'backbone': {
-                    //These script dependencies should be loaded before loading
-                    //backbone.js
-                    deps: [
-                        'underscore', 
-                        'jquery'
-                        ],
-                    //Once loaded, use the global 'Backbone' as the
-                    //module value.
-                    exports: 'Backbone'
-                },
-                'underscore':   { exports: '_' }
-            }
-        });
-
         define('klokwerk', [
-            "localstorage"
+            "klokwerk-dependencies"
             ], function () {
                 // Use Mustache style syntax for variable interpolation
                 _.templateSettings = {
@@ -316,12 +292,7 @@
         },
 
         stopCurrentTask: function () {
-            _.each(this.model.current(), 
-                function () {
-                    if (this) {
-                        this.stop();
-                    }
-                });
+            _.each(this.model.current(), function () { this.stop(); });
         },
 
         startTaskFromForm: function (ev) {
@@ -389,7 +360,6 @@
         this.tracker.localStorage = new Backbone.LocalStorage('klokwerk'); // FIXME: proper id
         this.trackerview = new this.TrackerView({'model': this.tracker});
     };
-
     return klokwerk;
 }));
 

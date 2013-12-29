@@ -1,18 +1,11 @@
 (function (root, factory) {
-    define([
-        "klokwerk"
-        ], function (klokwerk, mock_connection) {
-            return factory(klokwerk, mock_connection);
+    define(["utils"], 
+        function (utils) {
+            return factory(utils.klokwerk, utils.mock, utils);
         }
     );
-} (this, function (klokwerk, mock_connection) {
+} (this, function (klokwerk, mock, utils) {
 
-    createTaskFromForm = function (desc, tags) {
-        var $form = klokwerk.trackerview.$el.find('form.tracker-form');
-        $form.find('input#task-name').val(desc);
-        $form.find('input#labels').val(tags.join(','));
-        $form.submit();
-    };
     return describe("The Tracker", $.proxy(function () {
         beforeEach(function () {
             window.localStorage.clear();
@@ -25,15 +18,14 @@
                 }
                 klokwerk.trackerview.undelegateEvents();
             }
-            $('#current-tasks-section').hide().find('ul.tasklist').empty();
-            $('#finished-tasks-section').hide().find('span.day-section').remove();
+            utils.removeCurrentTasks().removeFinishedTasks();
             klokwerk.initialize();
         });
 
         describe('The task form', $.proxy(function () {
         
             it('allows the creation of a new task', $.proxy(function () {
-                createTaskFromForm('Writing a book', ['writing', 'book']);
+                utils.createTaskFromForm('Writing a book', ['writing', 'book']);
                 var $section = $('#current-tasks-section');
                 expect($section.is(':visible')).toEqual(true);
                 expect($section.find('ul.tasklist').children('li').length).toEqual(1);
@@ -49,13 +41,13 @@
                 var $section = $('#current-tasks-section');
                 expect($section.is(':visible')).toEqual(false);
                 runs(function () {
-                    createTaskFromForm('Proofreading my  book', ['book']);
+                    utils.createTaskFromForm('Proofreading my  book', ['book']);
                 });
                 waits(500);
                 runs(function () {
                     expect($section.is(':visible')).toEqual(true);
                     expect($section.find('ul.tasklist').children('li').length).toEqual(1);
-                    createTaskFromForm('Editing a play', ['editing', 'play']);
+                    utils.createTaskFromForm('Editing a play', ['editing', 'play']);
                 });
                 waits(500);
                 runs(function () {
