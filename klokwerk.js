@@ -215,7 +215,9 @@
         model: klokwerk.Task,
 
         current: function () {
-            return this.model.where({end: undefined});
+            if (this.model.lenth) {
+                return this.model.where({end: undefined});
+            }
         }
     });
 
@@ -316,7 +318,12 @@
         },
 
         stopCurrentTask: function () {
-            _.each(this.model.current(), function () { this.stop(); });
+            _.each(this.model.current(), 
+                function () {
+                    if (this) {
+                        this.stop();
+                    }
+                });
         },
 
         startTaskFromForm: function (ev) {
