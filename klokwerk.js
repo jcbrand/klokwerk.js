@@ -215,7 +215,7 @@
         model: klokwerk.Task,
 
         current: function () {
-            return this.model.where({end: undefined});
+            return this.where({end: undefined});
         }
     });
 
