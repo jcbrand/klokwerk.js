@@ -98,6 +98,10 @@
                 'end_day': end_iso.split('T')[0]+'T00:00:00Z',
                 'end_month': end_date.getUTCFullYear()+"-"+end_date.getUTCMonth()+"-1"+'T00:00:00Z'
             });
+        },
+
+        isCurrentTask: function () {
+            return this.get('end') === undefined;
         }
     });
 
@@ -144,15 +148,6 @@
             }, this);
         },
 
-        removeTask: function (ev) {
-            ev.preventDefault();
-            var that = this;
-            $(ev.target).closest('li').hide(function () {
-                that.model.destroy();
-                this.remove();
-            });
-        },
-
         render: function () {
             var $task_html, end_iso, end_time, i, prefix,
                 d = this.model.toJSON(),
@@ -184,6 +179,33 @@
                 $task_html.find('a.edit-task').before(this.label_template({label: d.labels[i]}));
             }
             return $task_html;
+        },
+
+        isCurrentTask: function () {
+            return this.model.isCurrentTask();
+        },
+
+        removeTask: function (ev) {
+            ev.preventDefault();
+            var $el = $(ev.target);
+            $el.closest('li').hide($.proxy(function () {
+                this.model.destroy();
+                this.$el.remove();
+                if (this.$el.closest('ul.tasklist').length === 0) {
+                    if (this.isCurrentTask()) {
+                        // remove the "Current Task" section
+                        if (klokwerk.trackerview.$current_section.is(':visible')) {
+                            klokwerk.trackerview.$current_section.slideUp();
+                        }
+                    } else {
+                        // TODO:
+                        // If there aren't ANY other tasks, we remove the whole
+                        // "Finished Tasks" section, otherwise we show a discreet
+                        // message, like "No tasks for this day".
+                    }
+                }
+            }, this));
+            return this;
         }
     });
 
@@ -215,6 +237,7 @@
         ),
         
         initialize: function () {
+            this.$current_section = $('#current-tasks-section');
             this.taskviews = {};
             this.model.on('add', $.proxy(function (item) {
                 var view = new klokwerk.TaskView({'model': item});
@@ -227,13 +250,12 @@
 
         render: function (item) {
             var taskview = this.taskviews[item.cid];
-            var $current_section = $('#current-tasks-section');
-            var $current_tasklist = $current_section.find('ul.tasklist:first').empty();
-            if (item.get('end') === undefined) {
+            var $current_tasklist = this.$current_section.find('ul.tasklist:first').empty();
+            if (item.isCurrentTask()) {
                 $current_tasklist.empty().append(taskview.render());
                 // Show the current tasks section if it's hidden.
-                if (!$current_section.is(':visible')) {
-                    $current_section.slideDown();
+                if (!this.$current_section.is(':visible')) {
+                    this.$current_section.slideDown();
                 }
             } else {
                 var $finished_section = $('#finished-tasks-section');
@@ -258,7 +280,7 @@
                 // Hide the current tasks section if there aren't any tasks there
                 // anymore.
                 if ($current_tasklist.children().length === 0) {
-                    $current_section.hide();
+                    this.$current_section.hide();
                 }
                 // Show the finished tasks section if it's hidden.
                 if (!$finished_section.is(':visible')) {
