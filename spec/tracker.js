@@ -56,6 +56,10 @@
                     var $day_section = $finished_section.find('span.day-section');
                     expect($day_section.length).toEqual(1);
                     expect($day_section.find('ul.tasklist').children('li').length).toEqual(1);
+                    // Check that the tags widget is empty
+                    var $form = klokwerk.trackerview.$el.find('form.tracker-form');
+                    var $tags = $form.find('ul.select2-choices li.select2-search-choice');
+                    expect($tags.length).toEqual(0);
                 });
             }));
         }));

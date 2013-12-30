@@ -289,26 +289,37 @@
                 'labels': ($labels.val() || '').split(',')
                 });
             $taskname.attr('value', '');
+            return this;
         },
 
         stopCurrentTask: function () {
             _.each(this.model.current(), function (el, idx, ls) {
                 el.stop();
             });
+            return this;
+        },
+
+        clearForm: function () {
+            var $form = this.$el.find('form.tracker-form');
+            $form.find('input#task-name').val();
+            $form.find('input#organisation').val();
+            $("#labels").select2('val', '');
+            return this;
         },
 
         startTaskFromForm: function (ev) {
             ev.preventDefault();
+            var $form;
             if (Modernizr.input.required) { // already validated via HTML5
-                this.stopCurrentTask();
-                this.addTask();
+                this.stopCurrentTask().addTask().clearForm();
             } else {
+                $form = this.$el.find('form.tracker-form');
                 $form.validate({
                     highlight: function () {
                         $form.find('#task-name').addClass('error').wrap('<span class="control-group error"/>');
                     },
                     submitHandler: $.proxy(function () {
-                        this.addTask();
+                        this.stopCurrentTask().addTask().clearForm();
                     }, this)
                 }); 
             }
