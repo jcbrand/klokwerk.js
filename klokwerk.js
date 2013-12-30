@@ -292,7 +292,9 @@
         },
 
         stopCurrentTask: function () {
-            _.each(this.model.current(), function () { this.stop(); });
+            _.each(this.model.current(), function (el, idx, ls) {
+                el.stop();
+            });
         },
 
         startTaskFromForm: function (ev) {
