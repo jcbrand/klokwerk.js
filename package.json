@@ -1,0 +1,42 @@
+{
+  "name": "klokwerk",
+  "version": "0.7.2",
+  "description": "Browser based XMPP instant messaging client",
+  "main": "main.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@bitbucket.org/jcbrand/klokwerk.git"
+  },
+  "keywords": [
+    "XMPP",
+    "Jabber",
+    "chat",
+    "messaging",
+    "chatrooms",
+    "webchat"
+  ],
+  "author": "JC Brand",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://bitbucket.org/jcbrand/klokwerk/issues"
+  },
+  "devDependencies": {
+    "grunt-cli": "~0.1.9",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.0",
+    "phantomjs": "~1.9.1-0",
+    "jasmine-reporters": "~0.2.1",
+    "bower": "~1.0.0",
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-contrib-cssmin": "~0.6.1"
+  },
+  "dependencies": {
+    "requirejs": "~2.1.8"
+  }
+}
