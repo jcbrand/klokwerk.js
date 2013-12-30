@@ -65,25 +65,14 @@
                 expect($('#finished-tasks-section').is(':visible')).toEqual(false);
             }, klokwerk));
         
-            it('shows finished tasks if there are any', $.proxy(function () {
+            it('shows finished tasks if they exist', $.proxy(function () {
                 runs(function () {
-                    var d, end_date, end_iso, i, start_date, start_iso;
+                    var d, end, i, start;
                     for (i=1; i<5; i++) {
                         d = new Date();
-                        start_date = new Date(d.setDate(d.getDate()-i));
-                        start_iso = klokwerk.toISOString(klokwerk.roundDate(start_date));
-                        end_date = new Date(start_date.getTime() + 60*1000);
-                        end_iso = klokwerk.toISOString(klokwerk.roundDate(end_date));
-
-                        klokwerk.tracker.create({
-                            'description': 'Task '+i,
-                            'start': start_iso,
-                            'start_day': start_iso.split('T')[0]+'T00:00:00Z',
-                            'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
-                            'end': end_iso,
-                            'category': '',
-                            'labels': '' 
-                        });
+                        start = new Date(d.setDate(d.getDate()-i));
+                        end = new Date(start.getTime() + 60*1000);
+                        utils.createTask('Task '+i, start, end);
                     }
                 });
                 waits(500);

@@ -21,6 +21,20 @@
         return this;
     };
 
+    utils.createTask = function (desc, start, end) {
+        var start_iso = klokwerk.toISOString(klokwerk.roundDate(start));
+        var end_iso = klokwerk.toISOString(klokwerk.roundDate(end));
+        klokwerk.tracker.create({
+            'description': desc,
+            'start': start_iso,
+            'start_day': start_iso.split('T')[0]+'T00:00:00Z',
+            'start_month': start.getUTCFullYear()+"-"+start.getUTCMonth()+"-1"+'T00:00:00Z',
+            'end': end_iso,
+            'category': '',
+            'labels': ''
+        });
+    };
+
     utils.removeCurrentTasks = function () {
         $('#current-tasks-section').hide().find('ul.tasklist').empty();
         return this;
