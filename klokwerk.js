@@ -58,10 +58,11 @@
                 pad(date.getUTCSeconds()) + '.000Z';
         }
     };
+
     klokwerk.parseISO8601 = function (datestr) {
         /* Parses string formatted as 2013-02-14T11:27:08.268Z to a Date obj.
         */
-        var numericKeys = [1, 4, 5, 6, 7, 10, 11],
+        var numericKeys = [1, 4, 5, 6, 7, 10, 11],
             struct = /^\s*(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}\.?\d*)Z\s*$/.exec(datestr),
             minutesOffset = 0,
             i, k;
@@ -386,7 +387,7 @@
         $('.help_button').popover();
         $('.datepicker').datepicker('show');
         $("#labels").select2({
-            width: '80%',
+            placeholder: "Labels",
             height: '20px',
             tags:["red", "green", "blue"],
             tokenSeparators: [";"]
