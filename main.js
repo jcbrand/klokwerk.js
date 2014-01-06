@@ -2,20 +2,20 @@
 require.config({
     paths: {
         "jquery": "components/jquery/jquery",
-        "jquery.placeholder": "lib/jquery.placeholder", 
-        "modernizr": "lib/modernizr",
+        "jquery.placeholder": "components/jquery.placeholder/jquery.placeholder", 
+        "modernizr": "components/modernizr/modernizr",
         "bootstrap-tooltip": "lib/bootstrap/js/bootstrap-tooltip",
         "bootstrap-popover": "lib/bootstrap/js/bootstrap-popover",
         "bootstrap-dropdown": "lib/bootstrap/js/bootstrap-dropdown",
         "bootstrap-alert": "lib/bootstrap/js/bootstrap-alert",
         "bootstrap-datepicker": "lib/bootstrap-datepicker",
-        "select2": "lib/select2-3.3.1/select2",
-        "jquery.validate": "lib/jquery-validation/jquery.validate",
+        "select2": "components/select2/select2",
+        "jquery.validate": "components/jquery-validation/jquery.validate",
         "locales": "locale/locales",
-        "underscore": "lib/underscore",
-        "backbone": "lib/backbone",
-        "backbone.localStorage": "lib/backbone.localStorage",
-        "klokwerk-dependencies": "src/deps-full",
+        "underscore": "components/underscore//underscore",
+        "backbone": "components/backbone/backbone",
+        "backbone.localStorage": "components/backbone.localStorage/backbone.localStorage",
+        "klokwerk-dependencies": "src/deps-full"
     },
 
     // define module dependencies for modules not using define
