@@ -3,7 +3,6 @@
  * http://opkode.com
  *
  * Copyright (c) Jan-Carel Brand (jc@opkode.com)
- * Dual licensed under the MIT and GPL Licenses
  */
 
 /* The following line defines global variables defined elsewhere. */
@@ -188,24 +187,27 @@
 
         removeTask: function (ev) {
             ev.preventDefault();
-            var $el = $(ev.target);
-            $el.closest('li').hide($.proxy(function () {
-                this.model.destroy();
-                this.$el.remove();
-                if (this.$el.closest('ul.tasklist').length === 0) {
-                    if (this.isCurrentTask()) {
-                        // remove the "Current Task" section
-                        if (klokwerk.trackerview.$current_section.is(':visible')) {
-                            klokwerk.trackerview.$current_section.slideUp();
+            var $el, result = confirm("Are you sure you want to remove this task?");
+            if (result === true) {
+                $el = $(ev.target);
+                $el.closest('li').hide($.proxy(function () {
+                    tis.model.destroy();
+                    this.$el.remove();
+                    if (this.$el.closest('ul.tasklist').length === 0) {
+                        if (this.isCurrentTask()) {
+                            // remove the "Current Task" section
+                            if (klokwerk.trackerview.$current_section.is(':visible')) {
+                                klokwerk.trackerview.$current_section.slideUp();
+                            }
+                        } else {
+                            // TODO:
+                            // If there aren't ANY other tasks, we remove the whole
+                            // "Finished Tasks" section, otherwise we show a discreet
+                            // message, like "No tasks for this day".
                         }
-                    } else {
-                        // TODO:
-                        // If there aren't ANY other tasks, we remove the whole
-                        // "Finished Tasks" section, otherwise we show a discreet
-                        // message, like "No tasks for this day".
                     }
-                }
-            }, this));
+                }, this));
+            }
             return this;
         }
     });
