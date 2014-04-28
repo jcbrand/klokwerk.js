@@ -8,6 +8,7 @@ define("klokwerk-dependencies", [
     "bootstrap-alert",
     "bootstrap-datepicker",
     "select2",
+    "moment",
     "jquery.validate",
     "underscore",
     "backbone",
