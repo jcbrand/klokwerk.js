@@ -1,16 +1,13 @@
 /*!
- * klokwerk.js 
+ * klokwerk.js
  * http://opkode.com
  *
  * Copyright (c) Jan-Carel Brand (jc@opkode.com)
  */
 
-/* The following line defines global variables defined elsewhere. */
-/*globals jQuery, portal_url*/
-
 // AMD/global registrations
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) { 
+    if (typeof define === 'function' && define.amd) {
         define('klokwerk', [
             "klokwerk-dependencies"
             ], function () {
@@ -19,27 +16,23 @@
                     evaluate : /\{\[([\s\S]+?)\]\}/g,
                     interpolate : /\{\{([\s\S]+?)\}\}/g
                 };
-
-                if (console===undefined || console.log===undefined) {
-                    console = { log: function () {}, error: function () {} };
-                }
-                return factory(jQuery, _, console);
+                return factory(jQuery, _);
             }
         );
-    } else { 
+    } else {
         // Browser globals
         _.templateSettings = {
             evaluate : /\{\[([\s\S]+?)\]\}/g,
             interpolate : /\{\{([\s\S]+?)\}\}/g
         };
-        if (console===undefined || console.log===undefined) {
-            console = { log: function () {}, error: function () {} };
-        }
-        root.klokwerk = factory(jQuery, _, console || {log: function(){}});
+        root.klokwerk = factory(jQuery, _);
     }
-}(this, function ($, _, console) {
+}(this, function ($, _) {
+    "use strict";
+    if (typeof console === "undefined" || typeof console.log === "undefined") {
+        console = { log: function () {}, error: function () {} };
+    }
     var klokwerk = {};
-
     klokwerk.toISOString = function (date) {
         var pad;
         if (typeof date.toISOString !== 'undefined') {
@@ -143,13 +136,13 @@
         label_template: _.template('<span class="clickable label label-info">{{label}}</span>'),
 
         initialize: function () {
-            this.model.on('change', function (item, changed) {
-                this.render(); 
+            this.model.on('change', function () {
+                this.render();
             }, this);
         },
 
         render: function () {
-            var $task_html, end_iso, end_time, i, prefix,
+            var $task_html, i, prefix,
                 d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
                 end = this.model.get('end'),
@@ -171,7 +164,7 @@
             d.hours = Math.floor(d.minutes/60);
             d.minutes = Math.round(d.minutes-(d.hours*60));
             $task_html = $(this.$el.html(this.task_template(d)));
-            if (prefix == 'finished') {
+            if (prefix === 'finished') {
                 $task_html.removeClass('current-task');
             }
             $task_html.addClass(prefix+'-task');
@@ -191,7 +184,7 @@
             if (result === true) {
                 $el = $(ev.target);
                 $el.closest('li').hide($.proxy(function () {
-                    tis.model.destroy();
+                    this.model.destroy();
                     this.$el.remove();
                     if (this.$el.closest('ul.tasklist').length === 0) {
                         if (this.isCurrentTask()) {
@@ -238,7 +231,7 @@
                 '<ul class="unstyled tasklist"></ul>'+
             '</span>'
         ),
-        
+
         initialize: function () {
             this.$current_section = $('#current-tasks-section');
             this.taskviews = {};
@@ -318,7 +311,7 @@
         },
 
         stopCurrentTask: function () {
-            _.each(this.model.current(), function (el, idx, ls) {
+            _.each(this.model.current(), function (el) {
                 el.stop();
             });
             return this;
@@ -346,7 +339,7 @@
                     submitHandler: $.proxy(function () {
                         this.stopCurrentTask().addTask().clearForm();
                     }, this)
-                }); 
+                });
             }
         },
 
