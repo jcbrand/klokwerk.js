@@ -25,7 +25,6 @@
         });
 
         describe('The task form', $.proxy(function () {
-        
             it('allows the creation of a new task', $.proxy(function () {
                 utils.createTaskFromForm('Writing a book', ['writing', 'book']);
                 var $section = $('#current-tasks-section');

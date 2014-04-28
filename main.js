@@ -14,9 +14,21 @@ config = {
         "modernizr": "components/modernizr/modernizr",
         "moment": "components/momentjs/moment",
         "select2": "components/select2/select2",
+        "text": 'components/requirejs-text/text',
+        "tpl": 'components/requirejs-tpl-jcbrand/tpl',
         "underscore": "components/underscore//underscore",
+        "klokwerk-templates": "src/templates",
         "klokwerk-dependencies": "src/deps-full"
     },
+
+    tpl: {
+        // Use Mustache style syntax for variable interpolation
+        templateSettings: {
+            evaluate : /\{\[([\s\S]+?)\]\}/g,
+            interpolate : /\{\{([\s\S]+?)\}\}/g
+        }
+    },
+
     // define module dependencies for modules not using define
     shim: {
         'backbone': {

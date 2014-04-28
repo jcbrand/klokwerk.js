@@ -1,0 +1,25 @@
+<div class="task-times">
+    <time datetime="{{start_iso}}">{{start_time}}</time> - 
+    {[ if (end) { ]} <time datetime="{{end_iso}}">{{end_time}}</time> {[ } ]}
+</div>
+<div class="task-details">
+    {[ if (end) { ]}
+        <a class="task-name" href="#">{{description}}</a>
+    {[ } ]}
+    {[ if (!end) { ]}
+        <strong class="task-name">{{description}}</strong>
+    {[ } ]}
+    {[ if (category) { ]}
+        <span class="category">{{category}}</span>
+    {[ } ]}
+    <a href="#" class="edit-task icon-pencil"></a>
+    <a href="#" class="remove-task icon-remove"></a>
+</div>
+<div class="task-spent">
+    <time class="spent pull-right">
+        {[ if (hours) { ]}
+            <span class="hours">{{hours}}</span>
+        {[ } ]}
+        <span class="minutes">{{minutes}}</span>
+    </time>
+</div>

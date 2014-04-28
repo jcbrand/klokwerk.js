@@ -7,32 +7,20 @@
 
 // AMD/global registrations
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define('klokwerk', [
-            "klokwerk-dependencies"
-            ], function () {
-                // Use Mustache style syntax for variable interpolation
-                _.templateSettings = {
-                    evaluate : /\{\[([\s\S]+?)\]\}/g,
-                    interpolate : /\{\{([\s\S]+?)\}\}/g
-                };
-                return factory(jQuery, _);
-            }
-        );
-    } else {
-        // Browser globals
-        _.templateSettings = {
-            evaluate : /\{\[([\s\S]+?)\]\}/g,
-            interpolate : /\{\{([\s\S]+?)\}\}/g
-        };
-        root.klokwerk = factory(jQuery, _);
-    }
-}(this, function ($, _) {
+    define('klokwerk', [
+        "klokwerk-dependencies", "klokwerk-templates"
+        ], function (deps, templates) {
+            return factory(jQuery, _, templates);
+        }
+    );
+}(this, function ($, _, templates) {
     "use strict";
     if (typeof console === "undefined" || typeof console.log === "undefined") {
         console = { log: function () {}, error: function () {} };
     }
-    var klokwerk = {};
+    var klokwerk = {
+        templates: templates
+    };
     klokwerk.toISOString = function (date) {
         var pad;
         if (typeof date.toISOString !== 'undefined') {
@@ -163,7 +151,7 @@
             d.minutes = (end-start)/(1000*60);
             d.hours = Math.floor(d.minutes/60);
             d.minutes = Math.round(d.minutes-(d.hours*60));
-            $task_html = $(this.$el.html(this.task_template(d)));
+            $task_html = $(this.$el.html(klokwerk.templates.task(d)));
             if (prefix === 'finished') {
                 $task_html.removeClass('current-task');
             }
@@ -192,11 +180,6 @@
                             if (klokwerk.trackerview.$current_section.is(':visible')) {
                                 klokwerk.trackerview.$current_section.slideUp();
                             }
-                        } else {
-                            // TODO:
-                            // If there aren't ANY other tasks, we remove the whole
-                            // "Finished Tasks" section, otherwise we show a discreet
-                            // message, like "No tasks for this day".
                         }
                     }
                 }, this));
