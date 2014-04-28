@@ -16,7 +16,10 @@ require([
     "mock",
     "jasmine-html"
     ], function($, klokwerk, mock, jasmine) {
-        require(["spec/tracker"], function() {
+        require([
+            "console-runner",
+            "spec/tracker"
+        ], function() {
             // Jasmine stuff
             var jasmineEnv = jasmine.getEnv();
             var reporter;
