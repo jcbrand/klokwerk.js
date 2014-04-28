@@ -5,10 +5,8 @@
         }
     );
 } (this, function (klokwerk, mock, utils) {
-
-    return describe("The Tracker", $.proxy(function () {
+    describe("The Tracker", $.proxy(function () {
         beforeEach(function () {
-            window.localStorage.clear();
             if (klokwerk.trackerview) {
                 var i, view; 
                 var keys = _.keys(klokwerk.trackerview.taskviews);
@@ -20,6 +18,10 @@
             }
             utils.removeCurrentTasks().removeFinishedTasks();
             klokwerk.initialize();
+        });
+
+        afterEach(function () {
+            window.localStorage.clear();
         });
 
         describe('The task form', $.proxy(function () {
