@@ -21,6 +21,7 @@
     var klokwerk = {
         templates: templates
     };
+
     klokwerk.toISOString = function (date) {
         var pad;
         if (typeof date.toISOString !== 'undefined') {
@@ -74,14 +75,15 @@
         stop: function () {
             var end_date = klokwerk.roundDate();
             var end_iso = klokwerk.toISOString(end_date);
-            this.save({
+            this.set({
                 'end': end_iso,
                 'end_day': end_iso.split('T')[0]+'T00:00:00Z',
                 'end_month': end_date.getUTCFullYear()+"-"+end_date.getUTCMonth()+"-1"+'T00:00:00Z'
             });
+            this.save();
         },
 
-        isCurrentTask: function () {
+        isCurrent: function () {
             return this.get('end') === undefined;
         }
     });
@@ -100,7 +102,7 @@
         },
 
         render: function () {
-            var $task_html, i, prefix,
+            var i, prefix,
                 d = this.model.toJSON(),
                 start = klokwerk.parseISO8601(this.model.get('start')),
                 end = this.model.get('end'),
@@ -121,19 +123,21 @@
             d.minutes = (end-start)/(1000*60);
             d.hours = Math.floor(d.minutes/60);
             d.minutes = Math.round(d.minutes-(d.hours*60));
-            $task_html = $(this.$el.html(klokwerk.templates.task(d)));
+            this.$el.html(klokwerk.templates.task(d));
             if (prefix === 'finished') {
-                $task_html.removeClass('current-task');
+                this.$el.removeClass('current-task');
+            } else { 
+                this.$el.addClass('current-task');
             }
-            $task_html.addClass(prefix+'-task');
+            this.$el.addClass(prefix+'-task');
             for (i=0; i<d.labels.length; i++) {
-                $task_html.find('a.edit-task').before(klokwerk.templates.label({label: d.labels[i]}));
+                this.$el.find('a.edit-task').before(klokwerk.templates.label({label: d.labels[i]}));
             }
-            return $task_html;
+            return this;
         },
 
-        isCurrentTask: function () {
-            return this.model.isCurrentTask();
+        isCurrent: function () {
+            return this.model.isCurrent();
         },
 
         removeTask: function (ev) {
@@ -145,7 +149,7 @@
                     this.model.destroy();
                     this.$el.remove();
                     if (this.$el.closest('ul.tasklist').length === 0) {
-                        if (this.isCurrentTask()) {
+                        if (this.isCurrent()) {
                             // remove the "Current Task" section
                             if (klokwerk.trackerview.$current_section.is(':visible')) {
                                 klokwerk.trackerview.$current_section.slideUp();
@@ -166,6 +170,64 @@
         }
     });
 
+    klokwerk.CurrentTasksView = Backbone.View.extend({
+        el: "div#current-tasks-section",
+
+        initialize: function () {
+            this.render();
+        },
+
+        render: function () {
+            // Hide the current tasks section if there aren't any tasks there
+            // anymore.
+            this.$el.html(klokwerk.templates.current_tasks());
+        },
+
+        renderTask: function (view) {
+            this.$el.find('.current-task').empty().append(view.render().$el);
+            // Show the current tasks section if it's hidden.
+            if (!this.$el.is(':visible')) {
+                this.$el.slideDown();
+            }
+        }
+    });
+
+    klokwerk.FinishedTasksView = Backbone.View.extend({
+        el: "div#finished-tasks-section",
+
+        initialize: function () {
+            this.render();
+        },
+
+        render: function () {
+            this.$el.html(klokwerk.templates.finished_tasks());
+            if (this.model.length) {
+                this.show();
+            }
+        },
+
+        show: function () {
+            if (!this.$el.is(':visible')) {
+                this.$el.slideDown();
+            }
+        },
+
+        renderTask: function (taskview, dayview) {
+            var all_isos = $('span.day-section').map(function() {return $(this).attr('data-day');}).get();
+            var day_iso = dayview.model.get('day_iso');
+            all_isos.push(day_iso);
+            var index = all_isos.sort().reverse().indexOf(day_iso);
+            if (index === 0) {
+                this.$el.find('legend').after(dayview.render().$el);
+            } else {
+                days.get(all_isos[index-1]).$el.after(dayview.render().$el);
+            }
+            taskview.render().$el.appendTo(this.$el.find('ul.tasklist'));
+            this.show();
+        }
+
+    });
+
     klokwerk.TrackerView = Backbone.View.extend({
         el: "div#tracker",
         events: {
@@ -176,58 +238,57 @@
         },
 
         initialize: function () {
-            this.$current_section = $('#current-tasks-section');
-            this.taskviews = {};
-            this.model.on('add', $.proxy(function (item) {
-                var view = new klokwerk.TaskView({'model': item});
-                this.taskviews[item.cid] = view;
-                this.render(item);
-            }, this));
+            var views = {};
+            this.get = function (id) { return views[id]; };
+            this.set = function (id, view) { views[id] = view; };
+            this.getAll = function () { return views; };
+
+            var days = {};
+            this.getDayView = function (id) { return days[id]; };
+            this.setDayView = function (id, view) { days[id] = view; };
+            this.getAllDayViews = function () { return days; };
+
+            this.days = new klokwerk.Days();
+            this.model.on('add', function (task) {
+                this.set(task.cid, new klokwerk.TaskView({'model': task}));
+                this.renderTask(task);
+            }, this);
+            this.model.on('change', this.renderTask, this);
+            this.finished_tasks = new klokwerk.FinishedTasksView({'model': this.model});
+            this.current_tasks = new klokwerk.CurrentTasksView({'model': this.model});
             this.model.fetch({add:true});
-            this.model.on('change', this.render, this);
         },
 
-        render: function (item) {
-            var taskview = this.taskviews[item.cid];
-            var $current_tasklist = this.$current_section.find('ul.tasklist:first').empty();
-            if (item.isCurrentTask()) {
-                $current_tasklist.empty().append(taskview.render());
-                // Show the current tasks section if it's hidden.
-                if (!this.$current_section.is(':visible')) {
-                    this.$current_section.slideDown();
-                }
-            } else {
-                var $finished_section = $('#finished-tasks-section');
-                var day_iso = item.get('end').split('T')[0] + 'T00:00:00Z';
-                var $day_section = $('span.day-section[data-day="'+day_iso+'"]');
-                var all_isos, index;
-                if (!$day_section.length) {
-                    $day_section = $(klokwerk.templates.day({
-                        'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
-                        'day_iso': day_iso
-                    }));
-                    all_isos = $('span.day-section').map(function() {return $(this).attr('data-day');}).get();
-                    all_isos.push(day_iso);
-                    index = all_isos.sort().reverse().indexOf(day_iso);
-                    if (index === 0) {
-                        $finished_section.find('legend').after($day_section);
-                    } else {
-                        $('span.day-section[data-day="'+all_isos[index-1]+'"]').after($day_section);
-                    }
-                }
-                $day_section.find('ul.tasklist:first').append(taskview.render());
-                // Hide the current tasks section if there aren't any tasks there
-                // anymore.
-                if ($current_tasklist.children().length === 0) {
-                    this.$current_section.hide();
-                }
-                // Show the finished tasks section if it's hidden.
-                if (!$finished_section.is(':visible')) {
-                    $finished_section.slideDown();
-                }
+        createDay: function (day_iso) {
+            var view = new klokwerk.DayView({
+                model:  new klokwerk.Day({
+                    'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
+                    'day_iso': day_iso
+                })
+            });
+            this.setDayView(view.model.cid, view);
+            return view.model;
+        },
+
+        getDay: function (day_iso) {
+            var day = this.days.get(day_iso);
+            if (!day.length) {
+                day = this.createDay(day_iso);
             }
-            taskview.delegateEvents();
-            return this;
+            return day;
+        },
+
+        renderTask: function (task) {
+            if (task.isCurrent()) {
+                this.current_tasks.renderTask(this.get(task.cid));
+            } else {
+                var taskview = this.get(task.cid);
+                var day_iso = taskview.model.get('end').split('T')[0] + 'T00:00:00Z';
+                this.finished_tasks.renderTask(
+                    taskview,
+                    this.getDayView(this.getDay(day_iso).cid));
+                taskview.delegateEvents();
+            }
         },
 
         addTask: function () {
@@ -238,9 +299,10 @@
                 desc = arr[0],
                 cat = arr[1] || '',
                 start_date = klokwerk.roundDate(),
-                start_iso = klokwerk.toISOString(start_date);
+                start_iso = klokwerk.toISOString(start_date),
+                task;
 
-            this.model.create({
+            task = this.model.create({
                 'description': desc,
                 'start': start_iso,
                 'start_day': start_iso.split('T')[0]+'T00:00:00Z',
@@ -318,6 +380,31 @@
         editTask: function (ev) {
             ev.preventDefault();
             alert('editTask');
+        }
+    });
+
+    klokwerk.Day = Backbone.Model.extend({
+        initialize: function (attributes, options) {
+            this.set(attributes);
+        }
+    });
+
+    klokwerk.DayView = Backbone.View.extend({
+        tagName: 'span',
+        className: 'day-section',
+
+        render: function () {
+            // TODO: Render the task as well.
+            this.$el.attr("data-day", this.model.get('day_iso'));
+            this.$el.html($(klokwerk.templates.day(this.model.attributes)));
+            return this;
+        }
+    });
+
+    klokwerk.Days = Backbone.Collection.extend({
+        model: klokwerk.Day,
+        get: function (day_iso) {
+            return this.where({day_iso: day_iso});
         }
     });
 
