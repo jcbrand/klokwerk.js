@@ -303,6 +303,7 @@
                 task;
 
             task = this.model.create({
+                'id': start_iso,
                 'description': desc,
                 'start': start_iso,
                 'start_day': start_iso.split('T')[0]+'T00:00:00Z',
