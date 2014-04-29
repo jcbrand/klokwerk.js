@@ -263,7 +263,8 @@
             var view = new klokwerk.DayView({
                 model:  new klokwerk.Day({
                     'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
-                    'day_iso': day_iso
+                    'day_iso': day_iso,
+                    'id': day_iso
                 })
             });
             this.setDayView(view.model.cid, view);
@@ -272,8 +273,9 @@
 
         getDay: function (day_iso) {
             var day = this.days.get(day_iso);
-            if (!day.length) {
+            if (!day) {
                 day = this.createDay(day_iso);
+                this.days.add(day);
             }
             return day;
         },
@@ -395,18 +397,16 @@
         className: 'day-section',
 
         render: function () {
-            // TODO: Render the task as well.
-            this.$el.attr("data-day", this.model.get('day_iso'));
-            this.$el.html($(klokwerk.templates.day(this.model.attributes)));
+            if (!this.$el.children().length) {
+                this.$el.attr("data-day", this.model.get('day_iso'));
+                this.$el.html($(klokwerk.templates.day(this.model.attributes)));
+            }
             return this;
         }
     });
 
     klokwerk.Days = Backbone.Collection.extend({
-        model: klokwerk.Day,
-        get: function (day_iso) {
-            return this.where({day_iso: day_iso});
-        }
+        model: klokwerk.Day
     });
 
     klokwerk.initialize = function () {
