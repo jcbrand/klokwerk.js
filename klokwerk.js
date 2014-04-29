@@ -196,6 +196,8 @@
         el: "div#finished-tasks-section",
 
         initialize: function () {
+            this.days = new klokwerk.Days();
+            this.dayviews = this.getDayViews();
             this.render();
         },
 
@@ -206,24 +208,63 @@
             }
         },
 
+        getDayViews: function () {
+            var _days = {};
+            return {
+                get: function (id) { return _days[id]; },
+                set: function (id, view) { _days[id] = view; },
+                getAll: function () { return _days; }
+            };
+        },
+
+        renderDay: function (day_view) {
+            // TODO: There must be a better way of finding the position of the
+            // day
+            var day_iso = day_view.model.get('day_iso');
+            var all_isos = $('span.day-section').map(function() {return $(this).attr('data-day');}).get();
+            all_isos.push(day_iso);
+            var index = all_isos.sort().reverse().indexOf(day_iso);
+            if (index === 0) {
+                this.$el.find('legend').after(day_view.render().$el);
+            } else {
+                this.days.get(all_isos[index-1]).$el.after(day_view.render().$el);
+            }
+        },
+
+        createDay: function (day_iso) {
+            var view = new klokwerk.DayView({
+                model:  new klokwerk.Day({
+                    'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
+                    'day_iso': day_iso,
+                    'id': day_iso
+                })
+            });
+            this.days.add(view.model);
+            this.dayviews.set(view.model.cid, view);
+            this.renderDay(view);
+            return view.model;
+        },
+
+        getDay: function (day_iso) {
+            var day = this.days.get(day_iso);
+            if (!day) {
+                day = this.createDay(day_iso);
+            }
+            return day;
+        },
+
         show: function () {
             if (!this.$el.is(':visible')) {
                 this.$el.slideDown();
             }
         },
 
-        renderTask: function (taskview, dayview) {
-            var all_isos = $('span.day-section').map(function() {return $(this).attr('data-day');}).get();
-            var day_iso = dayview.model.get('day_iso');
-            all_isos.push(day_iso);
-            var index = all_isos.sort().reverse().indexOf(day_iso);
-            if (index === 0) {
-                this.$el.find('legend').after(dayview.render().$el);
-            } else {
-                days.get(all_isos[index-1]).$el.after(dayview.render().$el);
-            }
-            taskview.render().$el.appendTo(this.$el.find('ul.tasklist'));
+        renderTask: function (task_view) {
+            var day_iso = task_view.model.get('end').split('T')[0] + 'T00:00:00Z';
+            var day_view = this.dayviews.get(this.getDay(day_iso).cid);
+            task_view.render().$el.appendTo(day_view.$el.find('ul.tasklist'));
             this.show();
+            task_view.delegateEvents();
         }
 
     });
@@ -243,12 +284,6 @@
             this.set = function (id, view) { views[id] = view; };
             this.getAll = function () { return views; };
 
-            var days = {};
-            this.getDayView = function (id) { return days[id]; };
-            this.setDayView = function (id, view) { days[id] = view; };
-            this.getAllDayViews = function () { return days; };
-
-            this.days = new klokwerk.Days();
             this.model.on('add', function (task) {
                 this.set(task.cid, new klokwerk.TaskView({'model': task}));
                 this.renderTask(task);
@@ -259,37 +294,11 @@
             this.model.fetch({add:true});
         },
 
-        createDay: function (day_iso) {
-            var view = new klokwerk.DayView({
-                model:  new klokwerk.Day({
-                    'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
-                    'day_iso': day_iso,
-                    'id': day_iso
-                })
-            });
-            this.setDayView(view.model.cid, view);
-            return view.model;
-        },
-
-        getDay: function (day_iso) {
-            var day = this.days.get(day_iso);
-            if (!day) {
-                day = this.createDay(day_iso);
-                this.days.add(day);
-            }
-            return day;
-        },
-
         renderTask: function (task) {
             if (task.isCurrent()) {
                 this.current_tasks.renderTask(this.get(task.cid));
             } else {
-                var taskview = this.get(task.cid);
-                var day_iso = taskview.model.get('end').split('T')[0] + 'T00:00:00Z';
-                this.finished_tasks.renderTask(
-                    taskview,
-                    this.getDayView(this.getDay(day_iso).cid));
-                taskview.delegateEvents();
+                this.finished_tasks.renderTask(this.get(task.cid));
             }
         },
 
