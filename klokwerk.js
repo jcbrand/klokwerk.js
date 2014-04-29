@@ -218,16 +218,18 @@
         },
 
         renderDay: function (day_view) {
-            // TODO: There must be a better way of finding the position of the
-            // day
-            var day_iso = day_view.model.get('day_iso');
+            var newer_day, day_iso = day_view.model.get('day_iso');
+            // FIXME: there must be a better way of getting all days currently
+            // shown.
             var all_isos = $('span.day-section').map(function() {return $(this).attr('data-day');}).get();
             all_isos.push(day_iso);
             var index = all_isos.sort().reverse().indexOf(day_iso);
             if (index === 0) {
+                // There is no newer day
                 this.$el.find('legend').after(day_view.render().$el);
             } else {
-                this.days.get(all_isos[index-1]).$el.after(day_view.render().$el);
+                newer_day = this.dayviews.get(this.days.get(all_isos[index-1]).cid);
+                newer_day.$el.after(day_view.render().$el);
             }
         },
 
