@@ -24,7 +24,8 @@ clean::
 jshint: stamp-npm
 	$(JSHINT) --config jshintrc $(SOURCES)
 
-check:: jshint
+check:
+	jshint
 	$(PHANTOMJS) node_modules/phantom-jasmine/lib/run_jasmine_test.coffee tests.html
 
 .PHONY: clean check jshint

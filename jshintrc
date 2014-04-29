@@ -10,14 +10,23 @@
     "unused": true,
     "white": false,
     "predef": [
-        "Modernizr",
+        "$",
         "Backbone",
-        "console",
-        "jQuery",
+        "Modernizr",
         "_",
+        "afterEach",
+        "config",
+        "beforeEach",
+        "console",
         "define",
+        "describe",
+        "expect",
+        "it",
+        "jQuery",
         "module",
         "require",
+        "runs",
+        "waits",
         "requirejs"
     ]
 }

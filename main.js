@@ -8,7 +8,7 @@ config = {
         "bootstrap-popover": "lib/bootstrap/js/bootstrap-popover",
         "bootstrap-tooltip": "lib/bootstrap/js/bootstrap-tooltip",
         "jquery": "components/jquery/jquery",
-        "jquery.placeholder": "components/jquery.placeholder/jquery.placeholder", 
+        "jquery.placeholder": "components/jquery.placeholder/jquery.placeholder",
         "jquery.validate": "components/jquery-validation/dist/jquery.validate",
         "locales": "locale/locales",
         "modernizr": "components/modernizr/modernizr",

@@ -93,36 +93,6 @@
             "click a.remove-task": "removeTask"
         },
 
-        task_template: _.template(
-            '<div class="task-times">'+
-                '<time datetime="{{start_iso}}">{{start_time}}</time> - '+
-                '{[ if (end) { ]} <time datetime="{{end_iso}}">{{end_time}}</time> {[ } ]}'+
-            '</div>'+
-            '<div class="task-details">'+
-                '{[ if (end) { ]}' +
-                    '<a class="task-name" href="#">{{description}}</a>'+
-                '{[ } ]}'+
-                '{[ if (!end) { ]}' +
-                    '<strong class="task-name">{{description}}</strong>'+
-                '{[ } ]}'+
-                '{[ if (category) { ]}' +
-                    '<span class="category">{{category}}</span>'+
-                '{[ } ]}'+
-                '<a href="#" class="edit-task icon-pencil"></a>'+
-                '<a href="#" class="remove-task icon-remove"></a>'+
-            '</div>'+
-            '<div class="task-spent">'+
-                '<time class="spent pull-right">'+
-                    '{[ if (hours) { ]}'+
-                        '<span class="hours">{{hours}}</span>'+
-                    '{[ } ]}'+
-                    '<span class="minutes">{{minutes}}</span>'+
-                '</time>'+
-            '</div>'
-        ),
-
-        label_template: _.template('<span class="clickable label label-info">{{label}}</span>'),
-
         initialize: function () {
             this.model.on('change', function () {
                 this.render();
@@ -157,7 +127,7 @@
             }
             $task_html.addClass(prefix+'-task');
             for (i=0; i<d.labels.length; i++) {
-                $task_html.find('a.edit-task').before(this.label_template({label: d.labels[i]}));
+                $task_html.find('a.edit-task').before(klokwerk.templates.label({label: d.labels[i]}));
             }
             return $task_html;
         },
@@ -205,16 +175,6 @@
             "click a.edit-task": "editTask"
         },
 
-        day_template: _.template(
-            '<span class="day-section" data-day="{{day_iso}}">'+
-                '<p class="row-fluid day-heading">'+
-                    '<span class="span10"><time class="day-heading" datetime="{{day_iso}}">{{day_human}}</time></span>'+
-                    '<span class="span2"><time class="spent pull-right"><span class="hours">12</span><span class="minutes">35</span></time></span>'+
-                '</p>'+
-                '<ul class="unstyled tasklist"></ul>'+
-            '</span>'
-        ),
-
         initialize: function () {
             this.$current_section = $('#current-tasks-section');
             this.taskviews = {};
@@ -242,7 +202,7 @@
                 var $day_section = $('span.day-section[data-day="'+day_iso+'"]');
                 var all_isos, index;
                 if (!$day_section.length) {
-                    $day_section = $(this.day_template({
+                    $day_section = $(klokwerk.templates.day({
                         'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
                         'day_iso': day_iso
                     }));

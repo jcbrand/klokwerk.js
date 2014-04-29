@@ -1,5 +1,5 @@
 (function (root, factory) {
-    define(["utils"], 
+    define(["utils"],
         function (utils) {
             return factory(utils.klokwerk, utils.mock, utils);
         }
@@ -8,8 +8,7 @@
     describe("The Tracker", $.proxy(function () {
         beforeEach(function () {
             if (klokwerk.trackerview) {
-                var i, view; 
-                var keys = _.keys(klokwerk.trackerview.taskviews);
+                var i, keys = _.keys(klokwerk.trackerview.taskviews);
                 for (i=0; i<keys.length; i++) {
                     klokwerk.trackerview.taskviews[keys[i]].remove();
                     delete klokwerk.trackerview.taskviews[keys[i]];
@@ -69,7 +68,7 @@
             it("shows nothing if there aren't any tasks", $.proxy(function () {
                 expect($('#finished-tasks-section').is(':visible')).toEqual(false);
             }, klokwerk));
-        
+
             it('shows finished tasks if they exist', $.proxy(function () {
                 runs(function () {
                     var d, end, i, start;

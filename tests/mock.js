@@ -4,7 +4,7 @@
         function() {
             return factory();
         });
-}(this, function (klokwerk) {
+}(this, function () {
     var mock = {};
     return mock;
 }));
