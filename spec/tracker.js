@@ -7,6 +7,7 @@
 } (this, function (klokwerk, mock, utils) {
     describe("The Tracker", $.proxy(function () {
         beforeEach(function () {
+            window.localStorage.clear();
             if (klokwerk.trackerview) {
                 var i, keys = _.keys(klokwerk.trackerview.taskviews);
                 for (i=0; i<keys.length; i++) {
@@ -25,7 +26,13 @@
 
         describe('The task form', $.proxy(function () {
             it('allows the creation of a new task', $.proxy(function () {
+                var trackerview = klokwerk.trackerview;
+                spyOn(trackerview, 'startTaskFromForm').andCallThrough();
+                trackerview.delegateEvents(); // We need to rebind all events otherwise our spy won't be called
+
                 utils.createTaskFromForm('Writing a book', ['writing', 'book']);
+                expect(trackerview.startTaskFromForm).toHaveBeenCalled();
+
                 var $section = $('#current-tasks-section');
                 expect($section.is(':visible')).toEqual(true);
                 expect($section.find('ul.tasklist').children('li').length).toEqual(1);
@@ -38,19 +45,30 @@
 
         describe('The current task', $.proxy(function () {
             it('is automatically stopped when a new task is created', $.proxy(function () {
+                var trackerview = klokwerk.trackerview;
+                spyOn(trackerview, 'startTaskFromForm').andCallThrough();
+                spyOn(trackerview, 'stopCurrentTask').andCallThrough();
+                spyOn(trackerview, 'addTask').andCallThrough();
+                trackerview.delegateEvents(); // We need to rebind all events otherwise our spy won't be called
+
                 var $section = $('#current-tasks-section');
                 expect($section.is(':visible')).toEqual(false);
                 runs(function () {
                     utils.createTaskFromForm('Proofreading my  book', ['book']);
                 });
-                waits(500);
+                waits(250);
                 runs(function () {
+                    expect(trackerview.startTaskFromForm).toHaveBeenCalled();
                     expect($section.is(':visible')).toEqual(true);
                     expect($section.find('ul.tasklist').children('li').length).toEqual(1);
                     utils.createTaskFromForm('Editing a play', ['editing', 'play']);
                 });
-                waits(500);
+                waits(250);
                 runs(function () {
+                    expect(trackerview.startTaskFromForm).toHaveBeenCalled();
+                    expect(trackerview.stopCurrentTask).toHaveBeenCalled();
+                    expect(trackerview.addTask).toHaveBeenCalled();
+
                     var $finished_section = $('#finished-tasks-section');
                     expect($finished_section.is(':visible')).toEqual(true);
                     var $day_section = $finished_section.find('span.day-section');

@@ -195,6 +195,7 @@
         },
 
         getDay: function (day_iso) {
+            day_iso = moment(day_iso).startOf('day').format();
             var day = this.days.get(day_iso);
             if (!day) {
                 day = this.createDay(day_iso);
@@ -209,14 +210,22 @@
         },
 
         renderTask: function (task_view) {
-            var day_iso = task_view.model.get('end').split('T')[0] + 'T00:00:00Z';
-            var day = this.getDay(day_iso);
-            var duration = day.get('duration');
+            /* TODO:
+             * Find the current view: Day, Month or Year.
+             * Find the current instance of that view (i.e. which day, month or
+             * year). It will be created if it doesn't exist yet.
+             *
+             * Add the task to that instance, in the correct chronological
+             * position.
+             */
+            // XXX: If view is Day:
+            var day = this.getDay(task_view.model.get('end')),
+                duration = day.get('duration'),
+                day_view = this.dayviews.get(day.cid);
             day.set('duration', duration + task_view.model.get('duration'));
-            var day_view = this.dayviews.get(day.cid);
             task_view.render().$el.appendTo(day_view.$el.find('ul.tasklist'));
-            this.show();
             task_view.delegateEvents();
+            this.show();
         }
 
     });
@@ -295,10 +304,7 @@
             ev.preventDefault();
             var $form;
             if (Modernizr.input.required) { // already validated via HTML5
-                this.stopCurrentTask();
-                setTimeout(function () {
-                    this.addTask().clearForm();
-                }.bind(this), 100);
+                this.stopCurrentTask().addTask().clearForm();
             } else {
                 $form = this.$el.find('form.tracker-form');
                 $form.validate({
@@ -358,9 +364,8 @@
         className: 'day-section',
 
         initialize: function () {
-            this.model.on('change', function () {
-                this.render();
-            }, this);
+            this.model.on('add', this.render, this);
+            this.model.on('change', this.render, this);
         },
 
         render: function () {

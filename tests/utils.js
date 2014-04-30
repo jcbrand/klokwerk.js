@@ -22,14 +22,12 @@
     };
 
     utils.createTask = function (desc, start, end) {
-        var start_iso = klokwerk.toISOString(klokwerk.roundDate(start));
-        var end_iso = klokwerk.toISOString(klokwerk.roundDate(end));
         klokwerk.tracker.create({
             'description': desc,
-            'start': start_iso,
-            'start_day': start_iso.split('T')[0]+'T00:00:00Z',
-            'start_month': start.getUTCFullYear()+"-"+start.getUTCMonth()+"-1"+'T00:00:00Z',
-            'end': end_iso,
+            'start': moment(start).format(),
+            'start_day': moment(start).startOf('day').format(),
+            'start_month': moment(start).startOf('month').format(),
+            'end': moment(end).format(),
             'category': '',
             'labels': ''
         });

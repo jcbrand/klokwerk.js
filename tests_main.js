@@ -16,6 +16,7 @@ require([
     "mock",
     "jasmine-html"
     ], function($, klokwerk, mock, jasmine) {
+        $.fx.off = true;
         require([
             "console-runner",
             "spec/tracker"
