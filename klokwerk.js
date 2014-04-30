@@ -22,63 +22,15 @@
         templates: templates
     };
 
-    klokwerk.toISOString = function (date) {
-        var pad;
-        if (typeof date.toISOString !== 'undefined') {
-            return date.toISOString();
-        } else {
-            // IE <= 8 Doesn't have toISOStringMethod
-            pad = function (num) {
-                return (num < 10) ? '0' + num : '' + num;
-            };
-            return date.getUTCFullYear() + '-' +
-                pad(date.getUTCMonth() + 1) + '-' +
-                pad(date.getUTCDate()) + 'T' +
-                pad(date.getUTCHours()) + ':' +
-                pad(date.getUTCMinutes()) + ':' +
-                pad(date.getUTCSeconds()) + '.000Z';
-        }
-    };
-
-    klokwerk.parseISO8601 = function (datestr) {
-        /* Parses string formatted as 2013-02-14T11:27:08.268Z to a Date obj.
-        */
-        var numericKeys = [1, 4, 5, 6, 7, 10, 11],
-            struct = /^\s*(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}\.?\d*)Z\s*$/.exec(datestr),
-            minutesOffset = 0,
-            i, k;
-
-        for (i = 0; (k = numericKeys[i]); ++i) {
-            struct[k] = +struct[k] || 0;
-        }
-        // allow undefined days and months
-        struct[2] = (+struct[2] || 1) - 1;
-        struct[3] = +struct[3] || 1;
-        if (struct[8] !== 'Z' && struct[9] !== undefined) {
-            minutesOffset = struct[10] * 60 + struct[11];
-
-            if (struct[9] === '+') {
-                minutesOffset = 0 - minutesOffset;
-            }
-        }
-        return new Date(Date.UTC(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]));
-    };
-
-    klokwerk.roundDate = function (date) {
-        /* Return date rounded to the nearest minute. */
-        var coeff = 1000*60;
-        var millis = Math.round((date || new Date()).getTime()/(coeff))*coeff;
-        return new Date(millis);
-    };
-
     klokwerk.Task = Backbone.Model.extend({
         stop: function () {
-            var end_date = klokwerk.roundDate();
-            var end_iso = klokwerk.toISOString(end_date);
+            var end_date = moment();
+            var end_iso = end_date.format();
             this.set({
                 'end': end_iso,
-                'end_day': end_iso.split('T')[0]+'T00:00:00Z',
-                'end_month': end_date.getUTCFullYear()+"-"+end_date.getUTCMonth()+"-1"+'T00:00:00Z'
+                'end_day': end_date.startOf('day').format(),
+                'end_month': end_date.startOf('month').format(),
+                'duration': 0
             });
             this.save();
         },
@@ -95,38 +47,33 @@
             "click a.remove-task": "removeTask"
         },
 
-        initialize: function () {
-            this.model.on('change', function () {
-                this.render();
-            }, this);
-        },
-
         render: function () {
             var i, prefix,
                 d = this.model.toJSON(),
-                start = klokwerk.parseISO8601(this.model.get('start')),
+                start = moment(this.model.get('start')),
                 end = this.model.get('end'),
-                minutes = start.getMinutes().toString();
-            d.start_time = start.getHours()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
-            d.start_iso = klokwerk.toISOString(start);
+                minutes = start.minute().toString();
+            d.start_time = start.hour()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
+            d.start_iso = start.format();
             d.end = end;
             if (end !== undefined) {
-                end = klokwerk.parseISO8601(end);
+                end = moment(end);
                 prefix = 'finished';
             } else {
-                end = klokwerk.roundDate();
+                end = moment();
                 prefix = 'current';
             }
-            minutes = end.getMinutes().toString();
-            d.end_time = end.getHours()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
-            d.end_iso = klokwerk.toISOString(end);
+            minutes = end.minute().toString();
+            d.end_time = end.hour()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
+            d.end_iso = moment(end).format();
             d.minutes = (end-start)/(1000*60);
             d.hours = Math.floor(d.minutes/60);
             d.minutes = Math.round(d.minutes-(d.hours*60));
+            this.model.set('duration', d.hours*60*60 + d.minutes*60);
             this.$el.html(klokwerk.templates.task(d));
             if (prefix === 'finished') {
                 this.$el.removeClass('current-task');
-            } else { 
+            } else {
                 this.$el.addClass('current-task');
             }
             this.$el.addClass(prefix+'-task');
@@ -178,8 +125,7 @@
         },
 
         render: function () {
-            // Hide the current tasks section if there aren't any tasks there
-            // anymore.
+            this.$el.hide();
             this.$el.html(klokwerk.templates.current_tasks());
         },
 
@@ -226,19 +172,20 @@
             var index = all_isos.sort().reverse().indexOf(day_iso);
             if (index === 0) {
                 // There is no newer day
-                this.$el.find('legend').after(day_view.render().$el);
+                this.$el.find('legend').after(day_view.$el);
             } else {
                 newer_day = this.dayviews.get(this.days.get(all_isos[index-1]).cid);
-                newer_day.$el.after(day_view.render().$el);
+                newer_day.$el.after(day_view.$el);
             }
         },
 
         createDay: function (day_iso) {
             var view = new klokwerk.DayView({
                 model:  new klokwerk.Day({
-                    'day_human': klokwerk.parseISO8601(day_iso).toDateString(),
+                    'day_human': moment(day_iso).format("YYYY-MM-DD"),
                     'day_iso': day_iso,
-                    'id': day_iso
+                    'id': day_iso,
+                    'duration': 0
                 })
             });
             this.days.add(view.model);
@@ -263,7 +210,10 @@
 
         renderTask: function (task_view) {
             var day_iso = task_view.model.get('end').split('T')[0] + 'T00:00:00Z';
-            var day_view = this.dayviews.get(this.getDay(day_iso).cid);
+            var day = this.getDay(day_iso);
+            var duration = day.get('duration');
+            day.set('duration', duration + task_view.model.get('duration'));
+            var day_view = this.dayviews.get(day.cid);
             task_view.render().$el.appendTo(day_view.$el.find('ul.tasklist'));
             this.show();
             task_view.delegateEvents();
@@ -300,6 +250,7 @@
             if (task.isCurrent()) {
                 this.current_tasks.renderTask(this.get(task.cid));
             } else {
+                this.current_tasks.render();
                 this.finished_tasks.renderTask(this.get(task.cid));
             }
         },
@@ -311,21 +262,17 @@
                 arr = $taskname.attr('value').split('@'),
                 desc = arr[0],
                 cat = arr[1] || '',
-                start_date = klokwerk.roundDate(),
-                start_iso = klokwerk.toISOString(start_date),
-                task;
-
-            task = this.model.create({
-                'id': start_iso,
+                m = moment();
+            this.model.create({
+                'id': m.millisecond(),
                 'description': desc,
-                'start': start_iso,
-                'start_day': start_iso.split('T')[0]+'T00:00:00Z',
-                'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
+                'start': m.format(),
+                'start_day': m.clone().startOf('day').format(),
+                'start_month': m.clone().startOf('month').format(),
                 'end': undefined,
                 'category': cat,
                 'labels': ($labels.val() || '').split(',')
                 });
-            $taskname.attr('value', '');
             return this;
         },
 
@@ -338,7 +285,7 @@
 
         clearForm: function () {
             var $form = this.$el.find('form.tracker-form');
-            $form.find('input#task-name').val();
+            $form.find('input#task-name').attr('value', '').val();
             $form.find('input#organisation').val();
             $("#labels").select2('val', '');
             return this;
@@ -348,7 +295,10 @@
             ev.preventDefault();
             var $form;
             if (Modernizr.input.required) { // already validated via HTML5
-                this.stopCurrentTask().addTask().clearForm();
+                this.stopCurrentTask();
+                setTimeout(function () {
+                    this.addTask().clearForm();
+                }.bind(this), 100);
             } else {
                 $form = this.$el.find('form.tracker-form');
                 $form.validate({
@@ -377,7 +327,7 @@
             }
             this.model.create({
                 'description': desc,
-                'start': klokwerk.toISOString(klokwerk.roundDate()),
+                'start': moment().format(),
                 'start_day': start_iso.split('T')[0]+'T00:00:00Z',
                 'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
                 'end': undefined,
@@ -407,11 +357,26 @@
         tagName: 'span',
         className: 'day-section',
 
+        initialize: function () {
+            this.model.on('change', function () {
+                this.render();
+            }, this);
+        },
+
         render: function () {
             if (!this.$el.children().length) {
                 this.$el.attr("data-day", this.model.get('day_iso'));
-                this.$el.html($(klokwerk.templates.day(this.model.attributes)));
             }
+            var duration = moment.duration(this.model.get('duration'), 'seconds');
+            this.$el.html(
+                $(klokwerk.templates.day({
+                    day_iso: this.model.get('day_iso'),
+                    day_human: this.model.get('day_human'),
+                    hours: duration.hours(),
+                    minutes: duration.minutes()
+                })
+            ));
+            $(klokwerk.templates.tasklist()).appendTo(this.$el);
             return this;
         }
     });
