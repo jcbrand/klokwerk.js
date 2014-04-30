@@ -21,6 +21,13 @@
         return this;
     };
 
+    utils.clearTracker = function () {
+        if (klokwerk.trackerview) {
+            klokwerk.trackerview.undelegateEvents();
+        }
+        utils.removeCurrentTasks().removeFinishedTasks();
+    };
+
     utils.createTask = function (desc, start, end) {
         klokwerk.tracker.create({
             'description': desc,

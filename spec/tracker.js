@@ -6,33 +6,22 @@
     );
 } (this, function (klokwerk, mock, utils) {
     describe("The Tracker", $.proxy(function () {
-        beforeEach(function () {
-            window.localStorage.clear();
-            if (klokwerk.trackerview) {
-                var i, keys = _.keys(klokwerk.trackerview.taskviews);
-                for (i=0; i<keys.length; i++) {
-                    klokwerk.trackerview.taskviews[keys[i]].remove();
-                    delete klokwerk.trackerview.taskviews[keys[i]];
-                }
-                klokwerk.trackerview.undelegateEvents();
-            }
-            utils.removeCurrentTasks().removeFinishedTasks();
-            klokwerk.initialize();
-        });
-
-        afterEach(function () {
-            window.localStorage.clear();
-        });
-
         describe('The task form', $.proxy(function () {
+            beforeEach(function () {
+                window.localStorage.clear();
+                utils.clearTracker();
+                klokwerk.initialize();
+            });
+            afterEach(function () {
+                window.localStorage.clear();
+            });
+
             it('allows the creation of a new task', $.proxy(function () {
                 var trackerview = klokwerk.trackerview;
                 spyOn(trackerview, 'startTaskFromForm').andCallThrough();
                 trackerview.delegateEvents(); // We need to rebind all events otherwise our spy won't be called
-
                 utils.createTaskFromForm('Writing a book', ['writing', 'book']);
                 expect(trackerview.startTaskFromForm).toHaveBeenCalled();
-
                 var $section = $('#current-tasks-section');
                 expect($section.is(':visible')).toEqual(true);
                 expect($section.find('ul.tasklist').children('li').length).toEqual(1);
@@ -44,6 +33,22 @@
         }));
 
         describe('The current task', $.proxy(function () {
+            beforeEach(function () {
+                window.localStorage.clear();
+                utils.clearTracker();
+                klokwerk.initialize();
+            });
+            afterEach(function () {
+                window.localStorage.clear();
+            });
+
+            it('is shown under a special "Current Task" section', $.proxy(function () {
+                var $section = $('#current-tasks-section');
+                expect($section.is(':visible')).toEqual(false);
+                utils.createTaskFromForm('Writing Jasmine Tests', []);
+                expect($section.is(':visible')).toEqual(true);
+            }), klokwerk);
+
             it('is automatically stopped when a new task is created', $.proxy(function () {
                 var trackerview = klokwerk.trackerview;
                 spyOn(trackerview, 'startTaskFromForm').andCallThrough();
@@ -79,10 +84,19 @@
                     var $tags = $form.find('ul.select2-choices li.select2-search-choice');
                     expect($tags.length).toEqual(0);
                 });
-            }));
+            }), klokwerk);
         }));
 
         describe('The finished tasks section', $.proxy(function () {
+            beforeEach(function () {
+                window.localStorage.clear();
+                utils.clearTracker();
+                klokwerk.initialize();
+            });
+            afterEach(function () {
+                window.localStorage.clear();
+            });
+
             it("shows nothing if there aren't any tasks", $.proxy(function () {
                 expect($('#finished-tasks-section').is(':visible')).toEqual(false);
             }, klokwerk));
@@ -97,7 +111,7 @@
                         utils.createTask('Task '+i, start, end);
                     }
                 });
-                waits(500);
+                waits(250);
                 runs(function () {
                     var i;
                     var $finished_section = $('#finished-tasks-section');
