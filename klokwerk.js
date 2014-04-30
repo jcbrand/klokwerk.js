@@ -51,7 +51,7 @@
             var i, prefix,
                 d = this.model.toJSON(),
                 start = moment(this.model.get('start')),
-                end = this.model.get('end'),
+                end = moment(this.model.get('end')),
                 minutes = start.minute().toString();
             d.start_time = start.hour()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
             d.start_iso = start.format();
