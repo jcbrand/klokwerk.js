@@ -22,6 +22,7 @@
     };
 
     utils.clearTracker = function () {
+        window.localStorage.clear();
         if (klokwerk.trackerview) {
             klokwerk.trackerview.undelegateEvents();
         }

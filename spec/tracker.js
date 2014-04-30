@@ -8,12 +8,11 @@
     describe("The Tracker", $.proxy(function () {
         describe('The task form', $.proxy(function () {
             beforeEach(function () {
-                window.localStorage.clear();
                 utils.clearTracker();
                 klokwerk.initialize();
             });
             afterEach(function () {
-                window.localStorage.clear();
+                utils.clearTracker();
             });
 
             it('allows the creation of a new task', $.proxy(function () {
@@ -34,12 +33,11 @@
 
         describe('The current task', $.proxy(function () {
             beforeEach(function () {
-                window.localStorage.clear();
                 utils.clearTracker();
                 klokwerk.initialize();
             });
             afterEach(function () {
-                window.localStorage.clear();
+                utils.clearTracker();
             });
 
             it('is shown under a special "Current Task" section', $.proxy(function () {
@@ -87,14 +85,13 @@
             }), klokwerk);
         }));
 
-        describe('The finished tasks section', $.proxy(function () {
+        describe('The finished tasks section', function () {
             beforeEach(function () {
-                window.localStorage.clear();
                 utils.clearTracker();
                 klokwerk.initialize();
             });
             afterEach(function () {
-                window.localStorage.clear();
+                utils.clearTracker();
             });
 
             it("shows nothing if there aren't any tasks", $.proxy(function () {
@@ -132,7 +129,61 @@
                     });
                 });
             }, klokwerk));
-        }));
+
+            describe('The Day View', $.proxy(function () {
+                beforeEach(function () {
+                    utils.clearTracker();
+                    klokwerk.initialize();
+                });
+                afterEach(function () {
+                    utils.clearTracker();
+                });
+
+                it('shows the date that day', $.proxy(function () {
+                    var $finished_section = $('#finished-tasks-section');
+                    expect($finished_section.is(':visible')).toEqual(false);
+                    expect($finished_section.find('span.day-section').length).toEqual(0);
+                    // Create a task one day ago.
+                    var end = moment().subtract('days', 1);
+                    var start = end.clone().subtract('hours', 1).subtract('minutes', 11);
+                    // Check that there is now a "Finished Tasks" section, with
+                    // a day.
+                    utils.createTask('Task', start.format(), end.format());
+                    expect($finished_section.is(':visible')).toEqual(true);
+                    var day = $finished_section.find('span.day-section');
+                    var day_heading = day.find('time.day-heading');
+                    expect(day.length).toEqual(1);
+                    expect(day.data('day')).toEqual(moment(start).startOf('day').format());
+                    expect(day_heading.attr('datetime')).toEqual(moment(start).startOf('day').format());
+                    expect(day_heading.text()).toEqual(moment(start).startOf('day').format("dddd, MMM Do YYYY"));
+                }), klokwerk);
+
+                it('shows the amount of time spent on tasks for that day', $.proxy(function () {
+                    var $finished_section = $('#finished-tasks-section');
+                    // Create a task one day ago.
+                    var end = moment().subtract('days', 1);
+                    var start = end.clone().subtract('hours', 1).subtract('minutes', 11);
+                    // Check that there is now a "Finished Tasks" section, with
+                    // a day.
+                    utils.createTask('Task', start.format(), end.format());
+                    var day = $finished_section.find('span.day-section');
+                    var day_heading = day.find('time.day-heading');
+
+                    var hours_spent = day.find('.day-heading time.spent .hours').text();
+                    var minutes_spent = day.find('.day-heading time.spent .minutes').text();
+                    expect(hours_spent).toEqual('1');
+                    expect(minutes_spent).toEqual('11');
+                }), klokwerk);
+            }, klokwerk));
+
+            describe('The Month View', $.proxy(function () {
+                // TODO
+            }, klokwerk));
+
+            describe('The Year View', $.proxy(function () {
+                // TODO
+            }, klokwerk));
+        });
 
     }, klokwerk));
 }));

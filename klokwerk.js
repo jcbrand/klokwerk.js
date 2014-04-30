@@ -23,6 +23,26 @@
     };
 
     klokwerk.Task = Backbone.Model.extend({
+        initialize: function (attributes) {
+            this.on('change:end', function () {
+                this.set('duration', this.getDuration());
+            }, this);
+            if (attributes.end) {
+                this.set('duration', this.getDuration());
+            }
+        },
+
+        getDuration: function (end) {
+            /* "end" must be a moment instance.
+             *
+             * Returns milliseconds since epoch
+             */
+            if (!end) {
+                end = moment(this.get('end'));
+            }
+            return moment.duration(end - moment(this.get('start'))).asMilliseconds();
+        },
+
         stop: function () {
             var end_date = moment();
             var end_iso = end_date.format();
@@ -48,7 +68,7 @@
         },
 
         render: function () {
-            var i, prefix,
+            var i, prefix, duration,
                 d = this.model.toJSON(),
                 start = moment(this.model.get('start')),
                 end = moment(this.model.get('end')),
@@ -63,13 +83,13 @@
                 end = moment();
                 prefix = 'current';
             }
+            duration = moment.duration(this.model.getDuration(end));
+            d.minutes = duration.minutes();
+            d.hours = duration.hours();
+
             minutes = end.minute().toString();
             d.end_time = end.hour()+':'+(minutes.length === 1 ? '0'+minutes: minutes);
             d.end_iso = moment(end).format();
-            d.minutes = (end-start)/(1000*60);
-            d.hours = Math.floor(d.minutes/60);
-            d.minutes = Math.round(d.minutes-(d.hours*60));
-            this.model.set('duration', d.hours*60*60 + d.minutes*60);
             this.$el.html(klokwerk.templates.task(d));
             if (prefix === 'finished') {
                 this.$el.removeClass('current-task');
@@ -110,6 +130,8 @@
     });
 
     klokwerk.Tracker = Backbone.Collection.extend({
+        /* A collection of all tasks in the time tracker.
+         */
         model: klokwerk.Task,
 
         current: function () {
@@ -129,7 +151,7 @@
             this.$el.html(klokwerk.templates.current_tasks());
         },
 
-        renderTask: function (view) {
+        renderCurrentTask: function (view) {
             this.$el.find('.current-task').empty().append(view.render().$el);
             // Show the current tasks section if it's hidden.
             if (!this.$el.is(':visible')) {
@@ -182,7 +204,7 @@
         createDay: function (day_iso) {
             var view = new klokwerk.DayView({
                 model:  new klokwerk.Day({
-                    'day_human': moment(day_iso).format("YYYY-MM-DD"),
+                    'day_human': moment(day_iso).format("dddd, MMM Do YYYY"),
                     'day_iso': day_iso,
                     'id': day_iso,
                     'duration': 0
@@ -209,7 +231,7 @@
             }
         },
 
-        renderTask: function (task_view) {
+        renderFinishedTask: function (task_view) {
             /* TODO:
              * Find the current view: Day, Month or Year.
              * Find the current instance of that view (i.e. which day, month or
@@ -222,7 +244,9 @@
             var day = this.getDay(task_view.model.get('end')),
                 duration = day.get('duration'),
                 day_view = this.dayviews.get(day.cid);
-            day.set('duration', duration + task_view.model.get('duration'));
+            // This is necessary due to lazy adding of Days.
+            // Day might not have existed until just now (see getDay).
+            day.add(task_view.model);
             task_view.render().$el.appendTo(day_view.$el.find('ul.tasklist'));
             task_view.delegateEvents();
             this.show();
@@ -257,10 +281,10 @@
 
         renderTask: function (task) {
             if (task.isCurrent()) {
-                this.current_tasks.renderTask(this.get(task.cid));
+                this.current_tasks.renderCurrentTask(this.get(task.cid));
             } else {
                 this.current_tasks.render();
-                this.finished_tasks.renderTask(this.get(task.cid));
+                this.finished_tasks.renderFinishedTask(this.get(task.cid));
             }
         },
 
@@ -353,9 +377,62 @@
         }
     });
 
+    klokwerk.DayTasks = Backbone.Collection.extend({
+        /* A collection of tasks that belong to a specific day.
+         *
+         * The Task models belong primarily to the klokwerk.Tracker collection, and
+         * secondarily here.
+         *
+         * Primarily meaning that the model's collection property points to
+         * klokwerk.Tracker and not klokwerk.DayTasks.
+         *
+         * The "collection" property is used so "that a model knows where to
+         * send it's .save() and .fetch() calls".
+         *
+         * See: https://github.com/jashkenas/backbone/issues/604
+         */
+        model: klokwerk.Task
+    });
+
     klokwerk.Day = Backbone.Model.extend({
         initialize: function (attributes, options) {
             this.set(attributes);
+            this.tasks = new klokwerk.DayTasks();
+            klokwerk.tracker.on('change:end', function (task) {
+                if (this.taskBelongsHere(task)) {
+                    this.tasks.add(task);
+                } else if (this.tasks.get(task)) {
+                    // Task's end date must have change and now doesn't belong
+                    // in this day anymore.
+                    this.tasks.remove(task);
+                }
+            }, this);
+            this.tasks.on('add', this.setDuration, this);
+            this.tasks.on('change:duration', this.setDuration, this);
+        },
+
+        add: function (task) {
+            if (this.taskBelongsHere(task) && !this.tasks.get(task)) {
+                this.tasks.add(task);
+            }
+        },
+
+        setDuration: function () {
+            this.set('duration', this.getDuration());
+        },
+
+        getDuration: function () {
+            /* Returns milliseconds since epoch.
+             */
+            var msecs = 0;
+            this.tasks.each(function (task) {
+                msecs += moment.duration(task.get('duration')).asMilliseconds();
+            });
+            return msecs;
+        },
+
+        taskBelongsHere: function (task) {
+            return moment(task.get('start')).isSame(this.get('day_iso'), 'day');
         }
     });
 
@@ -368,11 +445,23 @@
             this.model.on('change', this.render, this);
         },
 
+        getTaskViews: function () {
+            /* Provides an object with methods for getting and setting the
+             * views for all tasks that fall under this day.
+             */
+            var _tasks = {};
+            return {
+                get: function (id) { return _tasks[id]; },
+                set: function (id, view) { _tasks[id] = view; },
+                getAll: function () { return _tasks; }
+            };
+        },
+
         render: function () {
             if (!this.$el.children().length) {
                 this.$el.attr("data-day", this.model.get('day_iso'));
             }
-            var duration = moment.duration(this.model.get('duration'), 'seconds');
+            var duration = moment.duration(this.model.get('duration'));
             this.$el.html(
                 $(klokwerk.templates.day({
                     day_iso: this.model.get('day_iso'),
