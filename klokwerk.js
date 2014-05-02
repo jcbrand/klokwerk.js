@@ -439,12 +439,44 @@
     });
 
     klokwerk.DayView = Backbone.View.extend({
-        tagName: 'span',
-        className: 'day-section',
-
         initialize: function () {
             this.model.on('add', this.render, this);
-            this.model.on('change', this.render, this);
+            this.model.on('change:duration', this.render, this);
+        },
+
+        render: function (init) {
+            /* Updates the duration of time spent on tasks in this day
+             */
+            var duration = moment.duration(this.model.get('duration'));
+            this.$('.day-heading').html(
+                $(klokwerk.templates.day_heading({
+                    day_iso: this.model.get('day_iso'),
+                    day_human: this.model.get('day_human'),
+                    hours: duration.hours(),
+                    minutes: duration.minutes()
+                })
+            ));
+            return this;
+        },
+
+        _ensureElement: function() {
+            /* Override method from backbone.js
+             *
+             * Make sure that the el and $el attributes point to a DOM snippet
+             * from src/templates/day.html
+             */
+            if (!this.el) {
+                var duration = moment.duration(this.model.get('duration'));
+                var $el = $(klokwerk.templates.day({
+                    day_iso: this.model.get('day_iso'),
+                    day_human: this.model.get('day_human'),
+                    hours: duration.hours(),
+                    minutes: duration.minutes()
+                }));
+                this.setElement($el, false);
+            } else {
+                this.setElement(_.result(this, 'el'), false);
+            }
         },
 
         getTaskViews: function () {
@@ -457,23 +489,6 @@
                 set: function (id, view) { _tasks[id] = view; },
                 getAll: function () { return _tasks; }
             };
-        },
-
-        render: function () {
-            if (!this.$el.children().length) {
-                this.$el.attr("data-day", this.model.get('day_iso'));
-            }
-            var duration = moment.duration(this.model.get('duration'));
-            this.$el.html(
-                $(klokwerk.templates.day({
-                    day_iso: this.model.get('day_iso'),
-                    day_human: this.model.get('day_human'),
-                    hours: duration.hours(),
-                    minutes: duration.minutes()
-                })
-            ));
-            $(klokwerk.templates.tasklist()).appendTo(this.$el);
-            return this;
         }
     });
 

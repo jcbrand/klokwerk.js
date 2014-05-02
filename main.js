@@ -46,7 +46,7 @@ config = {
         "bootstrap-alert":      { deps: ['jquery'] },
         "bootstrap-datepicker": { deps: ['jquery'] },
         "bootstrap-dropdown":   { deps: ['jquery'] },
-        "bootstrap-popover":    { deps: ['jquery'] },
+        "bootstrap-popover":    { deps: ['jquery', 'bootstrap-tooltip'] },
         "bootstrap-tooltip":    { deps: ['jquery'] },
         "jquery.placeholder":   { deps: ['jquery'] },
         "jquery.validate":      { deps: ['jquery'] },

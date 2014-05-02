@@ -94,8 +94,26 @@
                 utils.clearTracker();
             });
 
-            it("shows nothing if there aren't any tasks", $.proxy(function () {
-                expect($('#finished-tasks-section').is(':visible')).toEqual(false);
+            it("gets updated as current tasks are stopped", $.proxy(function () {
+                /* Check that as new tasks are created, the finished tasks
+                 * listing grows with the names of the automatically stopped
+                 * previous tasks.
+                 */
+                var task1 = "Writing unit tests";
+                var task2 = "Editing a play";
+                var $finished_section = $('#finished-tasks-section');
+                expect($finished_section.is(':visible')).toEqual(false);
+                utils.createTaskFromForm(task1, []);
+                expect($finished_section.is(':visible')).toEqual(false);
+                utils.createTaskFromForm(task2, []);
+                expect($finished_section.is(':visible')).toEqual(true);
+
+                var $day_section = $finished_section.find('span.day-section');
+                expect($day_section.find('ul.tasklist').children("li").length).toEqual(1);
+                expect($day_section.find('ul.tasklist').find("a.task-name").first().text()).toEqual(task1);
+                utils.createTaskFromForm("Walking the dog", ["dog", "excercise"]);
+                expect($day_section.find('ul.tasklist').children("li").length).toEqual(2);
+                expect($day_section.find('ul.tasklist').find("a.task-name").last().text()).toEqual(task2);
             }, klokwerk));
 
             it("shows finished tasks if they exist", $.proxy(function () {
