@@ -16,7 +16,7 @@
 }(this, function ($, _, templates) {
     "use strict";
     if (typeof console === "undefined" || typeof console.log === "undefined") {
-        console = { log: function () {}, error: function () {} };
+        console = { log: function () {}, error: function () {} }; // jshint ignore:line
     }
     var klokwerk = {
         templates: templates
@@ -291,10 +291,11 @@
             var $form = this.$el.find('form.tracker-form'),
                 $taskname = $form.find('#task-name'),
                 $labels = $form.find('#labels'),
-                arr = $taskname.attr('value').split('@'),
+                arr = $taskname.val().split('@'),
                 desc = arr[0],
                 cat = arr[1] || '',
                 m = moment();
+            $taskname.val('');
             this.model.create({
                 'id': m.millisecond(),
                 'description': desc,
