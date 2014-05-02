@@ -7,18 +7,18 @@ config = {
         "bootstrap-dropdown": "lib/bootstrap/js/bootstrap-dropdown",
         "bootstrap-popover": "lib/bootstrap/js/bootstrap-popover",
         "bootstrap-tooltip": "lib/bootstrap/js/bootstrap-tooltip",
-        "jquery": "components/jquery/jquery",
+        "jquery": "components/jquery/dist/jquery",
         "jquery.placeholder": "components/jquery.placeholder/jquery.placeholder",
         "jquery.validate": "components/jquery-validation/dist/jquery.validate",
+        "klokwerk-dependencies": "src/deps-full",
+        "klokwerk-templates": "src/templates",
         "locales": "locale/locales",
         "modernizr": "components/modernizr/modernizr",
         "moment": "components/momentjs/moment",
         "select2": "components/select2/select2",
         "text": 'components/requirejs-text/text',
         "tpl": 'components/requirejs-tpl-jcbrand/tpl',
-        "underscore": "components/underscore//underscore",
-        "klokwerk-templates": "src/templates",
-        "klokwerk-dependencies": "src/deps-full"
+        "underscore": "components/underscore//underscore"
     },
 
     tpl: {
@@ -42,7 +42,15 @@ config = {
             //module value.
             exports: 'Backbone'
         },
-        'underscore':   { exports: '_' }
+        'underscore':           { exports: '_' },
+        "bootstrap-alert":      { deps: ['jquery'] },
+        "bootstrap-datepicker": { deps: ['jquery'] },
+        "bootstrap-dropdown":   { deps: ['jquery'] },
+        "bootstrap-popover":    { deps: ['jquery'] },
+        "bootstrap-tooltip":    { deps: ['jquery'] },
+        "jquery.placeholder":   { deps: ['jquery'] },
+        "jquery.validate":      { deps: ['jquery'] },
+        "select2":              { deps: ['jquery'] }
     }
 };
 
