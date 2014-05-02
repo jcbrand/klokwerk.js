@@ -167,8 +167,6 @@
                     // a day.
                     utils.createTask('Task', start.format(), end.format());
                     var day = $finished_section.find('span.day-section');
-                    var day_heading = day.find('time.day-heading');
-
                     var hours_spent = day.find('.day-heading time.spent .hours').text();
                     var minutes_spent = day.find('.day-heading time.spent .minutes').text();
                     expect(hours_spent).toEqual('1');

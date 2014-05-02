@@ -13,20 +13,23 @@
         "$",
         "Backbone",
         "Modernizr",
+        "spyOn",
         "_",
         "afterEach",
-        "config",
         "beforeEach",
+        "config",
         "console",
         "define",
         "describe",
+        "duration",
         "expect",
         "it",
         "jQuery",
         "module",
+        "moment",
         "require",
+        "requirejs",
         "runs",
-        "waits",
-        "requirejs"
+        "waits"
     ]
 }

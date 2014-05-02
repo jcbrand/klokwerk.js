@@ -21,7 +21,7 @@ clean::
 ########################################################################
 ## Tests
 
-jshint: stamp-npm
+jshint: stamp-npm stamp-bower
 	$(JSHINT) --config jshintrc $(SOURCES)
 
 check:

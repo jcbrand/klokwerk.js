@@ -242,7 +242,6 @@
              */
             // XXX: If view is Day:
             var day = this.getDay(task_view.model.get('end')),
-                duration = day.get('duration'),
                 day_view = this.dayviews.get(day.cid);
             // This is necessary due to lazy adding of Days.
             // Day might not have existed until just now (see getDay).
@@ -342,28 +341,30 @@
             }
         },
 
-        startTaskFromLink: function (ev) {
-            ev.preventDefault();
-            this.stopCurrentTask();
-            var i,
-                labels = [],
-                $link = $(ev.target),
-                $parent = $link.parent(),
-                $labels = $parent.find('.label'),
-                cat = $link.parent().find('.category').text(),
-                desc = $link.text();
-            for (i=0; i < $labels.length; i++) {
-                labels.push($labels[i].innerText);
-            }
-            this.model.create({
-                'description': desc,
-                'start': moment().format(),
-                'start_day': start_iso.split('T')[0]+'T00:00:00Z',
-                'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
-                'end': undefined,
-                'category': cat,
-                'labels': labels
-                });
+        startTaskFromLink: function () {
+            /* XXX TODO
+             * ev.preventDefault();
+             * this.stopCurrentTask();
+             * var i,
+             *     labels = [],
+             *     $link = $(ev.target),
+             *     $parent = $link.parent(),
+             *     $labels = $parent.find('.label'),
+             *     cat = $link.parent().find('.category').text(),
+             *     desc = $link.text();
+             * for (i=0; i < $labels.length; i++) {
+             *     labels.push($labels[i].innerText);
+             * }
+             * this.model.create({
+             *     'description': desc,
+             *     'start': moment().format(),
+             *     'start_day': start_iso.split('T')[0]+'T00:00:00Z',
+             *     'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
+             *     'end': undefined,
+             *     'category': cat,
+             *     'labels': labels
+             *     });
+             */
         },
 
         stopTask: function (ev) {
@@ -395,7 +396,7 @@
     });
 
     klokwerk.Day = Backbone.Model.extend({
-        initialize: function (attributes, options) {
+        initialize: function (attributes) {
             this.set(attributes);
             this.tasks = new klokwerk.DayTasks();
             klokwerk.tracker.on('change:end', function (task) {
