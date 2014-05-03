@@ -171,6 +171,7 @@
 
         render: function () {
             this.$el.html(klokwerk.templates.finished_tasks());
+            this.$('.datepicker').datepicker('show');
             if (this.model.length) {
                 this.show();
             }
@@ -498,7 +499,6 @@
 
     klokwerk.initialize = function () {
         $('.help_button').popover();
-        $('.datepicker').datepicker('show');
         $("#labels").select2({
             placeholder: "Labels",
             height: '20px',

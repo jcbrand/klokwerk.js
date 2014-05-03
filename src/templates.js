@@ -1,11 +1,11 @@
 define("klokwerk-templates", [
-    "tpl!src/templates/current_tasks",
-    "tpl!src/templates/day",
-    "tpl!src/templates/day_heading",
-    "tpl!src/templates/finished_tasks",
-    "tpl!src/templates/label",
-    "tpl!src/templates/task",
-    "tpl!src/templates/tasklist"
+    "tpl!current_tasks",
+    "tpl!day",
+    "tpl!day_heading",
+    "tpl!finished_tasks",
+    "tpl!label",
+    "tpl!task",
+    "tpl!tasklist"
 ], function () {
     return {
         current_tasks:  arguments[0],

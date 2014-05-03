@@ -10,15 +10,24 @@ config = {
         "jquery": "components/jquery/dist/jquery",
         "jquery.placeholder": "components/jquery.placeholder/jquery.placeholder",
         "jquery.validate": "components/jquery-validation/dist/jquery.validate",
-        "klokwerk-dependencies": "src/deps-full",
-        "klokwerk-templates": "src/templates",
         "locales": "locale/locales",
         "modernizr": "components/modernizr/modernizr",
         "moment": "components/momentjs/moment",
         "select2": "components/select2/select2",
         "text": 'components/requirejs-text/text',
         "tpl": 'components/requirejs-tpl-jcbrand/tpl',
-        "underscore": "components/underscore//underscore"
+        "underscore": "components/underscore//underscore",
+        // Klokwerk Templates
+        "current_tasks": "src/templates/current_tasks",
+        "day": "src/templates/day",
+        "day_heading": "src/templates/day_heading",
+        "finished_tasks": "src/templates/finished_tasks",
+        "label": "src/templates/label",
+        "task": "src/templates/task",
+        "tasklist": "src/templates/tasklist",
+
+        "klokwerk-dependencies": "src/deps-full",
+        "klokwerk-templates": "src/templates"
     },
 
     tpl: {

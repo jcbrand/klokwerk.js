@@ -47,6 +47,8 @@ a:hover {
 #main, #tracker {
     overflow:auto;
     padding-bottom: 40px; /* this needs to be bigger than footer height*/
+    height: 100%;
+    overflow: hidden;
 }
 
 #header, #footer {
