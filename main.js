@@ -3,7 +3,7 @@ config = {
         "backbone": "components/backbone/backbone",
         "backbone.localStorage": "components/backbone.localStorage/backbone.localStorage",
         "bootstrap-alert": "components/bootstrap/js/bootstrap-alert",
-        "bootstrap-datepicker": "lib/bootstrap-datepicker",
+        "bootstrap-datepicker": "components/bootstrap-datepicker/js/bootstrap-datepicker",
         "bootstrap-dropdown": "components/bootstrap/js/bootstrap-dropdown",
         "bootstrap-popover": "components/bootstrap/js/bootstrap-popover",
         "bootstrap-tooltip": "components/bootstrap/js/bootstrap-tooltip",

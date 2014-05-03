@@ -13,6 +13,7 @@
     "backbone": "1.1.2",
     "backbone.localStorage": "1.1.7",
     "bootstrap": "2.3.2",
+    "bootstrap-datepicker": "1.2.0",
     "jasmine": "https://github.com/jcbrand/jasmine.git#1_3_x",
     "jed": "0.5.4",
     "jquery": "1.11.0",
