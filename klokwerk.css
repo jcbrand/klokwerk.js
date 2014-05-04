@@ -47,8 +47,7 @@ a:hover {
 #main, #tracker {
     overflow:auto;
     padding-bottom: 40px; /* this needs to be bigger than footer height*/
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
 }
 
 #header, #footer {
@@ -108,7 +107,7 @@ textarea::-webkit-input-placeholder,
     height: 20px;
 }
 
-.datepicker th, 
+.datepicker th,
 .datepicker td {
     text-align: center;
     display: inline-block;
@@ -253,9 +252,11 @@ time.day-heading {
 }
 
 time.spent {
-    margin-left: 1em; 
-    margin-right: 1em; 
+    margin-left: 1em;
+    margin-right: 1em;
     color: grey;
+    text-align: right;
+    white-space: nowrap;
 }
 
 p.day-heading .spent {
@@ -278,14 +279,9 @@ p.day-heading {
 .hours::after {
     content: "h ";
 }
-.hours {
-    white-space: nowrap; 
-}
+
 .minutes::after {
     content: "m";
-}
-.minutes {
-    white-space: nowrap; 
 }
 
 .current-task .hours, .current-task .minutes {
@@ -294,7 +290,7 @@ p.day-heading {
 
 .seconds {
     color: #BBB;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 .seconds::before {
     content: " ";
@@ -378,7 +374,7 @@ a.icon-remove {
 }
 
 .login {
-    float:right; 
+    float:right;
     color: white;
     font-weight: bold;
 }
