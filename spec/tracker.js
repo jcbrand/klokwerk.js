@@ -190,6 +190,22 @@
                     expect(hours_spent).toEqual("1");
                     expect(minutes_spent).toEqual("11");
                 }), klokwerk);
+
+                it("shows tasks that started on that day, even if they end on a later day", $.proxy(function () {
+                    var $finished_section = $('#finished-tasks-section');
+                    // Create a task that spans two days
+                    var end = moment();
+                    var start = end.clone().subtract("days", 1);
+                    // Check that there is now a "Finished Tasks" section, with
+                    // a day.
+                    utils.createTask("Task", start.format(), end.format());
+                    var day = $finished_section.find('span.day-section');
+                    var hours_spent = day.find('.day-heading time.spent .hours').text();
+                    var minutes_spent = day.find('.day-heading time.spent .minutes').text();
+                    expect(hours_spent).toEqual("24");
+                    expect(minutes_spent).toEqual("0");
+                    expect(day.find('time.day-heading').attr('datetime')).toEqual(start.startOf('day').format());
+                }), klokwerk);
             }, klokwerk));
 
             describe("The Month View", $.proxy(function () {
