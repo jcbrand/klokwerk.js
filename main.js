@@ -23,6 +23,7 @@ config = {
         "day_heading": "src/templates/day_heading",
         "finished_tasks": "src/templates/finished_tasks",
         "label": "src/templates/label",
+        "querycontrols": "src/templates/querycontrols",
         "task": "src/templates/task",
         "tasklist": "src/templates/tasklist",
 

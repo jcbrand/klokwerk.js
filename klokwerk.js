@@ -136,16 +136,6 @@
         }
     });
 
-    klokwerk.Tracker = Backbone.Collection.extend({
-        /* A collection of all tasks in the time tracker.
-         */
-        model: klokwerk.Task,
-
-        current: function () {
-            return this.where({end: undefined});
-        }
-    });
-
     klokwerk.CurrentTasksView = Backbone.View.extend({
         el: "div#current-tasks-section",
 
@@ -167,6 +157,17 @@
         }
     });
 
+    klokwerk.QueryControls = Backbone.Model;
+
+    klokwerk.QueryControlsView = Backbone.View.extend({
+        tagName: "legend",
+
+        render: function () {
+            this.$el.html(klokwerk.templates.querycontrols());
+            return this;
+        }
+    });
+
     klokwerk.FinishedTasksView = Backbone.View.extend({
         el: "div#finished-tasks-section",
 
@@ -177,7 +178,10 @@
         },
 
         render: function () {
-            this.$el.html(klokwerk.templates.finished_tasks());
+            this.querycontrols = new klokwerk.QueryControlsView({
+                model: new klokwerk.QueryControls()
+            });
+            this.$el.html(this.querycontrols.render().$el);
             this.$('.datepicker').datepicker('show');
             if (this.model.length) {
                 this.show();
@@ -252,6 +256,16 @@
             // Day might not have existed until just now (see getDay).
             this.getDay(task_view.model.get('start')).add(task_view.model);
             this.show();
+        }
+    });
+
+    klokwerk.Tracker = Backbone.Collection.extend({
+        /* A collection of all tasks in the time tracker.
+         */
+        model: klokwerk.Task,
+
+        current: function () {
+            return this.where({end: undefined});
         }
     });
 
@@ -465,7 +479,6 @@
 
         _ensureElement: function() {
             /* Override method from backbone.js
-             *
              * Make sure that the el and $el attributes point to a DOM snippet
              * from src/templates/day.html
              */
@@ -479,7 +492,8 @@
     });
 
     klokwerk.Days = Backbone.Collection.extend({
-        model: klokwerk.Day
+        model: klokwerk.Day,
+        comparator: 'day_iso'
     });
 
     klokwerk.initialize = function () {
