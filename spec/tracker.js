@@ -6,7 +6,7 @@
     );
 } (this, function (klokwerk, mock, utils) {
     describe("The Tracker", $.proxy(function () {
-        describe("The task form", $.proxy(function () {
+        describe("Tasks", $.proxy(function () {
             beforeEach(function () {
                 utils.clearTracker();
                 klokwerk.initialize();
@@ -15,12 +15,12 @@
                 utils.clearTracker();
             });
 
-            it("allows the creation of a new task", $.proxy(function () {
+            it("can be created via the task form", $.proxy(function () {
                 var trackerview = klokwerk.trackerview;
-                spyOn(trackerview, "startTaskFromForm").andCallThrough();
+                spyOn(trackerview, "taskFormSubmitted").andCallThrough();
                 trackerview.delegateEvents(); // We need to rebind all events otherwise our spy won't be called
                 utils.createTaskFromForm("Writing a book", ["writing", "book"]);
-                expect(trackerview.startTaskFromForm).toHaveBeenCalled();
+                expect(trackerview.taskFormSubmitted).toHaveBeenCalled();
                 var $section = $('#current-tasks-section');
                 expect($section.is(':visible')).toEqual(true);
                 expect($section.find('ul.tasklist').children("li").length).toEqual(1);
@@ -28,6 +28,27 @@
                 expect($task.find('span.label').length).toEqual(2);
                 expect($task.find('span.label:first').text()).toEqual("writing");
                 expect($task.find('span.label:last').text()).toEqual("book");
+            }, klokwerk));
+
+            it("can be created by clicking on the name of an existing task", $.proxy(function () {
+                var trackerview = klokwerk.trackerview;
+                spyOn(trackerview, "taskLinkClicked").andCallThrough();
+                spyOn(trackerview, "stopCurrentTask").andCallThrough();
+                spyOn(trackerview, "addTaskFromLink").andCallThrough();
+                trackerview.delegateEvents(); // We need to rebind all events otherwise our spy won't be called
+
+                var end = moment().subtract("days", 1);
+                var start = end.clone().subtract("hours", 1).subtract("minutes", 11);
+                utils.createTask("Task", start.format(), end.format());
+                expect(klokwerk.tracker.models.length).toEqual(1);
+
+                var $finished_section = $('#finished-tasks-section');
+                var $link = $finished_section.find('span.day-section a.task-name');
+                $link.click();
+                expect(trackerview.taskLinkClicked).toHaveBeenCalled();
+                expect(trackerview.stopCurrentTask).toHaveBeenCalled();
+                expect(trackerview.addTaskFromLink).toHaveBeenCalled();
+                expect(klokwerk.tracker.models.length).toEqual(2);
             }, klokwerk));
         }));
 
@@ -49,9 +70,9 @@
 
             it("is automatically stopped when a new task is created", $.proxy(function () {
                 var trackerview = klokwerk.trackerview;
-                spyOn(trackerview, "startTaskFromForm").andCallThrough();
+                spyOn(trackerview, "taskFormSubmitted").andCallThrough();
                 spyOn(trackerview, "stopCurrentTask").andCallThrough();
-                spyOn(trackerview, "addTask").andCallThrough();
+                spyOn(trackerview, "addTaskFromForm").andCallThrough();
                 trackerview.delegateEvents(); // We need to rebind all events otherwise our spy won't be called
 
                 var $section = $('#current-tasks-section');
@@ -61,16 +82,16 @@
                 });
                 waits(250);
                 runs(function () {
-                    expect(trackerview.startTaskFromForm).toHaveBeenCalled();
+                    expect(trackerview.taskFormSubmitted).toHaveBeenCalled();
                     expect($section.is(':visible')).toEqual(true);
                     expect($section.find('ul.tasklist').children("li").length).toEqual(1);
                     utils.createTaskFromForm("Editing a play", ["editing", "play"]);
                 });
                 waits(250);
                 runs(function () {
-                    expect(trackerview.startTaskFromForm).toHaveBeenCalled();
+                    expect(trackerview.taskFormSubmitted).toHaveBeenCalled();
                     expect(trackerview.stopCurrentTask).toHaveBeenCalled();
-                    expect(trackerview.addTask).toHaveBeenCalled();
+                    expect(trackerview.addTaskFromForm).toHaveBeenCalled();
 
                     var $finished_section = $('#finished-tasks-section');
                     expect($finished_section.is(':visible')).toEqual(true);

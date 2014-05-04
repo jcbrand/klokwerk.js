@@ -258,9 +258,9 @@
     klokwerk.TrackerView = Backbone.View.extend({
         el: "div#tracker",
         events: {
-            "submit form.tracker-form": "startTaskFromForm",
+            "submit form.tracker-form": "taskFormSubmitted",
             "submit form.current-task-form": "stopTask",
-            "click a.task-name": "startTaskFromLink",
+            "click a.task-name": "taskLinkClicked",
             "click a.edit-task": "editTask"
         },
 
@@ -288,33 +288,33 @@
             }
         },
 
-        addTask: function () {
-            var $form = this.$el.find('form.tracker-form'),
-                $taskname = $form.find('#task-name'),
-                $labels = $form.find('#labels'),
-                arr = $taskname.val().split('@'),
-                desc = arr[0],
-                cat = arr[1] || '',
-                m = moment();
-            $taskname.val('');
-            this.model.create({
-                'id': m.millisecond(),
-                'description': desc,
-                'start': m.format(),
-                'start_day': m.clone().startOf('day').format(),
-                'start_month': m.clone().startOf('month').format(),
-                'end': undefined,
-                'category': cat,
-                'labels': ($labels.val() || '').split(',')
-                });
-            return this;
-        },
-
         stopCurrentTask: function () {
             _.each(this.model.current(), function (el) {
                 el.stop();
             });
             return this;
+        },
+
+
+        addTaskFromForm: function () {
+            this.stopCurrentTask();
+            var $form = this.$el.find('form.tracker-form'),
+                $taskname = $form.find('#task-name'),
+                $labels = $form.find('#labels'),
+                arr = $taskname.val().split('@'),
+                m = moment();
+            $taskname.val('');
+            this.model.create({
+                'id': m.valueOf(),
+                'description': arr[0],
+                'start': m.format(),
+                'start_day': m.clone().startOf('day').format(),
+                'start_month': m.clone().startOf('month').format(),
+                'end': undefined,
+                'category': arr[1] || '',
+                'labels': ($labels.val() || '').split(',')
+                });
+            return this.clearForm();
         },
 
         clearForm: function () {
@@ -325,11 +325,11 @@
             return this;
         },
 
-        startTaskFromForm: function (ev) {
+        taskFormSubmitted: function (ev) {
             ev.preventDefault();
             var $form;
             if (Modernizr.input.required) { // already validated via HTML5
-                this.stopCurrentTask().addTask().clearForm();
+                this.addTaskFromForm();
             } else {
                 $form = this.$el.find('form.tracker-form');
                 $form.validate({
@@ -337,36 +337,35 @@
                         $form.find('#task-name').addClass('error').wrap('<span class="control-group error"/>');
                     },
                     submitHandler: $.proxy(function () {
-                        this.stopCurrentTask().addTask().clearForm();
+                        this.addTaskFromForm();
                     }, this)
                 });
             }
         },
 
-        startTaskFromLink: function () {
-            /* XXX TODO
-             * ev.preventDefault();
-             * this.stopCurrentTask();
-             * var i,
-             *     labels = [],
-             *     $link = $(ev.target),
-             *     $parent = $link.parent(),
-             *     $labels = $parent.find('.label'),
-             *     cat = $link.parent().find('.category').text(),
-             *     desc = $link.text();
-             * for (i=0; i < $labels.length; i++) {
-             *     labels.push($labels[i].innerText);
-             * }
-             * this.model.create({
-             *     'description': desc,
-             *     'start': moment().format(),
-             *     'start_day': start_iso.split('T')[0]+'T00:00:00Z',
-             *     'start_month': start_date.getUTCFullYear()+"-"+start_date.getUTCMonth()+"-1"+'T00:00:00Z',
-             *     'end': undefined,
-             *     'category': cat,
-             *     'labels': labels
-             *     });
-             */
+        addTaskFromLink: function ($link) {
+             this.stopCurrentTask();
+             var i, labels = [],
+                 $labels = $link.parent().find('.label'),
+                 m = moment();
+             for (i=0; i < $labels.length; i++) {
+                 labels.push($labels[i].innerText);
+             }
+             this.model.create({
+                'id': m.valueOf(),
+                'description': $link.text(),
+                'start': m.format(),
+                'start_day': m.clone().startOf('day').format(),
+                'start_month': m.clone().startOf('month').format(),
+                'end': undefined,
+                'category': $link.parent().find('.category').text(),
+                'labels': labels
+            });
+        },
+
+        taskLinkClicked: function (ev) {
+             ev.preventDefault();
+             this.addTaskFromLink($(ev.target));
         },
 
         stopTask: function (ev) {
