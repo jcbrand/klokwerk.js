@@ -103,8 +103,8 @@
         tagName: 'li',
         className: 'clearfix',
         events: {
-            "click a.remove-task": "remove",
-            "click a.edit-task": "edit"
+            "click a.remove-task": "removeTask",
+            "click a.edit-task": "editTask"
         },
 
         initialize: function () {
@@ -157,7 +157,7 @@
             return this.model.isCurrent();
         },
 
-        edit: function (ev) {
+        editTask: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
             var editview = new klokwerk.TaskEditView({'model': this.model});
             this.$('.task-details').html(editview.$el);
@@ -165,7 +165,7 @@
             
         },
 
-        remove: function (ev) {
+        removeTask: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
             var $el, result = confirm("Are you sure you want to remove this task?");
             if (result === true) {
@@ -238,21 +238,12 @@
         }
     });
 
-    klokwerk.FinishedTasksView = Backbone.Overview.extend({
+    klokwerk.FinishedTasksView = Backbone.View.extend({
         el: "div#finished-tasks-section",
 
         initialize: function () {
-            this.model.on('add', function (task) {
-                if (!task.isCurrent()) {
-                    this.renderFinishedTask(this.add(task.cid, new klokwerk.TaskView({'model': task})));
-                }
-            }, this);
-            this.model.on('remove', function (task) { this.remove(task.cid); });
-            this.model.on('change:end', function (task) {
-                if (task.isCurrent()) {
-                    this.remove(task.cid);
-                }
-            });
+            this.model.on('add', this.initDay, this);
+            this.model.on('change:end', this.initDay, this);
             this.days = new klokwerk.Days();
             this.dayviews = this.getDayViews();
             this.render();
@@ -271,26 +262,20 @@
             }
         },
 
-        renderFinishedTask: function (view) {
-            /* TODO:
-             * Find the current view: Day, Month or Year.
-             * Find the current instance of that view (i.e. which day, month or
-             * year). It will be created if it doesn't exist yet.
-             *
-             * Add the task to that instance, in the correct chronological
-             * position.
-             */
-            // This is necessary due to lazy adding of Days.
-            // Day might not have existed until just now (see getDay).
-            this.getDay(view.model.get('start')).add(view.model);
-            this.show();
-        },
-
         getDayViews: function () {
             var _days = {};
             return {
                 get: function (id) { return _days[id]; },
-                set: function (id, view) { _days[id] = view; },
+                add: function (id, view) { _days[id] = view; },
+                getAll: function () { return _days; }
+            };
+        },
+
+        getMonthViews: function () {
+            var _months = {};
+            return {
+                get: function (id) { return _days[id]; },
+                add: function (id, view) { _days[id] = view; },
                 getAll: function () { return _days; }
             };
         },
@@ -321,17 +306,26 @@
                 })
             });
             this.days.add(view.model);
-            this.dayviews.set(view.model.cid, view);
+            this.dayviews.add(view.model.cid, view);
             this.renderDay(view);
             return view.model;
         },
 
-        getDay: function (day_iso) {
-            day_iso = moment(day_iso).startOf('day').format();
+        initDay: function (task) {
+            /*  If the day corresponding to task's end date doesn't exist,
+             *  create it and add the task to it. Otherwise, do nothing
+             *  because existing days have event listeners for new tasks.
+             */
+            if (task.isCurrent()) {
+                return;
+            }
+            var day_iso = moment(task.get('end')).startOf('day').format();
             var day = this.days.get(day_iso);
             if (!day) {
                 day = this.createDay(day_iso);
+                day.add(task);
             }
+            this.show();
             return day;
         },
 
@@ -523,22 +517,38 @@
         }
     });
 
-    klokwerk.DayView = Backbone.View.extend({
+    klokwerk.DayView = Backbone.Overview.extend({
+
         initialize: function () {
-            this.model.tasks.on('add', function (task) {
-                var task_view = klokwerk.trackerview.getTaskView(task);
-                task_view.render().$el.appendTo(this.$el.find('ul.tasklist'));
-                task_view.delegateEvents();
-                this.model.setDuration();
-                this.render();
-            }, this);
+            this.model.tasks.on('add', this.addTask, this);
+            this.model.tasks.on('remove', function (task) { this.remove(task.cid); });
             this.model.tasks.on('change:duration', function (task) {
                 this.model.setDuration();
-                this.render();
+                this.renderTask(task);
             }, this);
+            this.model.tasks.on('change:end', function (task) {
+                if (task.isCurrent()) {
+                    this.remove(task.cid);
+                } else {
+                    if (!this.get(task.cid)) {
+                        this.addTask();
+                    }
+                }
+            });
         },
 
-        render: function (init) {
+        addTask: function (task) {
+            this.model.setDuration();
+            this.renderTask(this.add(task.cid, new klokwerk.TaskView({'model': task})));
+            this.render();
+        },
+
+        renderTask: function (task) {
+            this.$('.tasklist').append(task.$el);
+            return this.render();
+        },
+
+        render: function () {
             /* Updates the duration of time spent on tasks in this day
              */
             var duration = moment.duration(this.model.get('duration'));
