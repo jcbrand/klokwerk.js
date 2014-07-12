@@ -111,6 +111,11 @@
             for (i=0; i<d.labels.length; i++) {
                 this.$el.find('a.edit-task').before(klokwerk.templates.label({label: d.labels[i]}));
             }
+            if (this.model.isCurrent()) {
+                setTimeout($.proxy(function () {
+                    this.render();
+                }, this), 60000);
+            }
             return this;
         },
 
