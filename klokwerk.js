@@ -217,8 +217,10 @@
             });
             this.$el.html(this.querycontrols.render().$el);
             this.$('.datepicker').datepicker('show');
-            if (this.model.length) {
+            if (_.without(this.model.pluck('end'), undefined).length) {
                 this.show();
+            } else {
+                this.hide();
             }
         },
 
@@ -290,6 +292,10 @@
             if (!this.$el.is(':visible')) {
                 this.$el.slideDown();
             }
+        },
+
+        hide: function () {
+            this.$el.hide();
         }
     });
 
