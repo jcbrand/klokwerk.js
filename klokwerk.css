@@ -226,6 +226,10 @@ div.task-spent {
     display: table-cell;
 }
 
+.task-details .task-form .form-control {
+    margin-bottom: 0;
+}
+
 .task-name {
     font-weight: bold;
 }

@@ -256,10 +256,14 @@
                         <li class="finished-task clearfix">
                             <div class="task-times"><time>12:34</time> - <time>12:34</time></div>
                             <div class="task-details">
-                                <strong class="task-name">Washing dishes</strong>
-                                <span class="category">uncategorized</span>
-                                <i class="clickable icon-pencil"></i>
-                                <i class="clickable icon-remove"></i>
+                                <form role="form" class="task-form">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="task-name" placeholder="Task">
+                                        <input type="text" class="form-control" id="task-category" placeholder="Category">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="cancel" class="btn btn-warning">cancel</button>
+                                    </div>
+                                </form>
                             </div>
                             <div class="task-spent">
                                 <time class="spent pull-right"><span class="hours">2</span><span class="minutes">4</span></time>

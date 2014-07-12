@@ -18,6 +18,7 @@ config = {
         "text": 'components/requirejs-text/text',
         "tpl": 'components/requirejs-tpl-jcbrand/tpl',
         "underscore": "components/underscore//underscore",
+
         // Klokwerk Templates
         "current_tasks": "src/templates/current_tasks",
         "day": "src/templates/day",
@@ -26,6 +27,7 @@ config = {
         "label": "src/templates/label",
         "querycontrols": "src/templates/querycontrols",
         "task": "src/templates/task",
+        "task_edit": "src/templates/task_edit",
         "tasklist": "src/templates/tasklist",
 
         "klokwerk-dependencies": "src/deps-full",

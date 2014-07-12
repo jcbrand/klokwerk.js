@@ -67,14 +67,48 @@
         }
     });
 
+    klokwerk.TaskEditView = Backbone.View.extend({
+        tagName: 'form',
+        className: 'task-form',
+
+        events: {
+            "click button[type=submit]": "save",
+            "click button[type=cancel]": "cancel"
+        },
+
+        initialize: function () {
+            this.render();
+        },
+
+        render: function () {
+            this.$el.html($(klokwerk.templates.task_edit(this.model.toJSON())));
+        },
+
+        save: function (ev) {
+            if (ev && ev.preventDefault) { ev.preventDefault(); }
+            this.model.set({
+                description: this.$('input.task-name').val(),
+                category: this.$('input.task-category').val()
+            });
+            this.remove().model.trigger('render');
+        },
+
+        cancel: function (ev) {
+            if (ev && ev.preventDefault) { ev.preventDefault(); }
+            this.remove().model.trigger('render');
+        }
+    });
+
     klokwerk.TaskView = Backbone.View.extend({
         tagName: 'li',
         className: 'clearfix',
         events: {
-            "click a.remove-task": "removeTask"
+            "click a.remove-task": "remove",
+            "click a.edit-task": "edit"
         },
 
         initialize: function () {
+            this.model.on('render', this.render, this);
             this.render();
         },
 
@@ -123,8 +157,16 @@
             return this.model.isCurrent();
         },
 
-        removeTask: function (ev) {
-            ev.preventDefault();
+        edit: function (ev) {
+            if (ev && ev.preventDefault) { ev.preventDefault(); }
+            var editview = new klokwerk.TaskEditView({'model': this.model});
+            this.$('.task-details').html(editview.$el);
+            this.$('.task-name').focus();
+            
+        },
+
+        remove: function (ev) {
+            if (ev && ev.preventDefault) { ev.preventDefault(); }
             var $el, result = confirm("Are you sure you want to remove this task?");
             if (result === true) {
                 $el = $(ev.target);
@@ -319,8 +361,7 @@
         events: {
             "submit form.tracker-form": "taskFormSubmitted",
             "submit form.current-task-form": "stopTask",
-            "click a.task-name": "taskLinkClicked",
-            "click a.edit-task": "editTask"
+            "click a.task-name": "taskLinkClicked"
         },
 
         initialize: function () {
@@ -410,11 +451,6 @@
         stopTask: function (ev) {
             ev.preventDefault();
             this.stopCurrentTask();
-        },
-
-        editTask: function (ev) {
-            ev.preventDefault();
-            alert('editTask');
         },
 
         getTaskView: function (task) {

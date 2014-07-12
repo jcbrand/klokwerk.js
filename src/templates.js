@@ -5,6 +5,7 @@ define("klokwerk-templates", [
     "tpl!label",
     "tpl!querycontrols",
     "tpl!task",
+    "tpl!task_edit",
     "tpl!tasklist"
 ], function () {
     return {
@@ -14,6 +15,7 @@ define("klokwerk-templates", [
         label:          arguments[3],
         querycontrols:  arguments[4],
         task:           arguments[5],
-        tasklist:       arguments[6]
+        task_edit:      arguments[6],
+        tasklist:       arguments[7]
     };
 });
