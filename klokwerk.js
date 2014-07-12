@@ -314,7 +314,7 @@
         }
     });
 
-    klokwerk.TrackerView = Backbone.Overview.extend({
+    klokwerk.TrackerView = Backbone.View.extend({
         el: "div#tracker",
         events: {
             "submit form.tracker-form": "taskFormSubmitted",
@@ -415,6 +415,14 @@
         editTask: function (ev) {
             ev.preventDefault();
             alert('editTask');
+        },
+
+        getTaskView: function (task) {
+            if (task.isCurrent()) {
+                return this.current_tasks.get(task.cid)
+            } else{
+                return this.finished_tasks.get(task.cid)
+            }
         }
     });
 
@@ -482,7 +490,7 @@
     klokwerk.DayView = Backbone.View.extend({
         initialize: function () {
             this.model.tasks.on('add', function (task) {
-                var task_view = klokwerk.trackerview.get(task.cid);
+                var task_view = klokwerk.trackerview.getTaskView(task);
                 task_view.render().$el.appendTo(this.$el.find('ul.tasklist'));
                 task_view.delegateEvents();
                 this.model.setDuration();
