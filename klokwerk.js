@@ -74,6 +74,10 @@
             "click a.remove-task": "removeTask"
         },
 
+        initialize: function () {
+            this.render();
+        },
+
         render: function () {
             var i, prefix, duration,
                 d = this.model.toJSON(),
@@ -168,7 +172,7 @@
         },
 
         renderCurrentTask: function (view) {
-            this.$el.find('.current-task').empty().append(view.render().$el);
+            this.$el.find('.current-task').empty().append(view.$el);
             // Show the current tasks section if it's hidden.
             if (!this.$el.is(':visible')) {
                 this.$el.slideDown();
@@ -218,7 +222,7 @@
             }
         },
 
-        renderFinishedTask: function (task_view) {
+        renderFinishedTask: function (view) {
             /* TODO:
              * Find the current view: Day, Month or Year.
              * Find the current instance of that view (i.e. which day, month or
@@ -229,7 +233,7 @@
              */
             // This is necessary due to lazy adding of Days.
             // Day might not have existed until just now (see getDay).
-            this.getDay(task_view.model.get('start')).add(task_view.model);
+            this.getDay(view.model.get('start')).add(view.model);
             this.show();
         },
 
