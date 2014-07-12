@@ -11,7 +11,8 @@
   "dependencies": {
     "almond": "~0.2.6",
     "backbone": "1.1.2",
-    "backbone.localStorage": "1.1.7",
+    "backbone.browserStorage": "*",
+    "backbone.overview": "*",
     "bootstrap": "2.3.2",
     "bootstrap-datepicker": "1.2.0",
     "jasmine": "https://github.com/jcbrand/jasmine.git#1_3_x",

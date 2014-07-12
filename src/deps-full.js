@@ -12,7 +12,7 @@ define("klokwerk-dependencies", [
     "jquery.validate",
     "underscore",
     "backbone",
-    "backbone.localStorage"
+    "backbone.browserStorage"
 ], function() {
     return arguments;
 });

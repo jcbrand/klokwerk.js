@@ -2,7 +2,7 @@
  * klokwerk.js
  * http://opkode.com
  *
- * Copyright (c) Jan-Carel Brand (jc@opkode.com)
+ * Copyright (c) JC Brand (jc@opkode.com)
  */
 
 // AMD/global registrations
@@ -505,7 +505,7 @@
             tokenSeparators: [";"]
         });
         this.tracker = new this.Tracker();
-        this.tracker.localStorage = new Backbone.LocalStorage('klokwerk'); // FIXME: proper id
+        this.tracker.browserStorage = new Backbone.BrowserStorage.local('klokwerk'); // FIXME: proper id
         this.trackerview = new this.TrackerView({'model': this.tracker});
         this.tracker.fetch({add:true});
     };
