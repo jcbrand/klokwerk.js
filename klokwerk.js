@@ -86,7 +86,7 @@
 
         save: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
-            this.model.set({
+            this.model.save({
                 description: this.$('input.task-name').val(),
                 category: this.$('input.task-category').val()
             });
@@ -242,8 +242,11 @@
         el: "div#finished-tasks-section",
 
         initialize: function () {
-            this.model.on('add', this.initDay, this);
-            this.model.on('change:end', this.initDay, this);
+            this.model.on('add', function (task) {
+                var day = this.ensureDay(task);
+                if (day) day.add(task);
+            }, this);
+            this.model.on('change:end', this.ensureDay, this);
             this.days = new klokwerk.Days();
             this.dayviews = this.getDayViews();
             this.render();
@@ -311,10 +314,9 @@
             return view.model;
         },
 
-        initDay: function (task) {
+        ensureDay: function (task) {
             /*  If the day corresponding to task's end date doesn't exist,
-             *  create it and add the task to it. Otherwise, do nothing
-             *  because existing days have event listeners for new tasks.
+             *  create it.
              */
             if (task.isCurrent()) {
                 return;
@@ -323,7 +325,6 @@
             var day = this.days.get(day_iso);
             if (!day) {
                 day = this.createDay(day_iso);
-                day.add(task);
             }
             this.show();
             return day;
