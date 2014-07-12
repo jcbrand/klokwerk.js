@@ -140,12 +140,31 @@
         el: "div#current-tasks-section",
 
         initialize: function () {
-            this.render();
+            this.model.on('add', function (task) {
+                if (task.isCurrent()) {
+                    this.renderCurrentTask(this.add(task.cid, new klokwerk.TaskView({'model': task})));
+                }
+            }, this);
+            this.model.on('remove', function (task) {
+                this.remove(task.cid);
+                this.hideIfNecessary();
+            }, this);
+            this.model.on('change:end', function (task) {
+                if (!task.isCurrent()) {
+                    this.remove(task.cid);
+                    this.hideIfNecessary();
+                }
+            }, this);
+            this.initialRender();
         },
 
-        render: function () {
-            this.$el.hide();
-            this.$el.html(klokwerk.templates.current_tasks());
+        initialRender: function () {
+            this.$el.hide().html(klokwerk.templates.current_tasks());
+        },
+
+        hideIfNecessary: function () {
+            // Hide if no current tasks
+            if (!this.getAll().length) { this.$el.hide(); }
         },
 
         renderCurrentTask: function (view) {
@@ -168,10 +187,21 @@
         }
     });
 
-    klokwerk.FinishedTasksView = Backbone.View.extend({
+    klokwerk.FinishedTasksView = Backbone.Overview.extend({
         el: "div#finished-tasks-section",
 
         initialize: function () {
+            this.model.on('add', function (task) {
+                if (!task.isCurrent()) {
+                    this.renderFinishedTask(this.add(task.cid, new klokwerk.TaskView({'model': task})));
+                }
+            }, this);
+            this.model.on('remove', function (task) { this.remove(task.cid); });
+            this.model.on('change:end', function (task) {
+                if (task.isCurrent()) {
+                    this.remove(task.cid);
+                }
+            });
             this.days = new klokwerk.Days();
             this.dayviews = this.getDayViews();
             this.render();
@@ -186,6 +216,21 @@
             if (this.model.length) {
                 this.show();
             }
+        },
+
+        renderFinishedTask: function (task_view) {
+            /* TODO:
+             * Find the current view: Day, Month or Year.
+             * Find the current instance of that view (i.e. which day, month or
+             * year). It will be created if it doesn't exist yet.
+             *
+             * Add the task to that instance, in the correct chronological
+             * position.
+             */
+            // This is necessary due to lazy adding of Days.
+            // Day might not have existed until just now (see getDay).
+            this.getDay(task_view.model.get('start')).add(task_view.model);
+            this.show();
         },
 
         getDayViews: function () {
@@ -241,21 +286,6 @@
             if (!this.$el.is(':visible')) {
                 this.$el.slideDown();
             }
-        },
-
-        renderFinishedTask: function (task_view) {
-            /* TODO:
-             * Find the current view: Day, Month or Year.
-             * Find the current instance of that view (i.e. which day, month or
-             * year). It will be created if it doesn't exist yet.
-             *
-             * Add the task to that instance, in the correct chronological
-             * position.
-             */
-            // This is necessary due to lazy adding of Days.
-            // Day might not have existed until just now (see getDay).
-            this.getDay(task_view.model.get('start')).add(task_view.model);
-            this.show();
         }
     });
 
@@ -279,22 +309,8 @@
         },
 
         initialize: function () {
-            this.model.on('add', function (task) {
-                this.add(task.cid, new klokwerk.TaskView({'model': task}));
-                this.renderTask(task);
-            }, this);
-            this.model.on('change', this.renderTask, this);
             this.finished_tasks = new klokwerk.FinishedTasksView({'model': this.model});
             this.current_tasks = new klokwerk.CurrentTasksView({'model': this.model});
-        },
-
-        renderTask: function (task) {
-            if (task.isCurrent()) {
-                this.current_tasks.renderCurrentTask(this.get(task.cid));
-            } else {
-                this.current_tasks.render();
-                this.finished_tasks.renderFinishedTask(this.get(task.cid));
-            }
         },
 
         stopCurrentTask: function () {
