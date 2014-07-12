@@ -148,7 +148,7 @@
             if (this.model.isCurrent()) {
                 setTimeout($.proxy(function () {
                     this.render();
-                }, this), 60000);
+                }, this), 30000);
             }
             return this;
         },
