@@ -12,7 +12,8 @@ define("klokwerk-dependencies", [
     "jquery.validate",
     "underscore",
     "backbone",
-    "backbone.browserStorage"
+    "backbone.browserStorage",
+    "backbone.overview"
 ], function() {
     return arguments;
 });

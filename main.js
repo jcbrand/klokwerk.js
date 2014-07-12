@@ -2,6 +2,7 @@ config = {
     paths: {
         "backbone": "components/backbone/backbone",
         "backbone.browserStorage": "components/backbone.browserStorage/backbone.browserStorage",
+        "backbone.overview": "components/backbone.overview/backbone.overview",
         "bootstrap-alert": "components/bootstrap/js/bootstrap-alert",
         "bootstrap-datepicker": "components/bootstrap-datepicker/js/bootstrap-datepicker",
         "bootstrap-dropdown": "components/bootstrap/js/bootstrap-dropdown",
