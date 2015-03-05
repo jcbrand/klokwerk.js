@@ -345,6 +345,7 @@
         /* A collection of all tasks in the time tracker.
          */
         model: klokwerk.Task,
+        url: '/api/tracker',
 
         current: function () {
             return this.where({end: undefined});
@@ -368,6 +369,7 @@
             _.each(this.model.current(), function (el) {
                 el.stop();
             });
+            this.model.sync();
             return this;
         },
 
@@ -450,9 +452,9 @@
 
         getTaskView: function (task) {
             if (task.isCurrent()) {
-                return this.current_tasks.get(task.cid)
+                return this.current_tasks.get(task.cid);
             } else{
-                return this.finished_tasks.get(task.cid)
+                return this.finished_tasks.get(task.cid);
             }
         }
     });
@@ -471,7 +473,8 @@
          *
          * See: https://github.com/jashkenas/backbone/issues/604
          */
-        model: klokwerk.Task
+        model: klokwerk.Task,
+        url: '/api/daytasks'
     });
 
     klokwerk.Day = Backbone.Model.extend({
@@ -573,7 +576,8 @@
 
     klokwerk.Days = Backbone.Collection.extend({
         model: klokwerk.Day,
-        comparator: 'day_iso'
+        comparator: 'day_iso',
+        url: '/api/days'
     });
 
     klokwerk.initialize = function () {
@@ -585,7 +589,7 @@
             tokenSeparators: [";"]
         });
         this.tracker = new this.Tracker();
-        this.tracker.browserStorage = new Backbone.BrowserStorage.local('klokwerk'); // FIXME: proper id
+        // this.tracker.browserStorage = new Backbone.BrowserStorage.local('klokwerk'); // FIXME: proper id
         this.trackerview = new this.TrackerView({'model': this.tracker});
         this.tracker.fetch({add:true});
     };
