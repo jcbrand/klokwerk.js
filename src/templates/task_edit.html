@@ -1,8 +1,12 @@
 <form role="form" class="task-form">
-    <div class="form-group">
-        <input type="text" class="form-control task-name" placeholder="Task" value="{{description}}">
-        <input type="text" class="form-control task-category" placeholder="Category" value="{{category}}">
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="cancel" class="btn btn-warning">cancel</button>
-    </div>
+<div class="task-times form-group">
+    <input type="datetime-local" name="start" class="form-control task-start" placeholder="Start time" value="{{start}}">
+    <input type="datetime-local" name="end" class="form-control task-end" placeholder="End time" value="{{end}}">
+</div>
+<div class="task-details form-group">
+    <input type="text" name="description" class="form-control task-name" placeholder="Task" value="{{description}}">
+    <input type="text" name="category" class="form-control task-category" placeholder="Category" value="{{category}}">
+</div>
+<button type="submit" class="btn btn-primary">Submit</button>
+<button type="cancel" class="btn btn-warning">cancel</button>
 </form>

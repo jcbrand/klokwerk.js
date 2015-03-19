@@ -23,6 +23,8 @@
     };
 
     klokwerk.Task = Backbone.Model.extend({
+        idAttribute: '_id',
+
         initialize: function (attributes) {
             this.on('change:end', this.setDuration, this);
             if (attributes.end) {
@@ -81,14 +83,19 @@
         },
 
         render: function () {
-            this.$el.html($(klokwerk.templates.task_edit(this.model.toJSON())));
+            var vals = this.model.toJSON();
+            vals.start = moment(vals.start).format('YYYY-MM-DTH:mm:ss');
+            vals.end = moment(vals.end).format('YYYY-MM-DTH:mm:ss');
+            this.$el.html($(klokwerk.templates.task_edit(vals)));
         },
 
         save: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
             this.model.save({
-                description: this.$('input.task-name').val(),
-                category: this.$('input.task-category').val()
+                start: moment(this.$('input[name=start]').val()).format(),
+                end: moment(this.$('input[name=end]').val()).format(),
+                description: this.$('input[name=description]').val(),
+                category: this.$('input[name=category]').val()
             });
             this.remove().model.trigger('render');
         },
@@ -160,7 +167,7 @@
         editTask: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
             var editview = new klokwerk.TaskEditView({'model': this.model});
-            this.$('.task-details').html(editview.$el);
+            this.$el.html(editview.$el);
             this.$('.task-name').focus();
             
         },
@@ -369,7 +376,7 @@
             _.each(this.model.current(), function (el) {
                 el.stop();
             });
-            this.model.sync();
+            // this.model.sync("update", this.model);
             return this;
         },
 
@@ -382,7 +389,6 @@
                 m = moment();
             $taskname.val('');
             this.model.create({
-                'id': m.valueOf(),
                 'description': arr[0],
                 'start': m.format(),
                 'start_day': m.clone().startOf('day').format(),
@@ -429,7 +435,6 @@
                  labels.push($labels[i].innerText);
              }
              this.model.create({
-                'id': m.valueOf(),
                 'description': $link.text(),
                 'start': m.format(),
                 'start_day': m.clone().startOf('day').format(),
@@ -589,7 +594,6 @@
             tokenSeparators: [";"]
         });
         this.tracker = new this.Tracker();
-        // this.tracker.browserStorage = new Backbone.BrowserStorage.local('klokwerk'); // FIXME: proper id
         this.trackerview = new this.TrackerView({'model': this.tracker});
         this.tracker.fetch({add:true});
     };
