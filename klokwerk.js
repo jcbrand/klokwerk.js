@@ -250,10 +250,9 @@
 
         initialize: function () {
             this.model.on('add', function (task) {
-                var day = this.ensureDay(task);
-                if (day) day.add(task);
+                _.each(this.ensureDays(task) || [], function (day) { day.add(task); });
             }, this);
-            this.model.on('change:end', this.ensureDay, this);
+            this.model.on('change:end', this.ensureDays, this);
             this.days = new klokwerk.Days();
             this.dayviews = this.getDayViews();
             this.render();
@@ -321,20 +320,23 @@
             return view.model;
         },
 
-        ensureDay: function (task) {
+        ensureDays: function (task) {
             /*  If the day corresponding to task's end date doesn't exist,
              *  create it.
              */
-            if (task.isCurrent()) {
-                return;
-            }
-            var day_iso = moment(task.get('end')).startOf('day').format();
-            var day = this.days.get(day_iso);
-            if (!day) {
-                day = this.createDay(day_iso);
-            }
+            if (task.isCurrent()) { return; }
+            var day_start, day_end;
             this.show();
-            return day;
+            var start = moment(task.get('start')).startOf('day');
+            var end = moment(task.get('end')).startOf('day');
+            if (end.isSame(start)) {
+                return [this.days.get(end) || this.createDay(end)];
+            } else {
+                // FIXME: get all days inbetween as well.
+                day_start = this.days.get(start) || this.createDay(start);
+                day_end = this.days.get(end) || this.createDay(end);
+                return [day_start, day_end];
+            }
         },
 
         show: function () {
@@ -522,7 +524,11 @@
         },
 
         taskBelongsHere: function (task) {
-            return moment(task.get('start')).isSame(this.get('day_iso'), 'day');
+            return (moment(task.get('start')).isSame(this.get('day_iso'), 'day') ||
+                    moment(task.get('end')).isSame(this.get('day_iso'), 'day')) ||
+
+                   (moment(task.get('start')).isBefore(this.get('day_iso'), 'day') &&
+                    moment(task.get('end')).isAfter(this.get('day_iso'), 'day'));
         }
     });
 
