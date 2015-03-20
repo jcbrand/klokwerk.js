@@ -305,12 +305,13 @@
             }
         },
 
-        createDay: function (day_iso) {
+        createDay: function (day_moment) {
             var view = new klokwerk.DayView({
                 model:  new klokwerk.Day({
-                    'day_human': moment(day_iso).format("dddd, MMM Do YYYY"),
-                    'day_iso': day_iso,
-                    'id': day_iso,
+                    'day_human': day_moment.format("dddd, MMM Do YYYY"),
+                    'day_iso': day_moment.format(),
+                    'day_moment': day_moment,
+                    'id': day_moment.format(),
                     'duration': 0
                 })
             });
@@ -327,14 +328,18 @@
             if (task.isCurrent()) { return; }
             var day_start, day_end;
             this.show();
+            var end_iso, start_iso;
             var start = moment(task.get('start')).startOf('day');
             var end = moment(task.get('end')).startOf('day');
             if (end.isSame(start)) {
-                return [this.days.get(end) || this.createDay(end)];
+                end_iso = end.format();
+                return [this.days.get(end_iso) || this.createDay(end)];
             } else {
                 // FIXME: get all days inbetween as well.
-                day_start = this.days.get(start) || this.createDay(start);
-                day_end = this.days.get(end) || this.createDay(end);
+                start_iso = start.format();
+                end_iso = end.format();
+                day_start = this.days.get(start_iso) || this.createDay(start);
+                day_end = this.days.get(end_iso) || this.createDay(end);
                 return [day_start, day_end];
             }
         },
