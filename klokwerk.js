@@ -86,6 +86,7 @@
             var vals = this.model.toJSON();
             vals.start = moment(vals.start).format('YYYY-MM-DDThh:mm:ss');
             vals.end = moment(vals.end).format('YYYY-MM-DDThh:mm:ss');
+            vals.current = this.model.isCurrent();
             this.$el.html($(klokwerk.templates.task_edit(vals)));
         },
 
@@ -93,7 +94,7 @@
             if (ev && ev.preventDefault) { ev.preventDefault(); }
             this.model.save({
                 start: moment(this.$('input[name=start]').val()).format(),
-                end: moment(this.$('input[name=end]').val()).format(),
+                end: !this.model.isCurrent() ? moment(this.$('input[name=end]').val()).format() : undefined,
                 description: this.$('input[name=description]').val(),
                 category: this.$('input[name=category]').val()
             });
