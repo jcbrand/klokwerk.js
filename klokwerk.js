@@ -84,8 +84,8 @@
 
         render: function () {
             var vals = this.model.toJSON();
-            vals.start = moment(vals.start).format('YYYY-MM-DTH:mm:ss');
-            vals.end = moment(vals.end).format('YYYY-MM-DTH:mm:ss');
+            vals.start = moment(vals.start).format('YYYY-MM-DDThh:mm:ss');
+            vals.end = moment(vals.end).format('YYYY-MM-DDThh:mm:ss');
             this.$el.html($(klokwerk.templates.task_edit(vals)));
         },
 
