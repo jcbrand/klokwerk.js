@@ -209,7 +209,7 @@
                 this.hideIfNecessary();
             }, this);
             this.model.on('change:end', function (task) {
-                if (!task.isCurrent()) {
+                if (this.get(task.cid) && !task.isCurrent()) {
                     this.remove(task.cid);
                     this.hideIfNecessary();
                 }
@@ -223,7 +223,7 @@
 
         hideIfNecessary: function () {
             // Hide if no current tasks
-            if (!this.getAll().length) { this.$el.hide(); }
+            if (!this.keys().length) { this.$el.hide(); }
         },
 
         renderCurrentTask: function (view) {
