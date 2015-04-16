@@ -126,6 +126,11 @@ strong.task-desc {
 
 #current-tasks-section {
     display: None;
+    padding: 1em;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background-color: aliceblue;
+    margin-bottom: 1em;
 }
 
 .input-append .popover-content {
