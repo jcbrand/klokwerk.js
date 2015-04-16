@@ -251,9 +251,10 @@
 
         initialize: function () {
             this.model.on('add', function (task) {
-                _.each(this.ensureDays(task) || [], function (day) { day.add(task); });
+                _.each(this.updateDaysAfterTaskAdding(task) || [], function (day) { day.add(task); });
             }, this);
-            this.model.on('change:end', this.ensureDays, this);
+            this.model.on('change:end', this.updateDaysAfterTaskAdding, this);
+            this.model.on('remove', this.updateDaysAfterTaskRemoval, this);
             this.days = new klokwerk.Days();
             this.dayviews = this.getDayViews();
             this.render();
@@ -265,6 +266,11 @@
             });
             this.$el.html(this.querycontrols.render().$el);
             this.$('.datepicker').datepicker('show');
+            this.ensureVisibility();
+        },
+
+        ensureVisibility: function () {
+            /* Make sure this view or hidden if needed. */
             if (_.without(this.model.pluck('end'), undefined).length) {
                 this.show();
             } else {
@@ -322,7 +328,31 @@
             return view.model;
         },
 
-        ensureDays: function (task) {
+        updateDaysAfterTaskRemoval: function (task) {
+            /* If the last remaining task in a day has been removed, then
+             * remove that day as well.
+             */
+            this.ensureVisibility();
+            var end_iso;
+            var start = moment(task.get('start')).startOf('day');
+            var end = moment(task.get('end')).startOf('day');
+
+            var _removeDayIfNecessary = function (end_iso) { 
+                var day = this.days.get(end_iso);
+                if (day.tasks.length === 1 && day.tasks.get(task.cid)) {
+                    day.destroy();
+                }
+            }.bind(this);
+            if (end.isSame(start)) {
+                _removeDayIfNecessary(end.format());
+            } else {
+                // FIXME: get all days inbetween as well.
+                _removeDayIfNecessary(start.format());
+                _removeDayIfNecessary(end.format());
+            }
+        },
+
+        updateDaysAfterTaskAdding: function (task) {
             /*  If the day corresponding to task's end date doesn't exist,
              *  create it.
              */
@@ -541,8 +571,9 @@
     klokwerk.DayView = Backbone.Overview.extend({
 
         initialize: function () {
+            this.model.on('destroy', function (task) { this.remove(); }.bind(this));
             this.model.tasks.on('add', this.addTask, this);
-            this.model.tasks.on('remove', function (task) { this.remove(task.cid); });
+            this.model.tasks.on('destroy', function (task) { this.remove(task.cid); });
             this.model.tasks.on('change:duration', function (task) {
                 this.model.setDuration();
                 this.renderTask(task);
