@@ -250,9 +250,7 @@
         el: "div#finished-tasks-section",
 
         initialize: function () {
-            this.model.on('add', function (task) {
-                _.each(this.updateDaysAfterTaskAdding(task) || [], function (day) { day.add(task); });
-            }, this);
+            this.model.on('add', this.updateDaysAfterTaskAdding, this);
             this.model.on('change:end', this.updateDaysAfterTaskAdding, this);
             this.model.on('remove', this.updateDaysAfterTaskRemoval, this);
             this.days = new klokwerk.Days();
@@ -333,7 +331,6 @@
              * remove that day as well.
              */
             this.ensureVisibility();
-            var end_iso;
             var start = moment(task.get('start')).startOf('day');
             var end = moment(task.get('end')).startOf('day');
 
@@ -346,7 +343,7 @@
             if (end.isSame(start)) {
                 _removeDayIfNecessary(end.format());
             } else {
-                // FIXME: get all days inbetween as well.
+                // FIXME: handle all days inbetween as well.
                 _removeDayIfNecessary(start.format());
                 _removeDayIfNecessary(end.format());
             }
@@ -357,21 +354,21 @@
              *  create it.
              */
             if (task.isCurrent()) { return; }
-            var day_start, day_end;
             this.show();
-            var end_iso, start_iso;
             var start = moment(task.get('start')).startOf('day');
             var end = moment(task.get('end')).startOf('day');
+
+            var _updateDay = function (date) {
+                if (!this.days.get(date.format())) {
+                  this.createDay(date).add(task);
+                }
+            }.bind(this);
             if (end.isSame(start)) {
-                end_iso = end.format();
-                return [this.days.get(end_iso) || this.createDay(end)];
+                _updateDay(end);
             } else {
-                // FIXME: get all days inbetween as well.
-                start_iso = start.format();
-                end_iso = end.format();
-                day_start = this.days.get(start_iso) || this.createDay(start);
-                day_end = this.days.get(end_iso) || this.createDay(end);
-                return [day_start, day_end];
+                // FIXME: handle all days inbetween as well.
+                _updateDay(start);
+                _updateDay(end);
             }
         },
 
