@@ -1,13 +1,17 @@
 <form role="form" class="task-form">
 <div class="task-times form-group">
-    <label for="start">Start:</label><input type="datetime-local" name="start" class="form-control task-start" placeholder="Start time" value="{{start}}">
+    <label for="start">Start:</label>
+    <input type="datetime-local" name="start" class="form-control task-start" placeholder="Start time" value="{{start}}">
     {[ if (!current) { ]}
-    <label for="end">End:</label><input type="datetime-local" name="end" class="form-control task-end" placeholder="End time" value="{{end}}">
+    <label for="end">End:</label>
+    <input type="datetime-local" name="end" class="form-control task-end" placeholder="End time" value="{{end}}">
     {[ } ]}
 </div>
 <div class="form-group">
     <label for="description">Task:</label>
     <input type="text" name="description" class="form-control task-name" placeholder="Task" value="{{description}}">
+</div>
+<div class="form-group">
     <label for="category">Category:</label>
     <input type="text" name="category" class="form-control task-category" placeholder="Category" value="{{category}}">
 </div>
