@@ -84,8 +84,8 @@
 
         render: function () {
             var vals = this.model.toJSON();
-            vals.start = moment(vals.start).format('YYYY-MM-DDThh:mm:ss');
-            vals.end = moment(vals.end).format('YYYY-MM-DDThh:mm:ss');
+            vals.start = moment(vals.start).format('YYYY-MM-DDTHH:mm:ss');
+            vals.end = moment(vals.end).format('YYYY-MM-DDTHH:mm:ss');
             vals.current = this.model.isCurrent();
             this.$el.html($(klokwerk.templates.task_edit(vals)));
         },
@@ -98,11 +98,17 @@
                 description: this.$('input[name=description]').val(),
                 category: this.$('input[name=category]').val()
             });
+            if (this.taskview &&this.taskview.editing) {
+              this.taskview.editing = false;
+            }
             this.remove().model.trigger('render');
         },
 
         cancel: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
+            if (this.taskview && this.taskview.editing) {
+              this.taskview.editing = false;
+            }
             this.remove().model.trigger('render');
         }
     });
@@ -121,6 +127,10 @@
         },
 
         render: function () {
+            if (this.editing === true) {
+              // Don't re-render while editing.
+              return;
+            }
             var i, prefix, duration,
                 d = this.model.toJSON(),
                 start = moment(this.model.get('start')),
@@ -156,7 +166,7 @@
             if (this.model.isCurrent()) {
                 setTimeout($.proxy(function () {
                     this.render();
-                }, this), 30000);
+                }, this), 60000);
             }
             return this;
         },
@@ -168,6 +178,12 @@
         editTask: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
             var editview = new klokwerk.TaskEditView({'model': this.model});
+            if (this.isCurrent()) {
+                // Need to keep track that we're editing because the current
+                // task gets re-rendered periodically.
+                this.editing = true;
+                editview.taskview = this;
+            }
             this.$el.html(editview.$el);
             this.$('.task-name').focus();
             
