@@ -7,13 +7,22 @@ Finished Tasks
     </span>
     <span class="btn-group">
         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            <strong>5 - 8 February</strong>&nbsp;
+            <!-- TODO: this must depend on the "view" set in QueryControlsView -->
+            {[ if (view === "day")  { ]}
+                <strong>{{day_str}}</strong>&nbsp;
+            {[ } ]}
+            {[ if (view === "week")  { ]}
+                <strong>{{week_str}}</strong>&nbsp;
+            {[ } ]}
+            {[ if (view === "month")  { ]}
+                <strong>{{month_str}}</strong>&nbsp;
+            {[ } ]}
             <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-            <li><a href="#"><strong>Day</strong>, 5 February</a></li>
-            <li><a href="#"><strong>Week</strong>, 31 January to 5 February</a></li>
-            <li><a href="#"><strong>Month</strong>, 1 January to 5 February</a><hr/></li>
+            <li><a href="#"><strong>Day</strong>, {{day_str}}</a></li>
+            <li><a href="#"><strong>Week</strong>, {{week_str}}</a></li>
+            <li><a href="#"><strong>Month</strong>, {{month_str}}</a><hr/></li>
             <li><strong class="apply-dates">Custom period</strong>
                 <button class="btn apply-dates" type="submit">Apply</button>
             </li>

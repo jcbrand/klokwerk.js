@@ -251,13 +251,24 @@
         }
     });
 
-    klokwerk.QueryControls = Backbone.Model;
+    klokwerk.QueryControls = Backbone.Model.extend({
+        initialize: function (attributes) {
+            this.set(_.extend({
+                'view': 'week' // views can be 'day', 'week' and 'month'
+            }, attributes));
+        }
+    });
 
     klokwerk.QueryControlsView = Backbone.View.extend({
         tagName: "legend",
 
         render: function () {
-            this.$el.html(klokwerk.templates.querycontrols());
+            var opts = _.extend(this.model.toJSON(), {
+                'day_str': moment().startOf('day').format('D MMMM YYYY'),
+                'week_str': moment().startOf('week').format('D MMMM YYYY') + ' to ' + moment().endOf('week').format('D MMMM YYYY'),
+                'month_str': moment().startOf('month').format('D MMMM YYYY') + ' to ' + moment().endOf('month').format('D MMMM YYYY'),
+            });
+            this.$el.html(klokwerk.templates.querycontrols(opts));
             return this;
         }
     });
