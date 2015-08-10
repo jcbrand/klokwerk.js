@@ -598,6 +598,7 @@
                 this.model.setDuration();
                 this.renderTask(task);
             }, this);
+            this.model.tasks.on('render', this.render, this);
             this.model.tasks.on('change:end', function (task) {
                 if (task.isCurrent()) {
                     this.remove(task.cid);
