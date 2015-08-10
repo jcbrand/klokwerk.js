@@ -98,7 +98,7 @@
                 description: this.$('input[name=description]').val(),
                 category: this.$('input[name=category]').val()
             });
-            if (this.taskview &&this.taskview.editing) {
+            if (this.taskview && this.taskview.editing) {
               this.taskview.editing = false;
             }
             this.remove().model.trigger('render');
@@ -164,9 +164,7 @@
                 this.$el.find('a.edit-task').before(klokwerk.templates.label({label: d.labels[i]}));
             }
             if (this.model.isCurrent()) {
-                setTimeout($.proxy(function () {
-                    this.render();
-                }, this), 60000);
+                setTimeout(this.render.bind(this), 60000);
             }
             return this;
         },
@@ -190,11 +188,11 @@
         },
 
         removeTask: function (ev) {
+            var $el;
             if (ev && ev.preventDefault) { ev.preventDefault(); }
-            var $el, result = confirm("Are you sure you want to remove this task?");
-            if (result === true) {
+            if (confirm("Are you sure you want to remove this task?") === true) {
                 $el = $(ev.target);
-                $el.closest('li').hide($.proxy(function () {
+                $el.closest('li').hide(function () {
                     this.model.destroy();
                     this.$el.remove();
                     if (this.$el.closest('ul.tasklist').length === 0) {
@@ -205,7 +203,7 @@
                             }
                         }
                     }
-                }, this));
+                }.bind(this));
             }
             return this;
         }
@@ -481,9 +479,7 @@
                     highlight: function () {
                         $form.find('#task-name').addClass('error').wrap('<span class="control-group error"/>');
                     },
-                    submitHandler: $.proxy(function () {
-                        this.addTaskFromForm();
-                    }, this)
+                    submitHandler: this.addTaskFromForm.bind(this)
                 });
             }
         },
