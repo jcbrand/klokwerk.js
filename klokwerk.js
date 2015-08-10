@@ -544,6 +544,7 @@
         initialize: function (attributes) {
             this.set(attributes);
             this.tasks = new klokwerk.DayTasks();
+            this.tasks.on('remove', this.setDuration, this);
             klokwerk.tracker.on('change:end', function (task) {
                 if (this.taskBelongsHere(task)) {
                     this.tasks.add(task);
@@ -591,34 +592,13 @@
     klokwerk.DayView = Backbone.Overview.extend({
 
         initialize: function () {
-            this.model.on('destroy', function (task) { this.remove(); }.bind(this));
+            this.model.on('destroy', function (task) { this.remove(); }, this);
             this.model.tasks.on('add', this.addTask, this);
             this.model.tasks.on('destroy', function (task) { this.remove(task.cid); });
-            this.model.tasks.on('change:duration', function (task) {
-                this.model.setDuration();
-                this.renderTask(task);
-            }, this);
+            this.model.tasks.on('remove', this.removeTask, this);
             this.model.tasks.on('render', this.render, this);
-            this.model.tasks.on('change:end', function (task) {
-                if (task.isCurrent()) {
-                    this.remove(task.cid);
-                } else {
-                    if (!this.get(task.cid)) {
-                        this.addTask();
-                    }
-                }
-            });
-        },
-
-        addTask: function (task) {
-            this.model.setDuration();
-            this.renderTask(this.add(task.cid, new klokwerk.TaskView({'model': task})));
-            this.render();
-        },
-
-        renderTask: function (task) {
-            this.$('.tasklist').append(task.$el);
-            return this.render();
+            this.model.tasks.on('change:duration', this.onTaskDurationChanged, this);
+            this.model.tasks.on('change:end', this.onTaskEndChanged, this);
         },
 
         render: function () {
@@ -627,6 +607,43 @@
             var duration = moment.duration(this.model.get('duration'));
             this.$('.day-heading').html($(klokwerk.templates.day_heading(this.model.toJSON())));
             return this;
+        },
+
+        addTask: function (task) {
+            this.model.setDuration();
+            this.renderTask(this.add(task.cid, new klokwerk.TaskView({'model': task})));
+            this.render();
+        },
+
+        removeTask: function (task) {
+            this.remove(task.cid);
+            if (this.model.tasks.length === 0) {
+                this.remove();
+            } else {
+                this.render();
+            }
+        },
+
+        renderTask: function (task) {
+            this.$('.tasklist').append(task.$el);
+            return this.render();
+        },
+
+        onTaskDurationChanged: function (task) {
+            if (this.model.taskBelongsHere(task)) {
+                this.model.setDuration();
+                this.renderTask(task);
+            } else {
+                this.model.tasks.remove(task);
+            }
+        },
+
+        onTaskEndChanged: function (task) {
+            if (task.isCurrent()) {
+                this.remove(task.cid);
+            } else if (!this.get(task.cid) && this.model.taskBelongsHere(task)) {
+                this.addTask(task);
+            }
         },
 
         _ensureElement: function() {
