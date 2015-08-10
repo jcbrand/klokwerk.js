@@ -251,23 +251,88 @@
 
     klokwerk.QueryControls = Backbone.Model.extend({
         initialize: function (attributes) {
+            this.browserStorage = new Backbone.BrowserStorage.session('klokwerk-query');
             this.set(_.extend({
-                'view': 'week' // views can be 'day', 'week' and 'month'
+                'view': 'week', // can be 'day', 'week' and 'month'
+                'start': moment().startOf('week'),
+                'end': moment().endOf('week')
             }, attributes));
         }
     });
 
     klokwerk.QueryControlsView = Backbone.View.extend({
         tagName: "legend",
+        events: {
+            "click button.page-left": "previous",
+            "click button.page-right": "next",
+            "click button.page-home": "home"
+        },
+
+        initialize: function () {
+            this.model.on('change', this.render, this);
+        },
 
         render: function () {
+            var start = this.model.get('start').clone();
+            var end = this.model.get('end').clone();
             var opts = _.extend(this.model.toJSON(), {
-                'day_str': moment().startOf('day').format('D MMMM YYYY'),
-                'week_str': moment().startOf('week').format('D MMMM YYYY') + ' to ' + moment().endOf('week').format('D MMMM YYYY'),
-                'month_str': moment().startOf('month').format('D MMMM YYYY') + ' to ' + moment().endOf('month').format('D MMMM YYYY'),
+                'day_str': start.format('D MMMM YYYY'),
+                'week_str': start.startOf('week').format('D MMMM YYYY') + ' to ' + end.endOf('week').format('D MMMM YYYY'),
+                'month_str': start.startOf('month').format('D MMMM YYYY') + ' to ' + end.endOf('month').format('D MMMM YYYY')
             });
             this.$el.html(klokwerk.templates.querycontrols(opts));
             return this;
+        },
+
+        previous: function (ev) {
+            ev.preventDefault();
+            var start = this.model.get('start').clone();
+            var end = this.model.get('end').clone();
+            switch (this.model.get('view')) {
+                case 'day':
+                    this.model.save({'start': start.subtract(1, 'days'), 'end': end.subtract(1, 'days')});
+                    break;
+                case 'week':
+                    this.model.save({'start': start.subtract(1, 'weeks'), 'end': end.subtract(1, 'weeks')});
+                    break;
+                case 'month':
+                    this.model.save({'start': start.subtract(1, 'months'), 'end': end.subtract(1, 'months')});
+                    break;
+            }
+        },
+
+        next: function (ev) {
+            ev.preventDefault();
+            var start = this.model.get('start').clone();
+            var end = this.model.get('end').clone();
+            switch (this.model.get('view')) {
+                case 'day':
+                    this.model.save({'start': start.add(1, 'days'), 'end': end.add(1, 'days')});
+                    break;
+                case 'week':
+                    this.model.save({'start': start.add(1, 'weeks'), 'end': end.add(1, 'weeks')});
+                    break;
+                case 'month':
+                    this.model.save({'start': start.add(1, 'months'), 'end': end.add(1, 'months')});
+                    break;
+            }
+        },
+
+        home: function (ev) {
+            ev.preventDefault();
+            var start = this.model.get('start').clone();
+            var end = this.model.get('end').clone();
+            switch (this.model.get('view')) {
+                case 'day':
+                    this.model.save({'start': moment().startOf('day'), 'end': moment().startOf('day')});
+                    break;
+                case 'week':
+                    this.model.save({'start': moment().startOf('week'), 'end': moment().startOf('week')});
+                    break;
+                case 'month':
+                    this.model.save({'start': moment().startOf('month'), 'end': moment().startOf('month')});
+                    break;
+            }
         }
     });
 
