@@ -2,6 +2,7 @@ define("klokwerk-dependencies", [
     "jquery",
     "moment",
     "underscore",
+    "validate",
     "jquery.placeholder", 
     "modernizr",
     "bootstrap-tooltip",

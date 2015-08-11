@@ -23,7 +23,8 @@
     "modernizr": "~2.7.1",
     "momentjs": "~2.10.6",
     "select2": "~3.4.5",
-    "underscore": "1.6.0"
+    "underscore": "1.6.0",
+    "validate": "~0.8.0"
   },
   "exportsOverride": {}
 }

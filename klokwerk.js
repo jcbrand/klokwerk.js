@@ -10,10 +10,10 @@
     define('klokwerk', [
         "klokwerk-dependencies", "klokwerk-templates"
         ], function (deps, templates) {
-            return factory(deps[0], deps[1], deps[2], templates);
+            return factory(deps[0], deps[1], deps[2], deps[3], templates);
         }
     );
-}(this, function ($, moment, _, templates) {
+}(this, function ($, moment, _, validate, templates) {
     "use strict";
     if (typeof console === "undefined" || typeof console.log === "undefined") {
         console = { log: function () {}, error: function () {} }; // jshint ignore:line

@@ -18,6 +18,7 @@ config = {
         "text": 'components/requirejs-text/text',
         "tpl": 'components/requirejs-tpl-jcbrand/tpl',
         "underscore": "components/underscore//underscore",
+        "validate": "components/validate/validate",
 
         // Klokwerk Templates
         "current_tasks": "src/templates/current_tasks",
