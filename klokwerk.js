@@ -385,9 +385,9 @@
         getMonthViews: function () {
             var _months = {};
             return {
-                get: function (id) { return _days[id]; },
-                add: function (id, view) { _days[id] = view; },
-                getAll: function () { return _days; }
+                get: function (id) { return _months[id]; },
+                add: function (id, view) { _months[id] = view; },
+                getAll: function () { return _months; }
             };
         },
 
