@@ -1,5 +1,7 @@
 define("klokwerk-dependencies", [
     "jquery",
+    "moment",
+    "underscore",
     "jquery.placeholder", 
     "modernizr",
     "bootstrap-tooltip",
@@ -8,9 +10,7 @@ define("klokwerk-dependencies", [
     "bootstrap-alert",
     "bootstrap-datepicker",
     "select2",
-    "moment",
     "jquery.validate",
-    "underscore",
     "backbone",
     "backbone.browserStorage",
     "backbone.overview"

@@ -10,10 +10,10 @@
     define('klokwerk', [
         "klokwerk-dependencies", "klokwerk-templates"
         ], function (deps, templates) {
-            return factory(jQuery, _, templates);
+            return factory(deps[0], deps[1], deps[2], templates);
         }
     );
-}(this, function ($, _, templates) {
+}(this, function ($, moment, _, templates) {
     "use strict";
     if (typeof console === "undefined" || typeof console.log === "undefined") {
         console = { log: function () {}, error: function () {} }; // jshint ignore:line
@@ -265,11 +265,11 @@
         events: {
             "click button.page-left": "previous",
             "click button.page-right": "next",
-            "click button.page-home": "home"
+            "click button.page-home": "home",
         },
 
         initialize: function () {
-            this.model.on('change', this.render, this);
+            $(document).on("keyup", this.paginateOnArrowKeys.bind(this));
         },
 
         render: function () {
@@ -277,12 +277,13 @@
             var end = this.model.get('end').clone();
             var opts = _.extend(this.model.toJSON(), {
                 'day_str': start.format('D MMMM YYYY'),
-                'week_str': start.startOf('week').format('D MMMM YYYY') + ' to ' + end.endOf('week').format('D MMMM YYYY'),
-                'month_str': start.startOf('month').format('D MMMM YYYY') + ' to ' + end.endOf('month').format('D MMMM YYYY')
+                'week_str': start.clone().startOf('week').format('D MMMM YYYY') + ' to ' + end.clone().endOf('week').format('D MMMM YYYY'),
+                'month_str': start.clone().startOf('month').format('D MMMM YYYY') + ' to ' + end.clone().endOf('month').format('D MMMM YYYY')
             });
             this.$el.html(klokwerk.templates.querycontrols(opts));
             klokwerk.tracker.fetch({
                 add: true,
+                remove: false,
                 data: {
                     'start': start.format(),
                     'end': end.format()
@@ -331,14 +332,23 @@
             var end = this.model.get('end').clone();
             switch (this.model.get('view')) {
                 case 'day':
-                    this.model.save({'start': moment().startOf('day'), 'end': moment().startOf('day')});
+                    this.model.save({'start': moment().startOf('day'), 'end': moment().endOf('day')});
                     break;
                 case 'week':
-                    this.model.save({'start': moment().startOf('week'), 'end': moment().startOf('week')});
+                    this.model.save({'start': moment().startOf('week'), 'end': moment().endOf('week')});
                     break;
                 case 'month':
-                    this.model.save({'start': moment().startOf('month'), 'end': moment().startOf('month')});
+                    this.model.save({'start': moment().startOf('month'), 'end': moment().endOf('month')});
                     break;
+            }
+        },
+
+        paginateOnArrowKeys: function (ev) {
+            /* We paginate left and right based on arrow keys */
+            if (ev.keyCode == '37') { // left
+                this.previous(ev);
+            } else if (ev.keyCode == '39') { // right
+                this.next(ev);
             }
         }
     });
@@ -350,15 +360,28 @@
             this.model.on('add', this.updateDaysAfterTaskAdding, this);
             this.model.on('change:end', this.updateDaysAfterTaskAdding, this);
             this.model.on('remove', this.updateDaysAfterTaskRemoval, this);
+            this.querycontrols = new klokwerk.QueryControlsView({model: new klokwerk.QueryControls()});
             this.days = new klokwerk.Days();
-            this.dayviews = this.getDayViews();
+            this.dayviews = new Backbone.Overview();
+            this.querycontrols.model.on('change', function () {
+                var start = this.querycontrols.model.get('start').clone();
+                var end = this.querycontrols.model.get('end').clone();
+                this.dayviews.each(function (view) {
+                    if (!view.model.get('day_moment').isBefore(start, 'day') && !view.model.get('day_moment').isAfter(end, 'day')) {
+                        this.renderDay(view);
+                    } else if ($.contains(document.documentElement, view.el)) {
+                        view.$el.detach();
+                    }
+                }.bind(this));
+                this.querycontrols.render();
+            }, this);
+            this.days.on('remove', function (day) {
+                this.dayviews.remove(day.cid);
+            }, this);
             this.render();
         },
 
         render: function () {
-            this.querycontrols = new klokwerk.QueryControlsView({
-                model: new klokwerk.QueryControls()
-            });
             this.$el.html(this.querycontrols.render().$el);
             this.$('.datepicker').datepicker('show');
             this.ensureVisibility();
@@ -366,29 +389,14 @@
 
         ensureVisibility: function () {
             /* Make sure this view or hidden if needed. */
+            this.show();
+            /*
             if (_.without(this.model.pluck('end'), undefined).length) {
                 this.show();
             } else {
                 this.hide();
             }
-        },
-
-        getDayViews: function () {
-            var _days = {};
-            return {
-                get: function (id) { return _days[id]; },
-                add: function (id, view) { _days[id] = view; },
-                getAll: function () { return _days; }
-            };
-        },
-
-        getMonthViews: function () {
-            var _months = {};
-            return {
-                get: function (id) { return _months[id]; },
-                add: function (id, view) { _months[id] = view; },
-                getAll: function () { return _months; }
-            };
+            */
         },
 
         renderDay: function (day_view) {
@@ -664,7 +672,7 @@
     klokwerk.DayView = Backbone.Overview.extend({
 
         initialize: function () {
-            this.model.on('destroy', function (task) { this.remove(); }, this);
+            this.model.on('destroy', function () { this.remove(); }, this);
             this.model.tasks.on('add', this.addTask, this);
             this.model.tasks.on('destroy', function (task) { this.remove(task.cid); });
             this.model.tasks.on('remove', this.removeTask, this);
@@ -735,7 +743,7 @@
     klokwerk.Days = Backbone.Collection.extend({
         model: klokwerk.Day,
         comparator: 'day_iso',
-        url: '/api/days'
+        browserStorage: new Backbone.BrowserStorage.session('klokwerk-days')
     });
 
     klokwerk.initialize = function () {
