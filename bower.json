@@ -21,7 +21,7 @@
     "jquery-validation": "1.12.0",
     "jquery.placeholder": "~0.2.4",
     "modernizr": "~2.7.1",
-    "momentjs": "~2.6.0",
+    "momentjs": "~2.10.6",
     "select2": "~3.4.5",
     "underscore": "1.6.0"
   },
