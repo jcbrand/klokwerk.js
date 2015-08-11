@@ -281,6 +281,13 @@
                 'month_str': start.startOf('month').format('D MMMM YYYY') + ' to ' + end.endOf('month').format('D MMMM YYYY')
             });
             this.$el.html(klokwerk.templates.querycontrols(opts));
+            klokwerk.tracker.fetch({
+                add: true,
+                data: {
+                    'start': start.format(),
+                    'end': end.format()
+                }
+            });
             return this;
         },
 
@@ -741,7 +748,6 @@
         });
         this.tracker = new this.Tracker();
         this.trackerview = new this.TrackerView({'model': this.tracker});
-        this.tracker.fetch({add:true});
     };
     return klokwerk;
 }));
