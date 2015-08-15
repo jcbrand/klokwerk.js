@@ -282,8 +282,8 @@
             var end = this.model.get('end').clone();
             var opts = _.extend(this.model.toJSON(), {
                 'day_str': start.format('D MMMM YYYY'),
-                'week_str': start.clone().startOf('week').format('D MMMM YYYY') + ' to ' + end.clone().endOf('week').format('D MMMM YYYY'),
-                'month_str': start.clone().startOf('month').format('D MMMM YYYY') + ' to ' + end.clone().endOf('month').format('D MMMM YYYY')
+                'week_str': start.clone().startOf('week').format('D MMMM YYYY') + ' to ' + start.clone().endOf('week').format('D MMMM YYYY'),
+                'month_str': start.clone().startOf('month').format('D MMMM YYYY') + ' to ' + start.clone().endOf('month').format('D MMMM YYYY')
             });
             this.$el.html(klokwerk.templates.querycontrols(opts));
             klokwerk.tracker.fetch({
@@ -359,7 +359,7 @@
             this.model.set({
                 'view': 'week',
                 'start': this.model.get('start').clone().startOf('week'),
-                'end': this.model.get('end').clone().endOf('week')
+                'end': this.model.get('start').clone().endOf('week')
             });
         },
 
@@ -368,7 +368,7 @@
             this.model.set({
                 'view': 'month',
                 'start': this.model.get('start').clone().startOf('month'),
-                'end': this.model.get('end').clone().endOf('month')
+                'end': this.model.get('start').clone().endOf('month')
             });
         },
 
@@ -377,7 +377,7 @@
             this.model.set({
                 'view': 'year',
                 'start': this.model.get('start').clone().startOf('year'),
-                'end': this.model.get('end').clone().endOf('year')
+                'end': this.model.get('start').clone().endOf('year')
             });
         },
 
