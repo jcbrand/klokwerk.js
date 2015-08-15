@@ -263,9 +263,14 @@
     klokwerk.QueryControlsView = Backbone.View.extend({
         tagName: "legend",
         events: {
-            "click button.page-left": "previous",
-            "click button.page-right": "next",
-            "click button.page-home": "home",
+            "click button.page-left": "pageBack",
+            "click button.page-right": "pageForward",
+            "click button.page-home": "pageHome",
+            "click a.choose-day": "chooseDay",
+            "click a.choose-week": "chooseWeek",
+            "click a.choose-month": "chooseMonth",
+            "click a.choose-year": "chooseYear",
+            "submit form.choose-custom-period": "chooseCustomPeriod",
         },
 
         initialize: function () {
@@ -292,7 +297,7 @@
             return this;
         },
 
-        previous: function (ev) {
+        pageBack: function (ev) {
             ev.preventDefault();
             var start = this.model.get('start').clone();
             var end = this.model.get('end').clone();
@@ -309,7 +314,7 @@
             }
         },
 
-        next: function (ev) {
+        pageForward: function (ev) {
             ev.preventDefault();
             var start = this.model.get('start').clone();
             var end = this.model.get('end').clone();
@@ -326,7 +331,7 @@
             }
         },
 
-        home: function (ev) {
+        pageHome: function (ev) {
             ev.preventDefault();
             var start = this.model.get('start').clone();
             var end = this.model.get('end').clone();
@@ -343,12 +348,51 @@
             }
         },
 
+        chooseDay: function (ev) {
+            ev.preventDefault();
+            var day = this.model.get('start').clone().startOf('day');
+            this.model.set({'view': 'day', 'start': day, 'end': day});
+        },
+
+        chooseWeek: function (ev) {
+            ev.preventDefault();
+            this.model.set({
+                'view': 'week',
+                'start': this.model.get('start').clone().startOf('week'),
+                'end': this.model.get('end').clone().endOf('week')
+            });
+        },
+
+        chooseMonth: function (ev) {
+            ev.preventDefault();
+            this.model.set({
+                'view': 'month',
+                'start': this.model.get('start').clone().startOf('month'),
+                'end': this.model.get('end').clone().endOf('month')
+            });
+        },
+
+        chooseYear: function (ev) {
+            ev.preventDefault();
+            this.model.set({
+                'view': 'year',
+                'start': this.model.get('start').clone().startOf('year'),
+                'end': this.model.get('end').clone().endOf('year')
+            });
+        },
+
+        chooseCustomPeriod: function (ev) {
+            ev.preventDefault();
+            this.model.set({'view': 'custom'});
+            alert('chooseCustomPeriod'); 
+        },
+
         paginateOnArrowKeys: function (ev) {
             /* We paginate left and right based on arrow keys */
-            if (ev.keyCode == '37') { // left
-                this.previous(ev);
+            if (ev.keyCode == '38') { // left
+                this.pageBack(ev);
             } else if (ev.keyCode == '39') { // right
-                this.next(ev);
+                this.pageForward(ev);
             }
         }
     });
