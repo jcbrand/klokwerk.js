@@ -1,36 +1,41 @@
 Finished Tasks
-<form class="pull-right form-search">
-    <span class="btn-group">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            <!-- TODO: this must depend on the "view" set in QueryControlsView -->
-            {[ if (view === "day")  { ]}
-                <strong>{{day_str}}</strong>&nbsp;
-            {[ } ]}
-            {[ if (view === "week")  { ]}
-                <strong>{{week_str}}</strong>&nbsp;
-            {[ } ]}
-            {[ if (view === "month")  { ]}
-                <strong>{{month_str}}</strong>&nbsp;
-            {[ } ]}
-            <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li><a href="#"><strong>Day</strong>, {{day_str}}</a></li>
-            <li><a href="#"><strong>Week</strong>, {{week_str}}</a></li>
-            <li><a href="#"><strong>Month</strong>, {{month_str}}</a><hr/></li>
-            <li><strong class="apply-dates">Custom period</strong>
-                <button class="btn apply-dates" type="submit">Apply</button>
-            </li>
-            <li>
-                <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
-                <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
-            </li>
-        </ul>
-    </span>
-    <span class="btn-group">
-        <button class="btn page-left"><i class="icon-arrow-left"></i></button>
-        <button class="btn page-home"><i class="icon-home"></i></button>
-        <button class="btn page-right"><i class="icon-arrow-right"></i></button>
-    </span>
+<div class="pull-right query-controls">
+<span class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        <!-- TODO: this must depend on the "view" set in QueryControlsView -->
+        {[ if (view === "day")  { ]}
+            <strong>{{day_str}}</strong>&nbsp;
+        {[ } ]}
+        {[ if (view === "week")  { ]}
+            <strong>{{week_str}}</strong>&nbsp;
+        {[ } ]}
+        {[ if (view === "month")  { ]}
+            <strong>{{month_str}}</strong>&nbsp;
+        {[ } ]}
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="#" class="choose-day"><strong>Day</strong>, {{day_str}}</a></li>
+        <li><a href="#" class="choose-week"><strong>Week</strong>, {{week_str}}</a></li>
+        <li><a href="#" class="choose-month"><strong>Month</strong>, {{month_str}}</a><hr/></li>
+        <li>
+            <form class="choose-custom-period">
+            <strong class="apply-dates">Custom period</strong>
+            <button class="btn apply-dates" type="submit">Apply</button>
+            </form>
+        </li>
+        <li>
+            <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
+            <div class="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
+        </li>
+    </ul>
+</span>
+<span class="btn-group">
+    <button class="btn page-left"><i class="icon-arrow-left"></i></button>
+    <button class="btn page-home"><i class="icon-home"></i></button>
+    <button class="btn page-right"><i class="icon-arrow-right"></i></button>
+</span>
+<form class="form-search filter-tasks">
     <input type="search" placeholder="Filter Text" />
 </form>
+</div>

@@ -409,3 +409,12 @@ a.icon-remove {
     color: inherit;
 }
 
+.query-controls {
+    display: inline-block;
+}
+.query-controls span {
+    margin-right: 1em;
+}
+form.filter-tasks {
+    display: inline-block;
+}
