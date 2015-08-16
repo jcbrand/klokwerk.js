@@ -67,13 +67,9 @@
                 </div>
 
                 <div id="finished-tasks-section" style="display: block">
-                    <legend> Finished Tasks 
-                        <form class="pull-right form-search">
-                        <span class="btn-group">
-                            <button class="btn"><i class="icon-arrow-left"></i></button>
-                            <button class="btn"><i class="icon-home"></i></button>
-                            <button class="btn"><i class="icon-arrow-right"></i></button>
-                        </span>
+                    <legend>
+                        Tracked Tasks <span class="spent-time">Time spent in this period: 0h:21m</span>
+                        <div class="pull-right query-controls">
                         <span class="btn-group">
                             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                                 <strong>5 - 8 February</strong>&nbsp;
@@ -92,8 +88,15 @@
                                 </li>
                             </ul>
                         </span>
-                        <input type="search" placeholder="Filter Text" />
+                        <span class="btn-group">
+                            <button class="btn"><i class="icon-arrow-left"></i></button>
+                            <button class="btn"><i class="icon-home"></i></button>
+                            <button class="btn"><i class="icon-arrow-right"></i></button>
+                        </span>
+                        <form class="form-search filter-tasks">
+                            <input type="search" placeholder="Filter Text" />
                         </form>
+                        </div>
                     </legend>
 
                     <div class="barchart">

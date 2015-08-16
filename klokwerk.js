@@ -275,6 +275,10 @@
 
         initialize: function () {
             $(document).on("keyup", this.paginateOnArrowKeys.bind(this));
+            klokwerk.tracker.on('add', _.debounce(this.updateDuration.bind(this), 200));
+            klokwerk.tracker.on('remove', _.debounce(this.updateDuration.bind(this), 200));
+            klokwerk.tracker.on('change:start', _.debounce(this.updateDuration.bind(this), 200));
+            klokwerk.tracker.on('change:end', _.debounce(this.updateDuration.bind(this), 200));
         },
 
         render: function () {
@@ -283,7 +287,8 @@
             var opts = _.extend(this.model.toJSON(), {
                 'day_str': start.format('D MMMM YYYY'),
                 'week_str': start.clone().startOf('week').format('D MMMM YYYY') + ' to ' + start.clone().endOf('week').format('D MMMM YYYY'),
-                'month_str': start.clone().startOf('month').format('D MMMM YYYY') + ' to ' + start.clone().endOf('month').format('D MMMM YYYY')
+                'month_str': start.clone().startOf('month').format('D MMMM YYYY') + ' to ' + start.clone().endOf('month').format('D MMMM YYYY'),
+                'total_time_str': this.getDuration()
             });
             this.$el.html(klokwerk.templates.querycontrols(opts));
             klokwerk.tracker.fetch({
@@ -295,6 +300,27 @@
                 }
             });
             return this;
+        },
+
+        updateDuration: function () {
+            this.$('#spent-time').html(this.getDuration());
+        },
+
+        getDuration: function () {
+            var duration = moment.duration(0);
+            if (typeof klokwerk.trackerview == "undefined") { return ''; }
+            var start = this.model.get('start');
+            var end = this.model.get('end');
+            _.each(klokwerk.trackerview.finished_tasks.days.filter(function (day) {
+                return !day.get('day_moment').isBefore(start, 'day') && !day.get('day_moment').isAfter(end, 'day');
+            }), function (day) {
+                duration.add(day.getDuration());
+            });
+            var hours = duration.hours();
+            var minutes = duration.minutes();
+            var hstring = hours > 1 && hours + ' hours' || hours ==  1 && hours + ' hour' || '';
+            var mstring = minutes > 1 && minutes + ' minutes' || minutes ==  1 && minutes + ' minute' || '';
+            return duration.asSeconds() ? hstring + (hours && minutes ? ' and ' : '') + mstring + ' spent during this period.' : '';
         },
 
         pageBack: function (ev) {

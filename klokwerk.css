@@ -418,3 +418,9 @@ a.icon-remove {
 form.filter-tasks {
     display: inline-block;
 }
+
+.spent-time {
+    font-size: 14px;
+    margin-left: 0.5em;
+    color: darkgrey;
+}
