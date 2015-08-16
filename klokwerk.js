@@ -288,7 +288,7 @@
                 'day_str': start.format('D MMMM YYYY'),
                 'week_str': start.clone().startOf('week').format('D MMMM YYYY') + ' to ' + start.clone().endOf('week').format('D MMMM YYYY'),
                 'month_str': start.clone().startOf('month').format('D MMMM YYYY') + ' to ' + start.clone().endOf('month').format('D MMMM YYYY'),
-                'total_time_str': this.getDuration()
+                'total_time_str': this.getDurationMessage()
             });
             this.$el.html(klokwerk.templates.querycontrols(opts));
             klokwerk.tracker.fetch({
@@ -303,10 +303,10 @@
         },
 
         updateDuration: function () {
-            this.$('#spent-time').html(this.getDuration());
+            this.$('#spent-time').html(this.getDurationMessage());
         },
 
-        getDuration: function () {
+        getDurationMessage: function () {
             var duration = moment.duration(0);
             if (typeof klokwerk.trackerview == "undefined") { return ''; }
             var start = this.model.get('start');
@@ -316,7 +316,7 @@
             }), function (day) {
                 duration.add(day.getDuration());
             });
-            var hours = duration.hours();
+            var hours = Math.floor(duration.asHours());
             var minutes = duration.minutes();
             var hstring = hours > 1 && hours + ' hours' || hours ==  1 && hours + ' hour' || '';
             var mstring = minutes > 1 && minutes + ' minutes' || minutes ==  1 && minutes + ' minute' || '';
@@ -415,7 +415,7 @@
 
         paginateOnArrowKeys: function (ev) {
             /* We paginate left and right based on arrow keys */
-            if (ev.keyCode == '38') { // left
+            if (ev.keyCode == '37') { // left
                 this.pageBack(ev);
             } else if (ev.keyCode == '39') { // right
                 this.pageForward(ev);
