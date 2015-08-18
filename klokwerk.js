@@ -18,6 +18,28 @@
     if (typeof console === "undefined" || typeof console.log === "undefined") {
         console = { log: function () {}, error: function () {} }; // jshint ignore:line
     }
+
+    var contains = function (attr, query) {
+        return function (item) {
+            if (typeof attr === 'object') {
+                var value = false;
+                _.each(attr, function (a) {
+                    value = value || item.get(a).toLowerCase().indexOf(query.toLowerCase()) !== -1;
+                });
+                return value;
+            } else if (typeof attr === 'string') {
+                return item.get(attr).toLowerCase().indexOf(query.toLowerCase()) !== -1;
+            } else {
+                throw new TypeError('contains: wrong attribute type. Must be string or array.');
+            }
+        };
+    };
+    contains.not = function (attr, query) {
+        return function (item) {
+            return !(contains(attr, query)(item));
+        };
+    };
+
     var klokwerk = {
         templates: templates
     };
@@ -271,6 +293,7 @@
             "click a.choose-month": "chooseMonth",
             "click a.choose-year": "chooseYear",
             "submit form.choose-custom-period": "chooseCustomPeriod",
+            "keydown .filter-tasks": "filterTasks"
         },
 
         initialize: function () {
@@ -301,6 +324,20 @@
             });
             return this;
         },
+
+        tog: function (v) {
+            return v?'addClass':'removeClass';
+        },
+
+        filterTasks: _.debounce(function (ev) {
+            if (ev && ev.preventDefault) { ev.preventDefault(); }
+            var $filter = this.$('.tasks-filter'),
+                q = $filter.val();
+            $filter[this.tog(q)]('x');
+            klokwerk.trackerview.finished_tasks.dayviews.each(function (dayview) {
+                dayview.filter(q);
+            });
+        }, 300),
 
         updateDuration: function () {
             this.$('#spent-time').html(this.getDurationMessage());
@@ -793,6 +830,43 @@
                 this.remove(task.cid);
             } else if (!this.get(task.cid) && this.model.taskBelongsHere(task)) {
                 this.addTask(task);
+            }
+        },
+
+        show: function () {
+            this.$el.show();
+            return this;
+        },
+
+        hide: function () {
+            this.$el.hide();
+            return this;
+        },
+
+        filter: function (q) {
+            /* Filter the day's tasks based on the query. Hide the whole day if
+             * all tasks are filtered out.
+             */
+            var matches;
+            if (q.length === 0) {
+                this.show();
+                this.model.tasks.each(function (item) {
+                    this.get(item.cid).$el.show();
+                }.bind(this));
+            } else {
+                q = q.toLowerCase();
+                matches = this.model.tasks.filter(contains.not('description', q));
+                if (matches.length === this.model.tasks.length) { // hide the whole group
+                    this.hide();
+                } else {
+                    _.each(matches, function (item) {
+                        this.get(item.cid).$el.hide();
+                    }.bind(this));
+                    _.each(this.model.tasks.reject(contains.not('description', q)), function (item) {
+                        this.get(item.cid).$el.show();
+                    }.bind(this));
+                    this.show();
+                }
             }
         },
 
