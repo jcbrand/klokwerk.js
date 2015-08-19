@@ -277,7 +277,8 @@
             this.set(_.extend({
                 'view': 'week', // can be 'day', 'week' and 'month'
                 'start': moment().startOf('week'),
-                'end': moment().endOf('week')
+                'end': moment().endOf('week'),
+                'filtertype': 'name'
             }, attributes));
         }
     });
@@ -293,7 +294,9 @@
             "click a.choose-month": "chooseMonth",
             "click a.choose-year": "chooseYear",
             "submit form.choose-custom-period": "chooseCustomPeriod",
-            "keydown .filter-tasks": "filterTasks"
+            "keydown .filter-tasks": "filterTasks",
+            "click a.filter-by-name": "filterByName",
+            "click a.filter-by-category": "filterByCategory"
         },
 
         initialize: function () {
@@ -329,13 +332,32 @@
             return v?'addClass':'removeClass';
         },
 
+        filterByName: function (ev) {
+            if (ev && ev.preventDefault) { ev.preventDefault(); }
+            this.model.set({'filtertype': 'name'});
+            this.$('.tasks-filter-type')
+                .html('Task Name&nbsp;<span class="caret"></span>')
+                .data('filter-type', 'description');
+            this.filterTasks();
+        },
+
+        filterByCategory: function (ev) {
+            if (ev && ev.preventDefault) { ev.preventDefault(); }
+            this.model.set({'filtertype': 'category'});
+            this.$('.tasks-filter-type')
+                .html('Task Category&nbsp;<span class="caret"></span>')
+                .data('filter-type', 'category');
+            this.filterTasks();
+        },
+
         filterTasks: _.debounce(function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
             var $filter = this.$('.tasks-filter'),
-                q = $filter.val();
+                q = $filter.val(),
+                t = this.$('.tasks-filter-type').data('filter-type');
             $filter[this.tog(q)]('x');
             klokwerk.trackerview.finished_tasks.dayviews.each(function (dayview) {
-                dayview.filter(q);
+                dayview.filter(q, t);
             });
         }, 300),
 
@@ -843,7 +865,7 @@
             return this;
         },
 
-        filter: function (q) {
+        filter: function (q, t) {
             /* Filter the day's tasks based on the query. Hide the whole day if
              * all tasks are filtered out.
              */
@@ -855,14 +877,14 @@
                 }.bind(this));
             } else {
                 q = q.toLowerCase();
-                matches = this.model.tasks.filter(contains.not('description', q));
+                matches = this.model.tasks.filter(contains.not(t, q));
                 if (matches.length === this.model.tasks.length) { // hide the whole group
                     this.hide();
                 } else {
                     _.each(matches, function (item) {
                         this.get(item.cid).$el.hide();
                     }.bind(this));
-                    _.each(this.model.tasks.reject(contains.not('description', q)), function (item) {
+                    _.each(this.model.tasks.reject(contains.not(t, q)), function (item) {
                         this.get(item.cid).$el.show();
                     }.bind(this));
                     this.show();
