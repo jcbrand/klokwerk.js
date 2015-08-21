@@ -326,12 +326,13 @@
             this.$el.html(klokwerk.templates.querycontrols(opts));
             klokwerk.tracker.fetch({
                 add: true,
-                remove: false,
                 data: {
                     'start': start.format(),
                     'end': end.format()
                 }
             });
+            // Also fetch current tasks.
+            klokwerk.tracker.fetch({ add: true, data: { 'end': undefined } });
             return this;
         },
 
