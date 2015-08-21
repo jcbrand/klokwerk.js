@@ -114,11 +114,18 @@
 
         save: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
+            var start = moment(this.$('input[name=start]').val());
+            var end = moment(this.$('input[name=end]').val());
+            var is_current = this.model.isCurrent();
             this.model.save({
-                start: moment(this.$('input[name=start]').val()).format(),
-                end: !this.model.isCurrent() ? moment(this.$('input[name=end]').val()).format() : undefined,
-                description: this.$('input[name=description]').val(),
-                category: this.$('input[name=category]').val()
+                'start': start.format(),
+                'start_day': start.startOf('day').format(),
+                'start_month': start.startOf('month').format(),
+                'end': !is_current ? end.format() : undefined,
+                'end_day': !is_current ? end.startOf('day').format() : undefined,
+                'end_month': !is_current ? end.startOf('month').format() : undefined,
+                'description': this.$('input[name=description]').val(),
+                'category': this.$('input[name=category]').val()
             });
             if (this.taskview && this.taskview.editing) {
               this.taskview.editing = false;
