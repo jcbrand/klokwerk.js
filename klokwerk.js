@@ -593,9 +593,8 @@
             var end = moment(task.get('end')).startOf('day');
 
             var _updateDay = function (date) {
-                if (!this.days.get(date.format())) {
-                  this.createDay(date).add(task);
-                }
+                var day = this.days.get(date.format()) || this.createDay(date);
+                day.add(task);
             }.bind(this);
             if (end.isSame(start)) {
                 _updateDay(end);
