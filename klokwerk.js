@@ -325,14 +325,15 @@
             });
             this.$el.html(klokwerk.templates.querycontrols(opts));
             klokwerk.tracker.fetch({
-                add: true,
-                data: {
+                'add': true,
+                'data': {
                     'start': start.format(),
                     'end': end.format()
-                }
+                },
+                'remove': false
             });
             // Also fetch current tasks.
-            klokwerk.tracker.fetch({ add: true, data: { 'end': undefined } });
+            klokwerk.tracker.fetch({ add: true, data: { 'end': undefined, 'remove': false } });
             return this;
         },
 
@@ -578,11 +579,11 @@
 
             var _removeDayIfNecessary = function (end_iso) { 
                 var day = this.days.get(end_iso);
-                if (day.tasks.length === 1 && day.tasks.get(task.cid)) {
+                if (day && day.tasks.length === 1 && day.tasks.get(task.cid)) {
                     day.destroy();
                 }
             }.bind(this);
-            if (end.isSame(start)) {
+            if (end.isSame(start), 'day') {
                 _removeDayIfNecessary(end.format());
             } else {
                 // FIXME: handle all days inbetween as well.
