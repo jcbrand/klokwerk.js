@@ -388,7 +388,7 @@
             var minutes = duration.minutes();
             var hstring = hours > 1 && hours + ' hours' || hours ==  1 && hours + ' hour' || '';
             var mstring = minutes > 1 && minutes + ' minutes' || minutes ==  1 && minutes + ' minute' || '';
-            return duration.asSeconds() ? hstring + (hours && minutes ? ' and ' : '') + mstring + ' spent during this period.' : '';
+            return duration.asSeconds() ? hstring + (hours && minutes ? ' and ' : '') + mstring + ' spent on the tasks shown.' : '';
         },
 
         pageBack: function (ev) {
