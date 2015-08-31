@@ -46,6 +46,7 @@
 
     klokwerk.Task = Backbone.Model.extend({
         idAttribute: '_id',
+        //url: '/api/task',
 
         initialize: function (attributes) {
             this.on('change:end', this.setDuration, this);
@@ -328,12 +329,13 @@
                 'add': true,
                 'data': {
                     'start': start.format(),
-                    'end': end.format()
+                    'end': end.format(),
+                    'include_current': true
                 },
                 'remove': false
             });
             // Also fetch current tasks.
-            klokwerk.tracker.fetch({ add: true, data: { 'end': undefined, 'remove': false } });
+            // klokwerk.tracker.fetch({ add: true, data: { 'end': undefined, 'remove': false } });
             return this;
         },
 
@@ -597,7 +599,7 @@
              *  create it.
              */
             if (task.isCurrent()) { return; }
-            this.show();
+            this.show(); // Show the finished tasks section
             var start = moment(task.get('start')).startOf('day');
             var end = moment(task.get('end')).startOf('day');
 
