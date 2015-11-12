@@ -285,8 +285,7 @@
             this.set(_.extend({
                 'view': 'week', // can be 'day', 'week' and 'month'
                 'start': moment().startOf('week'),
-                'end': moment().endOf('week'),
-                'filtertype': 'name'
+                'end': moment().endOf('week')
             }, attributes));
         }
     });
@@ -345,7 +344,6 @@
 
         filterByName: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
-            this.model.set({'filtertype': 'name'});
             this.$('.tasks-filter-type')
                 .html('Task Name&nbsp;<span class="caret"></span>')
                 .data('filter-type', 'description');
@@ -354,7 +352,6 @@
 
         filterByCategory: function (ev) {
             if (ev && ev.preventDefault) { ev.preventDefault(); }
-            this.model.set({'filtertype': 'category'});
             this.$('.tasks-filter-type')
                 .html('Task Category&nbsp;<span class="caret"></span>')
                 .data('filter-type', 'category');
