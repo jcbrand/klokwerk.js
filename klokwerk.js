@@ -847,7 +847,7 @@
         getDurationForTasks: function (tasks) {
             var duration = moment.duration();
             _.each(tasks, function (task) {
-                duration = moment.duration(duration + task.getDuration());
+                duration.add(task.getDuration());
             });
             return {'hours': duration.hours(), 'minutes': duration.minutes()};
         },
