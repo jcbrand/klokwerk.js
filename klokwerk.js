@@ -364,24 +364,41 @@
                 q = $filter.val(),
                 t = this.$('.tasks-filter-type').data('filter-type');
             $filter[this.tog(q)]('x');
+            // TODO: only filter days being shown in current timespan
             klokwerk.trackerview.finished_tasks.dayviews.each(function (dayview) {
                 dayview.filter(q, t);
             });
+            this.updateDuration();
         }, 300),
 
         updateDuration: function () {
             this.$('#spent-time').html(this.getDurationMessage());
         },
 
-        getDurationMessage: function () {
-            var duration = moment.duration(0);
-            if (typeof klokwerk.trackerview == "undefined") { return ''; }
+        getDaysInVisibleTimeSpan: function () {
+          /* Return only those days which are shown in the current timespan
+           * chosen by the user.
+           */
             var start = this.model.get('start');
             var end = this.model.get('end');
-            _.each(klokwerk.trackerview.finished_tasks.days.filter(function (day) {
+            return klokwerk.trackerview.finished_tasks.days.filter(function (day) {
                 return !day.get('day_moment').isBefore(start, 'day') && !day.get('day_moment').isAfter(end, 'day');
-            }), function (day) {
-                duration.add(day.getDuration());
+            });
+        },
+
+        getDurationMessage: function () {
+            var $filter = this.$('.tasks-filter'),
+                q = $filter.val(),
+                t = q ? this.$('.tasks-filter-type').data('filter-type') : null,
+                duration = moment.duration(0);
+
+            if (typeof klokwerk.trackerview == "undefined") { return ''; }
+            _.each(this.getDaysInVisibleTimeSpan(), function (day) {
+                if (q) {
+                    duration.add(day.getFilteredDuration(q, t));
+                } else {
+                    duration.add(day.getDuration());
+                }
             });
             var hours = Math.floor(duration.asHours());
             var minutes = duration.minutes();
@@ -796,6 +813,18 @@
             return moment.duration(msecs);
         },
 
+        getFilteredDuration: function (query, type) {
+            return this.getDurationForTasks(this.tasks.reject(contains.not(type, query)));
+        },
+
+        getDurationForTasks: function (tasks) {
+            var duration = moment.duration();
+            _.each(tasks, function (task) {
+                duration.add(task.getDuration());
+            });
+            return duration;
+        },
+
         taskBelongsHere: function (task) {
             return (moment(task.get('start')).isSame(this.get('day_iso'), 'day') ||
                     moment(task.get('end')).isSame(this.get('day_iso'), 'day')) ||
@@ -844,14 +873,6 @@
             return this.render();
         },
 
-        getDurationForTasks: function (tasks) {
-            var duration = moment.duration();
-            _.each(tasks, function (task) {
-                duration.add(task.getDuration());
-            });
-            return {'hours': duration.hours(), 'minutes': duration.minutes()};
-        },
-
         onTaskDurationChanged: function (task) {
             if (this.model.taskBelongsHere(task)) {
                 this.model.setDuration();
@@ -883,7 +904,7 @@
             /* Filter the day's tasks based on the query. Hide the whole day if
              * all tasks are filtered out.
              */
-            var rejects, passed;
+            var rejects, passed, duration;
             if (q.length === 0) {
                 this.show();
                 this.model.tasks.each(function (item) {
@@ -902,7 +923,8 @@
                     _.each(passed, function (item) {
                         this.get(item.cid).$el.show();
                     }.bind(this));
-                    this.render(this.getDurationForTasks(passed)).show();
+                    duration = this.model.getDurationForTasks(passed);
+                    this.render({'hours': duration.hours(), 'minutes': duration.minutes()}).show();
                 }
             }
         },
