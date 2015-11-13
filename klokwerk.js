@@ -817,11 +817,10 @@
             this.model.tasks.on('change:end', this.onTaskEndChanged, this);
         },
 
-        render: function () {
+        render: function (opts) {
             /* Updates the duration of time spent on tasks in this day
              */
-            var duration = moment.duration(this.model.get('duration'));
-            this.$('.day-heading').html($(klokwerk.templates.day_heading(this.model.toJSON())));
+            this.$('.day-heading').html($(klokwerk.templates.day_heading(_.extend(this.model.toJSON(), opts))));
             return this;
         },
 
@@ -843,6 +842,14 @@
         renderTask: function (task) {
             this.$('.tasklist').append(task.$el);
             return this.render();
+        },
+
+        getDurationForTasks: function (tasks) {
+            var duration = moment.duration();
+            _.each(tasks, function (task) {
+                duration = moment.duration(duration + task.getDuration());
+            });
+            return {'hours': duration.hours(), 'minutes': duration.minutes()};
         },
 
         onTaskDurationChanged: function (task) {
@@ -876,7 +883,7 @@
             /* Filter the day's tasks based on the query. Hide the whole day if
              * all tasks are filtered out.
              */
-            var matches;
+            var rejects, passed;
             if (q.length === 0) {
                 this.show();
                 this.model.tasks.each(function (item) {
@@ -884,17 +891,18 @@
                 }.bind(this));
             } else {
                 q = q.toLowerCase();
-                matches = this.model.tasks.filter(contains.not(t, q));
-                if (matches.length === this.model.tasks.length) { // hide the whole group
+                rejects = this.model.tasks.filter(contains.not(t, q));
+                if (rejects.length === this.model.tasks.length) { // hide the whole group
                     this.hide();
                 } else {
-                    _.each(matches, function (item) {
+                    _.each(rejects, function (item) {
                         this.get(item.cid).$el.hide();
                     }.bind(this));
-                    _.each(this.model.tasks.reject(contains.not(t, q)), function (item) {
+                    passed = this.model.tasks.reject(contains.not(t, q));
+                    _.each(passed, function (item) {
                         this.get(item.cid).$el.show();
                     }.bind(this));
-                    this.show();
+                    this.render(this.getDurationForTasks(passed)).show();
                 }
             }
         },
