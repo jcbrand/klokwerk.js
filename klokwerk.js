@@ -321,11 +321,14 @@
                 'day_str': start.format('D MMMM YYYY'),
                 'week_str': start.clone().startOf('week').format('D MMMM YYYY') + ' to ' + start.clone().endOf('week').format('D MMMM YYYY'),
                 'month_str': start.clone().startOf('month').format('D MMMM YYYY') + ' to ' + start.clone().endOf('month').format('D MMMM YYYY'),
+                'custom_str': start.clone().format('D MMMM YYYY') + ' to ' + end.clone().format('D MMMM YYYY'),
                 'total_time_str': this.getDurationMessage()
             });
             this.$el.html(klokwerk.templates.querycontrols(opts));
-            this.$('.datepicker').datepicker()
-              .on('changeDate', this.chooseCustomPeriod.bind(this));
+            this.$('.datepicker.dp-start').attr('data-date', start.clone().format('DD-MM YYYY')).datepicker()
+              .on('changeDate', this.chooseCustomStartPeriod.bind(this));
+            this.$('.datepicker.dp-end').attr('data-date', end.clone().format('DD-MM YYYY')).datepicker()
+              .on('changeDate', this.chooseCustomEndPeriod.bind(this));
 
             klokwerk.tracker.fetch({
                 'add': true,
@@ -494,10 +497,16 @@
             });
         },
 
-        chooseCustomPeriod: function (ev) {
+        chooseCustomStartPeriod: function (ev) {
             this.model.set({
                 'view': 'custom',
-                'start': moment(ev.date.valueOf()),
+                'start': moment(ev.date.valueOf())
+            });
+        },
+
+        chooseCustomEndPeriod: function (ev) {
+            this.model.set({
+                'view': 'custom',
                 'end': moment(ev.date.valueOf())
             });
         },
