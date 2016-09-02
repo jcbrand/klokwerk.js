@@ -721,7 +721,9 @@
         url: '/api/tracker',
 
         current: function () {
-            return this.where({end: undefined});
+            return this.reject(function (task) {
+                return typeof task.get('end') !== 'undefined';
+            });
         }
     });
 
