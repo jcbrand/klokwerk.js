@@ -214,7 +214,7 @@
             }
             this.$el.html(editview.$el);
             this.$('.task-name').focus();
-            
+
         },
 
         removeTask: function (ev) {
@@ -301,6 +301,7 @@
             "click a.choose-month": "chooseMonth",
             "click a.choose-year": "chooseYear",
             "submit form.choose-custom-period": "chooseCustomPeriod",
+            "submit form.export-tasks": "exportTasks",
             "keydown .filter-tasks": "filterTasks",
             "click a.filter-by-name": "filterByName",
             "click a.filter-by-category": "filterByCategory"
@@ -491,10 +492,48 @@
             });
         },
 
+        taskToCSV: function (task) {
+            return task.get('start') + ',' +
+                   task.get('end') + ',"' +
+                   task.get('description') + '","' +
+                   task.get('category') + '","' +
+                   task.get('labels').join() + '"\n';
+        },
+
+        exportToCSV: function (filename, tasks) {
+            var csv_file = _.reduce(tasks, function (memo, task) {
+                return memo + this.taskToCSV(task);
+            }.bind(this), 'Start Date, End Date, Description, Category, Labels\n');
+            var blob = new Blob([csv_file], { type: 'text/csv;charset=utf-8;' });
+            if (navigator.msSaveBlob) { // IE 10+
+                navigator.msSaveBlob(blob, filename);
+            } else {
+                var link = document.createElement("a");
+                if (link.download !== undefined) { // feature detection
+                    // Browsers that support HTML5 download attribute
+                    var url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+        },
+
+        exportTasks: function (ev) {
+            ev.preventDefault();
+            this.exportToCSV('Exported Tasks: from '+
+                this.model.get('start').toLocaleString() + ' to ' +
+                this.model.get('end').toLocaleString(),
+                klokwerk.tracker.models);
+        },
+
         chooseCustomPeriod: function (ev) {
             ev.preventDefault();
             this.model.set({'view': 'custom'});
-            alert('chooseCustomPeriod'); 
+            alert('chooseCustomPeriod');
         },
 
         paginateOnArrowKeys: function (ev) {
@@ -593,7 +632,7 @@
             var start = moment(task.get('start')).startOf('day');
             var end = moment(task.get('end')).startOf('day');
 
-            var _removeDayIfNecessary = function (end_iso) { 
+            var _removeDayIfNecessary = function (end_iso) {
                 var day = this.days.get(end_iso);
                 if (day && day.tasks.length === 1 && day.tasks.get(task.cid)) {
                     day.destroy();
