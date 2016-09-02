@@ -324,6 +324,9 @@
                 'total_time_str': this.getDurationMessage()
             });
             this.$el.html(klokwerk.templates.querycontrols(opts));
+            this.$('.datepicker').datepicker()
+              .on('changeDate', this.chooseCustomPeriod.bind(this));
+
             klokwerk.tracker.fetch({
                 'add': true,
                 'data': {
@@ -577,8 +580,6 @@
 
         render: function () {
             this.$el.html(this.querycontrols.render().$el);
-            this.$('.datepicker').datepicker()
-              .on('changeDate', this.querycontrols.chooseCustomPeriod.bind(this.querycontrols));
             this.ensureVisibility();
         },
 
