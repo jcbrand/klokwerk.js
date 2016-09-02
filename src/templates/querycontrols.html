@@ -33,9 +33,9 @@ Tracked Tasks&nbsp;
     </ul>
 </span>
 <span class="btn-group">
-    <button class="btn page-left"><i class="icon-arrow-left"></i></button>
-    <button class="btn page-home"><i class="icon-home"></i></button>
-    <button class="btn page-right"><i class="icon-arrow-right"></i></button>
+    <button class="btn page-left" {[ if (view === "custom")  {]}  disabled="disabled" {[ } ]}><i class="icon-arrow-left"></i></button>
+    <button class="btn page-home" {[ if (view === "custom")  {]}  disabled="disabled" {[ } ]}><i class="icon-home"></i></button>
+    <button class="btn page-right" {[ if (view === "custom")  {]}  disabled="disabled" {[ } ]}><i class="icon-arrow-right"></i></button>
 </span>
 <form class="form-search filter-tasks export-tasks">
     <div class="input-group">
