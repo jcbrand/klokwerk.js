@@ -553,10 +553,13 @@
 
         exportTasks: function (ev) {
             ev.preventDefault();
+            var q = this.model.get('filter_text').toLowerCase();
+            var t = this.model.get('filter_type');
             this.exportToCSV('Exported Tasks: from '+
                 this.model.get('start').toLocaleString() + ' to ' +
                 this.model.get('end').toLocaleString(),
-                klokwerk.tracker.models);
+                klokwerk.tracker.filter(contains(t, q))
+            );
         },
 
         paginateOnArrowKeys: function (ev) {
