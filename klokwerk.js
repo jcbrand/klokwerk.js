@@ -285,7 +285,9 @@
             this.set(_.extend({
                 'view': 'week', // can be 'day', 'week' and 'month'
                 'start': moment().startOf('week'),
-                'end': moment().endOf('week')
+                'end': moment().endOf('week'),
+                'filter_text': '',
+                'filter_type': 'description'
             }, attributes));
         }
     });
@@ -315,6 +317,7 @@
         },
 
         render: function () {
+            var filter_was_focused = this.$('.tasks-filter').is(':focus');
             var start = this.model.get('start').clone();
             var end = this.model.get('end').clone();
             var opts = _.extend(this.model.toJSON(), {
@@ -330,6 +333,9 @@
             this.$('.datepicker.dp-end').attr('data-date', end.clone().format('DD-MM YYYY')).datepicker()
               .on('changeDate', this.chooseCustomEndPeriod.bind(this));
 
+            if (filter_was_focused) {
+                this.$('.tasks-filter').focus();
+            }
             klokwerk.tracker.fetch({
                 'add': true,
                 'data': {
@@ -369,13 +375,17 @@
             var $filter = this.$('.tasks-filter'),
                 q = $filter.val(),
                 t = this.$('.tasks-filter-type').data('filter-type');
+
+            this.model.set({'filter_text': q});
+            this.model.set({'filter_type': t});
+
             $filter[this.tog(q)]('x');
             // TODO: only filter days being shown in current timespan
             klokwerk.trackerview.finished_tasks.dayviews.each(function (dayview) {
                 dayview.filter(q, t);
             });
             this.updateDuration();
-        }, 300),
+        }, 500),
 
         updateDuration: function () {
             this.$('#spent-time').html(this.getDurationMessage());

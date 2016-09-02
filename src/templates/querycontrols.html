@@ -39,7 +39,7 @@ Tracked Tasks&nbsp;
 </span>
 <form class="form-search filter-tasks export-tasks">
     <div class="input-group">
-        <input class="form-control tasks-filter" type="search" placeholder="Filter Text" />
+        <input class="form-control tasks-filter" type="search" placeholder="Filter Text" value="{{filter_text}}" onfocus="this.value=this.value;"/>
         <span class="btn-group">
             <button type="button" class="tasks-filter-type btn btn-default dropdown-toggle"
                     data-toggle="dropdown" data-filter-type="description" aria-haspopup="true" aria-expanded="false">
