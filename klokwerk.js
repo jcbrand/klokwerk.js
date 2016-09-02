@@ -385,7 +385,7 @@
                 dayview.filter(q, t);
             });
             this.updateDuration();
-        }, 500),
+        }, 300),
 
         updateDuration: function () {
             this.$('#spent-time').html(this.getDurationMessage());
@@ -581,18 +581,7 @@
             this.querycontrols = new klokwerk.QueryControlsView({model: new klokwerk.QueryControls()});
             this.days = new klokwerk.Days();
             this.dayviews = new Backbone.Overview();
-            this.querycontrols.model.on('change', function () {
-                var start = this.querycontrols.model.get('start').clone();
-                var end = this.querycontrols.model.get('end').clone();
-                this.dayviews.each(function (view) {
-                    if (!view.model.get('day_moment').isBefore(start, 'day') && !view.model.get('day_moment').isAfter(end, 'day')) {
-                        this.renderDay(view);
-                    } else if ($.contains(document.documentElement, view.el)) {
-                        view.$el.detach();
-                    }
-                }.bind(this));
-                this.querycontrols.render();
-            }, this);
+            this.querycontrols.model.on('change', this.onQueryChanged, this);
             this.days.on('remove', function (day) {
                 this.dayviews.remove(day.cid);
             }, this);
@@ -690,6 +679,24 @@
                 // FIXME: handle all days inbetween as well.
                 _updateDay(start);
                 _updateDay(end);
+            }
+        },
+
+        onQueryChanged: function () {
+            var start = this.querycontrols.model.get('start').clone();
+            var end = this.querycontrols.model.get('end').clone();
+            this.dayviews.each(function (view) {
+                if (!view.model.get('day_moment').isBefore(start, 'day') && !view.model.get('day_moment').isAfter(end, 'day')) {
+                    this.renderDay(view);
+                } else if ($.contains(document.documentElement, view.el)) {
+                    view.$el.detach();
+                }
+            }.bind(this));
+            this.querycontrols.render();
+            if (this.querycontrols.model.get('filter_type') === 'category') {
+                this.querycontrols.filterByCategory();
+            } else {
+                this.querycontrols.filterByName();
             }
         },
 
