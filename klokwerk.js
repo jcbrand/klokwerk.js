@@ -300,7 +300,6 @@
             "click a.choose-week": "chooseWeek",
             "click a.choose-month": "chooseMonth",
             "click a.choose-year": "chooseYear",
-            "submit form.choose-custom-period": "chooseCustomPeriod",
             "submit form.export-tasks": "exportTasks",
             "keydown .filter-tasks": "filterTasks",
             "click a.filter-by-name": "filterByName",
@@ -492,6 +491,14 @@
             });
         },
 
+        chooseCustomPeriod: function (ev) {
+            this.model.set({
+                'view': 'custom',
+                'start': moment(ev.date.valueOf()),
+                'end': moment(ev.date.valueOf())
+            });
+        },
+
         taskToCSV: function (task) {
             return task.get('start') + ',' +
                    task.get('end') + ',"' +
@@ -528,12 +535,6 @@
                 this.model.get('start').toLocaleString() + ' to ' +
                 this.model.get('end').toLocaleString(),
                 klokwerk.tracker.models);
-        },
-
-        chooseCustomPeriod: function (ev) {
-            ev.preventDefault();
-            this.model.set({'view': 'custom'});
-            alert('chooseCustomPeriod');
         },
 
         paginateOnArrowKeys: function (ev) {
@@ -576,7 +577,8 @@
 
         render: function () {
             this.$el.html(this.querycontrols.render().$el);
-            this.$('.datepicker').datepicker('show');
+            this.$('.datepicker').datepicker()
+              .on('changeDate', this.querycontrols.chooseCustomPeriod.bind(this.querycontrols));
             this.ensureVisibility();
         },
 
