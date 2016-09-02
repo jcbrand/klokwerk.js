@@ -550,12 +550,14 @@
         },
 
         paginateOnArrowKeys: function (ev) {
-            /* We paginate left and right based on arrow keys */
-            if (ev.keyCode == '37') { // left
-                this.pageBack(ev);
-            } else if (ev.keyCode == '39') { // right
-                this.pageForward(ev);
-            }
+            if ($(':focus').length === 0) {
+              /* We paginate left and right based on arrow keys */
+              if (ev.keyCode == '37') { // left
+                  this.pageBack(ev);
+              } else if (ev.keyCode == '39') { // right
+                  this.pageForward(ev);
+              }
+          }
         }
     });
 
